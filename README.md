@@ -1,4 +1,3 @@
-asLibrary Management System
-Mini Project
+Library Management System - Laravel App
 
-Interns Mallow-Tech
+Mallow Tech Interns
