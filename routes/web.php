@@ -50,3 +50,4 @@ Route::get('/utilities-subscribe', function () {
 });
 
 
+require 'auth.php';

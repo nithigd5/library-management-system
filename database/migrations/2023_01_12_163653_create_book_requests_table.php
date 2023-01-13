@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('book_author')->nullable();
             $table->foreignId('user_id')->constrained('users');
             $table->text('description')->nullable();
+            $table->enum('status', ['pending', 'accepted', 'rejected']);
         });
     }
 
