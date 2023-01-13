@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::redirect('/', '/dashboard');
+Route::redirect('/', '/login');
 
 // Blank Page
 Route::get('/dashboard', function () {
@@ -48,3 +48,5 @@ Route::get('/utilities-subscribe', function () {
 
 
 require 'auth.php';
+require 'book.php';
+require 'admin.php';

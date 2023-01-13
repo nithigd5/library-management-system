@@ -262,9 +262,12 @@
                     <i class="fas fa-cog"></i> Settings
                 </a>
                 <div class="dropdown-divider"></div>
-                <a href="#"
+                <a href="#" onclick="$('#logout').submit();"
                     class="dropdown-item has-icon text-danger">
                     <i class="fas fa-sign-out-alt"></i> Logout
+                    <form action="{{ route('logout') }}" id="logout" class="d-inline" id="logout" method="post">
+                        @csrf
+                    </form>
                 </a>
             </div>
         </li>

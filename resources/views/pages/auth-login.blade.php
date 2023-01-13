@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"
-        name="viewport">
+          name="viewport">
     <title>Login &mdash; Library Management System</title>
 
     <!-- General CSS Files -->
     <link rel="stylesheet"
-        href="{{ asset('library/bootstrap/dist/css/bootstrap.min.css') }}">
+          href="{{ asset('library/bootstrap/dist/css/bootstrap.min.css') }}">
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
           integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
@@ -53,9 +53,9 @@
                                    tabindex="1"
                                    autofocus required data-parsley-errors-container="#email-error"
                                    data-parsley-type="email" data-parsley-trigger="change">
-                            @error('email')
-                                <div id="email-error" style="color: red">{{ $message }}</div>
-                            @enderror
+
+                            <div id="email-error" style="color: red">@error('email'){{ $message }}@enderror</div>
+
                         </div>
 
                         <div class="form-group">
