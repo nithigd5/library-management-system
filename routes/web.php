@@ -18,7 +18,10 @@ Route::redirect('/', '/dashboard');
 
 // Blank Page
 Route::get('/dashboard', function () {
-    return view('pages.blank-page', ['type_menu' => '']);
+    return view('pages.blank-page', ['type_menu' => 'dashboard']);
+});
+Route::get('/contact-us', function () {
+    return view('pages.contact-us');
 });
 
 // google maps
@@ -30,9 +33,7 @@ Route::get('/auth-forgot-password', function () {
 Route::get('/auth-login', function () {
     return view('pages.auth-login', ['type_menu' => 'auth']);
 });
-Route::get('/auth-login2', function () {
-    return view('pages.auth-login2', ['type_menu' => 'auth']);
-});
+
 Route::get('/auth-register', function () {
     return view('pages.auth-register', ['type_menu' => 'auth']);
 });
@@ -41,9 +42,6 @@ Route::get('/auth-reset-password', function () {
 });
 
 // utilities
-Route::get('/utilities-contact', function () {
-    return view('pages.utilities-contact', ['type_menu' => 'utilities']);
-});
 Route::get('/utilities-invoice', function () {
     return view('pages.utilities-invoice', ['type_menu' => 'utilities']);
 });

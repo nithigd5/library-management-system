@@ -1,10 +1,10 @@
 <div class="main-sidebar sidebar-style-2">
     <aside id="sidebar-wrapper">
         <div class="sidebar-brand">
-            <a href="index.html">Stisla</a>
+            <a href="{{url('dashboard')}}">Library Management</a>
         </div>
         <div class="sidebar-brand sidebar-brand-sm">
-            <a href="index.html">St</a>
+            <a href="{{url('dashboard')}}">LMS</a>
         </div>
         <ul class="sidebar-menu">
             <li class="menu-header">Dashboard</li>
@@ -18,31 +18,17 @@
                     </li>
                 </ul>
             </li>
-            <li class="{{ Request::is('dashboard') ? 'active' : '' }}">
-                <a class="nav-link"
-                    href="{{ url('dashboard') }}"><i class="far fa-square"></i> <span>Blank Page</span></a>
-            </li>
             <li class="menu-header">Stisla</li>
             <li class="menu-header">Pages</li>
             <li class="nav-item dropdown {{ $type_menu === 'auth' ? 'active' : '' }}">
                 <a href="#"
                     class="nav-link has-dropdown"><i class="far fa-user"></i> <span>Auth</span></a>
                 <ul class="dropdown-menu">
-                    <li class="{{ Request::is('auth-forgot-password') ? 'active' : '' }}">
-                        <a href="{{ url('auth-forgot-password') }}">Forgot Password</a>
-                    </li>
                     <li class="{{ Request::is('auth-login') ? 'active' : '' }}">
                         <a href="{{ url('auth-login') }}">Login</a>
                     </li>
-                    <li class="{{ Request::is('auth-login2') ? 'active' : '' }}">
-                        <a class="beep beep-sidebar"
-                            href="{{ url('auth-login2') }}">Login 2</a>
-                    </li>
-                    <li class="{{ Request::is('auth-register') ? 'active' : '' }}">
-                        <a href="{{ url('auth-register') }}">Register</a>
-                    </li>
-                    <li class="{{ Request::is('auth-reset-password') ? 'active' : '' }}">
-                        <a href="{{ url('auth-reset-password') }}">Reset Password</a>
+                    <li class="{{ Request::is('auth-forgot-password') ? 'active' : '' }}">
+                        <a href="{{ url('auth-forgot-password') }}">Forgot Password</a>
                     </li>
                 </ul>
             </li>
