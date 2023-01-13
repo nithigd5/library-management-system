@@ -5,17 +5,21 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Application|Factory|View
      */
     public function index()
     {
-        //
+        return view('pages.admin.books.index', ['type_menu' => 'books']);
     }
 
     /**
@@ -25,7 +29,7 @@ class BookController extends Controller
      */
     public function create()
     {
-        //
+        return view('pages.admin.books.create', ['type_menu' => 'books']);
     }
 
     /**
@@ -47,7 +51,7 @@ class BookController extends Controller
                 'mode' => $input['mode'] ,
                 'is_download_allowed' => $input['is_download_allowed'] ,
                 'book_path' => $input['book']->store('books') ,
-                'image' => $input['image']->store('public/books/front-covers')
+                'image' => $input['image']->store('public/data/books/front-covers')
             ]);
         } else {
             $book = Book::create([
@@ -56,7 +60,7 @@ class BookController extends Controller
                 'price' => $input['price'] ,
                 'version' => $input['version'] ,
                 'mode' => $input['mode'] ,
-                'image' => $input['image']->store('public/books/front-covers')]);
+                'image' => $input['image']->store('public/data/books/front-covers')]);
         }
 
         return response()->json($book);
@@ -81,7 +85,7 @@ class BookController extends Controller
      */
     public function edit($id)
     {
-        //
+        return view('pages.admin.books.edit', ['type_menu' => 'books']);
     }
 
     /**
@@ -101,7 +105,7 @@ class BookController extends Controller
         $book->mode = $request->mode;
 
         if(isset($request->image)){
-            $book->image = $request->image->store('public/books/front-covers');
+            $book->image = $request->image->store('public/data/books/front-covers');
         }
 
         if($request->file('book_file') !== null && $request->mode === 'online')

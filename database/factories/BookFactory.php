@@ -23,7 +23,7 @@ class BookFactory extends Factory
             'price' => fake()->randomFloat(2, 10, 5000),
             'version' => fake()->numberBetween(1, 50),
             'book_path' => UploadedFile::fake()->create('book.pdf', 100, 'application/pdf')->store('books'),
-            'image' => UploadedFile::fake()->image('thumbnail.jpg', 100, 100)->store('public/books/front-covers'),
+            'image' => UploadedFile::fake()->image('thumbnail.jpg', 100, 100)->store('public/data/books/front-covers'),
             'mode' => fake()->randomElement(['offline', 'online']),
             'is_download_allowed' => function(array $attr){
                 return $attr['mode'] === 'online' && fake()->boolean();

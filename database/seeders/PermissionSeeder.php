@@ -61,7 +61,6 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'books.update']);
         Permission::create(['name' => 'books.delete']);
         Permission::create(['name' => 'books.view']);
-        Permission::create(['name' => 'books.admin-view']);
         Permission::create(['name' => 'books.search']);
 
         Permission::create(['name' => 'books.request.create']);
