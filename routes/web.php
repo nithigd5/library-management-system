@@ -261,3 +261,4 @@ Route::get('/credits', function () {
     return view('pages.credits', ['type_menu' => '']);
 });
 
+require 'auth.php';

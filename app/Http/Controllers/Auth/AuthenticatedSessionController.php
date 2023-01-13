@@ -32,8 +32,6 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
-        Cache::put('username', Auth::user()->name);
-        Cache::put('userid', Auth::user()->id);
 
         return redirect()->intended(RouteServiceProvider::HOME);
     }
@@ -51,8 +49,6 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
-
-        Cache::flush();
 
         return redirect('/');
     }
