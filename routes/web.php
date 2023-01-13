@@ -30,9 +30,6 @@ Route::get('/contact-us', function () {
 Route::get('/auth-forgot-password', function () {
     return view('pages.auth-forgot-password', ['type_menu' => 'auth']);
 });
-Route::get('/auth-login', function () {
-    return view('pages.auth-login', ['type_menu' => 'auth']);
-});
 
 Route::get('/auth-register', function () {
     return view('pages.auth-register', ['type_menu' => 'auth']);

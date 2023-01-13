@@ -25,7 +25,7 @@
                     class="nav-link has-dropdown"><i class="far fa-user"></i> <span>Auth</span></a>
                 <ul class="dropdown-menu">
                     <li class="{{ Request::is('auth-login') ? 'active' : '' }}">
-                        <a href="{{ url('auth-login') }}">Login</a>
+                        <a href="{{ route('login') }}">Login</a>
                     </li>
                     <li class="{{ Request::is('auth-forgot-password') ? 'active' : '' }}">
                         <a href="{{ url('auth-forgot-password') }}">Forgot Password</a>
