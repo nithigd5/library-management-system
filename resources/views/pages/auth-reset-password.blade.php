@@ -14,7 +14,7 @@
 
         <div class="card-body">
             <p class="text-muted">We will send a link to reset your password</p>
-            <form method="POST">
+            <form method="POST" data-parsley-validate>
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input id="email"
@@ -23,7 +23,8 @@
                         name="email"
                         tabindex="1"
                         required
-                        autofocus>
+                        autofocus data-parsley-type="email" data-parsley-errors-container="#email-error">
+                    <div id="email-error" style="color: red"></div>
                 </div>
 
                 <div class="form-group">
@@ -34,7 +35,8 @@
                         data-indicator="pwindicator"
                         name="password"
                         tabindex="2"
-                        required>
+                        required data-parsley-minlength="8" data-parsley-errors-container="#password-error">
+                    <div id="password-error" style="color: red"></div>
                     <div id="pwindicator"
                         class="pwindicator">
                         <div class="bar"></div>
@@ -49,7 +51,8 @@
                         class="form-control"
                         name="confirm-password"
                         tabindex="2"
-                        required>
+                        required data-parsley-equalto="#password" data-parsley-errors-container="#confirm-password-error">
+                    <div id="cofirm-password-error" style="color: red"></div>>
                 </div>
 
                 <div class="form-group">
@@ -70,4 +73,5 @@
 
     <!-- Page Specific JS File -->
     <script src="{{ asset('js/page/auth-register.js') }}"></script>
+    <script src="{{ asset('js/parsley.js') }}"></script>
 @endpush

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"
         name="viewport">
-    <title>Contact &mdash; Stisla</title>
+    <title>Contact &mdash; Library Management System</title>
 
     <!-- General CSS Files -->
     <link rel="stylesheet"
@@ -47,7 +47,7 @@
                 <div class="row">
                     <div class="col-12 col-md-10 offset-md-1 col-lg-10 offset-lg-1">
                         <div class="login-brand">
-                            Stisla
+                            Library Management System
                         </div>
 
                         <div class="card card-primary">
@@ -57,7 +57,7 @@
                                         <h4>Contact Us</h4>
                                     </div>
                                     <div class="card-body">
-                                        <form method="POST">
+                                        <form method="POST" data-parsley-validate>
                                             <div class="form-group floating-addon">
                                                 <label>Name</label>
                                                 <div class="input-group">
@@ -71,7 +71,8 @@
                                                         class="form-control"
                                                         name="name"
                                                         autofocus
-                                                        placeholder="Name">
+                                                        placeholder="Name" required data-parsley-errors-container="#name-error">
+                                                    <div id="name-error" style="color: red"></div>
                                                 </div>
                                             </div>
 
@@ -87,7 +88,8 @@
                                                         type="email"
                                                         class="form-control"
                                                         name="email"
-                                                        placeholder="Email">
+                                                        placeholder="Email" required data-parsley-type="email" data-parsley-errors-container="#email-error">
+                                                    <div id="email-error" style="color: red"></div>
                                                 </div>
                                             </div>
 
@@ -95,7 +97,8 @@
                                                 <label>Message</label>
                                                 <textarea class="form-control"
                                                     placeholder="Type your message"
-                                                    data-height="150"></textarea>
+                                                    data-height="150" required data-parsley-errors-container="#message_error"></textarea>
+                                                <div id="message_error" style="color: red"></div>
                                             </div>
 
                                             <div class="form-group text-right">
@@ -114,7 +117,7 @@
                             </div>
                         </div>
                         <div class="simple-footer">
-                            Copyright &copy; Stisla 2018
+                            Copyright &copy; LMS 2023
                         </div>
                     </div>
                 </div>
@@ -132,7 +135,7 @@
     <script src="{{ asset('js/stisla.js') }}"></script>
 
     <!-- JS Libraies -->
-    <script src="http://maps.google.com/maps/api/js?key=AIzaSyB55Np3_WsZwUQ9NS7DP-HnneleZLYZDNw&amp;sensor=true"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap"></script>
     <script src="{{ asset('library/gmaps/gmaps.js') }}"></script>
 
     <!-- Page Specific JS File -->
@@ -141,6 +144,7 @@
     <!-- Template JS File -->
     <script src="{{ asset('js/scripts.js') }}"></script>
     <script src="{{ asset('js/custom.js') }}"></script>
+    <script src="{{ asset('js/parsley.js') }}"></script>
 </body>
 
 </html>
