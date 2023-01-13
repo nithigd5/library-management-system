@@ -20,10 +20,10 @@ return new class extends Migration
             $table->string('author');
             $table->float('price');
             $table->integer('version');
-            $table->string('book_location')->nullable();
-            $table->enum('mode', ['offline', 'online']);
+            $table->string('book_path')->nullable();
+            $table->enum('mode', ['offline', 'online'])->default('offline');
             $table->string('image');
-            $table->boolean('is_download_allowed');
+            $table->boolean('is_download_allowed')->default(false);
         });
     }
 
