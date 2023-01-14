@@ -62,7 +62,7 @@ class BookController extends Controller
                 'image' => $input['image']->store('data/books/front-covers' , ['disk' => 'public'])]);
         }
 
-        return response()->json($book);
+        return to_route('books.index');
     }
 
     /**
