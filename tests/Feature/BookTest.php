@@ -44,11 +44,11 @@ class BookTest extends TestCase
 
         $book['book_path'] = 'books/' . $bookFile->hashName();
         unset($book['book']);
-        $book['image'] = 'public/data/books/front-covers/' . $image->hashName();
+        $book['image'] = 'data/books/front-covers/' . $image->hashName();
 
         $this->assertDatabaseHas('books' , $book);
         Storage::assertExists($book['book_path']);
-        Storage::assertExists($book['image']);
+        Storage::disk('public')->assertExists($book['image']);
 
         //Assert admin cannot create an Invalid offline book
         $book = [
@@ -72,11 +72,11 @@ class BookTest extends TestCase
         $response = $this->actingAs($user)->post(route('books.store') , $book);
         $response->assertStatus(200);
 
-        $book['image'] = 'public/data/books/front-covers/' . $image->hashName();
+        $book['image'] = 'data/books/front-covers/' . $image->hashName();
         $book['is_download_allowed'] = false;
 
         $this->assertDatabaseHas('books' , $book);
-        Storage::assertExists($book['image']);
+        Storage::disk('public')->assertExists($book['image']);
     }
 
     /**
@@ -105,10 +105,9 @@ class BookTest extends TestCase
         $response = $this->actingAs($user)->put(route('books.update', $book->id) , $new_book);
         $response->assertStatus(200);
 
-        $new_book['image'] = 'public/data/books/front-covers/' . $new_book['image']->hashName();
-
+        $new_book['image'] = 'data/books/front-covers/' . $new_book['image']->hashName();
         $this->assertDatabaseHas('books', $new_book);
-        Storage::assertExists($new_book['image']);
+        Storage::disk('public')->assertExists($new_book['image']);
 
         //Test admin cannot update a book to online without PDF of Book
         $new_book = array();
