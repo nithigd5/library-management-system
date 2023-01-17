@@ -55,6 +55,23 @@
 
 @stack('scripts')
 
+<script>
+
+    let bookImage = $("#book_image");
+    let bookImageLabel = bookImage.siblings("label");
+
+    let bookPDF = $("#book_pdf");
+    let bookPDFLabel = bookPDF.siblings("label");
+
+    bookImage.change(() => setFileChange(bookImage, bookImageLabel));
+    bookPDF.change(() => setFileChange(bookPDF, bookPDFLabel));
+
+    function setFileChange(input, label) {
+        label.text(input.val().split('\\').pop());
+    }
+
+</script>
+
 <!-- Template JS File -->
 <script src="{{ asset('js/scripts.js') }}"></script>
 <script src="{{ asset('js/custom.js') }}"></script>

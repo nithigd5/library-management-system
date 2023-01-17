@@ -39,7 +39,8 @@
                                             </div>
                                         </div>
                                         <input type="text" name="author"
-                                               class="form-control @error('author') is-invalid @enderror" value="{{ old('author') }}">
+                                               class="form-control @error('author') is-invalid @enderror"
+                                               value="{{ old('author') }}">
                                         <div class="invalid-feedback">
                                             @error('author') {{ $message }} @enderror
                                         </div>
@@ -49,7 +50,8 @@
                                     <label>Version</label>
                                     <div class="input-group">
                                         <input type="number" name="version"
-                                               class="form-control @error('version') is-invalid @enderror" value="{{ old('version') }}">
+                                               class="form-control @error('version') is-invalid @enderror"
+                                               value="{{ old('version') }}">
                                         <div class="invalid-feedback">
                                             @error('version') {{ $message }} @enderror
                                         </div>
@@ -59,7 +61,8 @@
                                     <label>Price</label>
                                     <div class="input-group">
                                         <input type="number" name="price"
-                                               class="form-control @error('price') is-invalid @enderror" value="{{ old('price') }}">
+                                               class="form-control @error('price') is-invalid @enderror"
+                                               value="{{ old('price') }}">
                                         <div class="invalid-feedback">
                                             @error('price') {{ $message }} @enderror
                                         </div>
@@ -105,15 +108,19 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="form-check">
-                                        <input class="form-check-input @error('is_download_allowed') is-invalid @enderror" type="radio" name="is_download_allowed"
-                                               id="is_download_allowed1" value="1">
+                                        <input
+                                            class="form-check-input @error('is_download_allowed') is-invalid @enderror"
+                                            type="radio" name="is_download_allowed"
+                                            id="is_download_allowed1" value="1">
                                         <label class="form-check-label" for="is_download_allowed1">
                                             Allow Downloads
                                         </label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input @error('is_download_allowed') is-invalid @enderror" type="radio" name="is_download_allowed"
-                                               id="is_download_allowed2" value="0">
+                                        <input
+                                            class="form-check-input @error('is_download_allowed') is-invalid @enderror"
+                                            type="radio" name="is_download_allowed"
+                                            id="is_download_allowed2" value="0">
                                         <label class="form-check-label" for="is_download_allowed2">
                                             Don't Allow Downloads
                                         </label>
@@ -137,7 +144,5 @@
 @endsection
 
 @push('scripts')
-    <!-- JS Libraies -->
 
-    <!-- Page Specific JS File -->
 @endpush
