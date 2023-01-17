@@ -22,7 +22,7 @@ return new class extends Migration
             $table->timestamps();
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('profile_image')->unique();
+            $table->string('profile_image');
             $table->dateTime('last_login');
             $table->text('address')->nullable();
             $table->enum('status', ['active', 'inactive', 'banned']);
