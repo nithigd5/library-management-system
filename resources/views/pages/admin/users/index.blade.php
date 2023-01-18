@@ -2,7 +2,7 @@
 
 @extends('layouts.admin-app')
 
-@section('title', 'Books')
+@section('title', 'Customers')
 
 @push('style')
     <!-- CSS Libraries -->
@@ -12,29 +12,28 @@
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>Manage All Books</h1>
+                <h1>Manage all Customers</h1>
             </div>
 
             <div class="section-body">
                 <div class="row">
-                    @foreach($books as $book)
+                    @foreach($users as $user)
                         <div class="col-12 col-sm-6 col-md-6 col-lg-3">
                             <article class="article">
                                 <div class="article-header">
-                                    <div class="article-image"  style="background-image: url({{ Storage::url($book->image) }});">
+                                    <div class="article-image"  style="background-image: url({{ Storage::url($user->profile_image) }});">
                                     </div>
                                     <div class="article-title">
-                                        <h2><a href="#">{{ $book->name }}</a></h2>
+                                        <h2><a href="#">{{ $user->first_name.$user->last_name }}</a></h2>
                                     </div>
                                 </div>
                                 <div class="article-details">
-                                    <p>{{ $book->author }}. </p>
                                     <div class="article-cta">
                                         <a href="#" class="btn btn-primary">View</a>
-                                        <a href="{{ route('books.edit', $book->id) }}" class="btn btn-secondary">Edit</a>
+                                        <a href="{{ route('customers.edit', $user->id) }}" class="btn btn-secondary">Edit</a>
                                         <a href="#" onclick="$(this).siblings('form').submit()" class="btn btn-danger">Delete</a>
 
-                                        <form style="display: none" action="{{ route('books.destroy', $book->id) }}" method="post">
+                                        <form style="display: none" action="{{ route('customers.destroy', $user->id) }}" method="post">
                                             @csrf
                                             @method('DELETE')
 

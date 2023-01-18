@@ -8,6 +8,8 @@ use App\Models\Book;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
@@ -77,24 +79,24 @@ class BookController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the specified book.
      *
-     * @param int $id
-     * @return \Illuminate\Http\Response
+     * @param Book $book
+     * @return Application|Factory|View
      */
-    public function edit($id)
+    public function edit(Book $book): Application|Factory|View
     {
-        return view('pages.admin.books.edit' , ['type_menu' => 'books']);
+        return view('pages.admin.books.edit' , ['type_menu' => 'books' , 'book' => $book]);
     }
 
     /**
      * Update the specified valid Book in books table.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response
+     * @param UpdateBookRequest $request
+     * @param Book $book
+     * @return RedirectResponse
      */
-    public function update(UpdateBookRequest $request , Book $book)
+    public function update(UpdateBookRequest $request , Book $book): RedirectResponse
     {
 
         $book->name = $request->name;
@@ -115,17 +117,28 @@ class BookController extends Controller
 
         $book->save();
 
-        return $book;
+        return to_route('books.index');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified book from database and associated files from storage.
      *
-     * @param int $id
-     * @return \Illuminate\Http\Response
+     * @param Book $book
+     * @return RedirectResponse
+     * @throws \Throwable
      */
-    public function destroy($id)
+    public function destroy(Book $book): RedirectResponse
     {
-        //
+        //Delete a Book Front Image from Storage if Present
+        if ($book->image)
+            Storage::disk('public')->delete($book->image);
+
+        //Delete a Book PDF File from Storage if present
+        if ($book->book_path)
+            Storage::delete($book->book_path);
+
+        $book->delete();
+
+        return to_route('books.index');
     }
 }

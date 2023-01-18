@@ -70,6 +70,16 @@
         label.text(input.val().split('\\').pop());
     }
 
+    $("input").each(function (){
+        $(this).change(()=>$(this).removeClass('is-invalid'));
+    })
+    $("select").each(function (){
+        $(this).change(()=>$(this).removeClass('is-invalid'));
+    })
+    $("textarea").each(function (){
+        $(this).change(()=>$(this).removeClass('is-invalid'));
+    })
+
 </script>
 
 <!-- Template JS File -->
