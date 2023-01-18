@@ -17,7 +17,7 @@ class CustomerController extends Controller
      */
     public function index(): View|Factory|Application
     {
-        return view('pages.admin.users.index' , ['type_menu' => 'books' , 'users' => User::where('type' , 'customer')->get()]);
+        return view('pages.admin.users.index' , ['type_menu' => 'customers' , 'users' => User::where('type' , 'customer')->get()]);
 
     }
 

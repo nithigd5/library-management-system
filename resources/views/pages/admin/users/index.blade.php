@@ -24,7 +24,7 @@
                                     <div class="article-image"  style="background-image: url({{ Storage::url($user->profile_image) }});">
                                     </div>
                                     <div class="article-title">
-                                        <h2><a href="#">{{ $user->first_name.$user->last_name }}</a></h2>
+                                        <h2><a href="#">{{ $user->first_name.' '.$user->last_name }}</a></h2>
                                     </div>
                                 </div>
                                 <div class="article-details">

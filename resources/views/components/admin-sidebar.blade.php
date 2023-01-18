@@ -32,7 +32,7 @@
                 </ul>
             </li>
             <li class="menu-header">Users</li>
-            <li class="nav-item dropdown {{ $type_menu === 'users' ? 'active' : '' }}">
+            <li class="nav-item dropdown {{ $type_menu === 'customers' ? 'active' : '' }}">
                 <a href="#"
                    class="nav-link has-dropdown"><i class="far fa-user"></i> <span>Customers</span></a>
                 <ul class="dropdown-menu">
