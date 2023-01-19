@@ -1,4 +1,3 @@
-@extends('layouts.auth')
 
 @section('title', 'Register')
 
@@ -12,7 +11,7 @@
 @section('main')
     <div class="card card-primary">
         <div class="card-header">
-            <h4>Register</h4>
+            <h4>Customer Registrations</h4>
         </div>
 
         <div class="card-body">

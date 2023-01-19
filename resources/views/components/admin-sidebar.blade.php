@@ -39,7 +39,7 @@
                     <li class="{{ Request::is('customers') ? 'active' : '' }}">
                         <a href="{{ route('customers.index') }}">View All Customers</a>
                     </li>
-                    <li class="{{ Request::is('users/create') ? 'active' : '' }}">
+                    <li class="{{ Request::is('customers/create') ? 'active' : '' }}">
                         <a href="{{ route('customers.create') }}">Add a Customer</a>
                     </li>
                 </ul>

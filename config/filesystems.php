@@ -73,4 +73,9 @@ return [
         public_path('storage') => storage_path('app/public'),
     ],
 
+    //Uploaded files Locations
+
+    'profile_images' => env('PROFILE_IMAGE_LOCATION', 'data/profile-images'),
+    'book_front_covers' => env('BOOK_FRONT_COVER_LOCATION', 'data/books/front-covers'),
+    'book_pdf_files' => env('PDF_BOOK_LOCATION', 'books'),
 ];

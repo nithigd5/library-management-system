@@ -22,10 +22,9 @@ class BookTest extends TestCase
      */
     public function test_can_create_book(): void
     {
-        $this->seed([PermissionSeeder::class , RoleSeeder::class]);
         Storage::fake();
-
-        $user = $this->createAndGetUser();
+        $this->seed([PermissionSeeder::class , RoleSeeder::class]);
+        $user = $this->createAndGetAdmin();
 
         //Test admin Can Create an Online book
         $book = [
@@ -87,12 +86,9 @@ class BookTest extends TestCase
      */
     public function test_can_update_book(): void
     {
-        $this->seed([PermissionSeeder::class , RoleSeeder::class]);
-
         Storage::fake();
-
-        $user = $this->createAndGetUser();
-
+        $this->seed([PermissionSeeder::class , RoleSeeder::class]);
+        $user = $this->createAndGetAdmin();
         $book = $this->createAndGetBook();
 
         //Test admin can update a book (offline)
@@ -144,17 +140,26 @@ class BookTest extends TestCase
         Storage::assertExists($new_book['book_path']);
     }
 
-    function createAndGetUser()
+    /**
+     * Create and return a admin
+     * @return User
+     */
+    function createAndGetAdmin(): User
     {
         return User::factory()->create([
-            'profile_image' => UploadedFile::fake()->image('profile.jpg' , 100 , 100)
+            'profile_image' => UploadedFile::fake()->image('profile.jpg' , 100 , 100)->store('data/profile-images', ['disk' => 'public']),
+            'status' => 'active'
         ])->assignRole('admin');
-
     }
 
-    function createAndGetBook(){
+    /**
+     * Create and return a book
+     * @return Book
+     */
+    function createAndGetBook(): Book
+    {
         return Book::factory()->create([
-            'book_path' => UploadedFile::fake()->create('book.pdf' , 100 , 'application/pdf'),
+            'book_path' => UploadedFile::fake()->create('book.pdf' , 100 , 'application/pdf') ,
             'image' => UploadedFile::fake()->image('thumbnail.jpg' , 100 , 100)
         ]);
     }

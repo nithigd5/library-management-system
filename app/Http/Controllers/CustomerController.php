@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCustomerRequest;
+use App\Http\Requests\UpdateCustomerRequest;
 use App\Models\User;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class CustomerController extends Controller
 {
@@ -24,66 +28,85 @@ class CustomerController extends Controller
     /**
      * Show the form for creating a new customer.
      *
-     * @return \Illuminate\Http\Response
+     * @return Application|Factory|View
      */
     public function create()
     {
-        //
+        return view('pages.admin.users.create', ['type_menu' => 'customers']);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created customer in database and profile image is stored in storage correctly.
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(StoreCustomerRequest $request)
     {
-        //
+        $input = $request->validated();
+        $input['password'] = Hash::make($input['password']);
+        $input['profile_image'] = $input['profile_image']->store(config('filesystems.profile_images') , ['disk' => 'public']);
+        $user = User::create($input);
+        $user->active();
+
+        return to_route('customers.index');
     }
 
     /**
-     * Display the specified resource.
+     * Show the form for editing the customer.
      *
-     * @param int $id
-     * @return \Illuminate\Http\Response
+     * @param User $customer
+     * @return Application|Factory|View
      */
-    public function show($id)
+    public function edit(User $customer)
     {
-        //
+        return view('pages.admin.users.edit', ['user' => $customer]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified customer in database and profile image if present.
      *
-     * @param int $id
-     * @return \Illuminate\Http\Response
+     * @param UpdateCustomerRequest $request
+     * @param User $customer
+     * @return RedirectResponse
      */
-    public function edit($id)
+    public function update(UpdateCustomerRequest $request , User $customer): RedirectResponse
     {
-        //
+        $customer->first_name = $request->first_name;
+        $customer->last_name = $request->last_name;
+        $customer->address = $request->address;
+        $customer->phone = $request->phone;
+        $customer->email = $request->email;
+        $this->saveProfileImage($request , $customer);
+        $customer->save();
+
+        return to_route('customers.index');
     }
 
     /**
-     * Update the specified resource in storage.
+     * Remove the specified Customer from database and remove his profile image.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response
+     * @param User $customer
+     * @return RedirectResponse
      */
-    public function update(Request $request , $id)
+    public function destroy(User $customer)
     {
-        //
+        Storage::disk('public')->delete($customer->profile_image);
+        $customer->delete();
+
+        return to_route('customers.index');
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
+     * @param UpdateCustomerRequest $request
+     * @param User $customer
+     * @return void
      */
-    public function destroy($id)
+    public function saveProfileImage(UpdateCustomerRequest $request , User $customer): void
     {
-        //
+        $profile_image = $request->profile_image;
+        if (!is_null($profile_image)) {
+            $customer->profile_image = $profile_image->store(config('filesystems.profile_images') , ['disk' => 'public']);
+        }
     }
 }
