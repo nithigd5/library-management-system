@@ -21,7 +21,7 @@ class CustomerController extends Controller
      */
     public function index(): View|Factory|Application
     {
-        return view('pages.admin.users.index' , ['type_menu' => 'customers' , 'users' => User::where('type' , 'customer')->get()]);
+        return view('pages.admin.users.index' , ['type_menu' => 'customers' , 'users' => User::where('type' , 'customer')->orderByDesc('updated_at')->get()]);
 
     }
 
@@ -32,7 +32,7 @@ class CustomerController extends Controller
      */
     public function create()
     {
-        return view('pages.admin.users.create', ['type_menu' => 'customers']);
+        return view('pages.admin.users.create' , ['type_menu' => 'customers']);
     }
 
     /**
@@ -47,7 +47,9 @@ class CustomerController extends Controller
         $input['password'] = Hash::make($input['password']);
         $input['profile_image'] = $input['profile_image']->store(config('filesystems.profile_images') , ['disk' => 'public']);
         $user = User::create($input);
-        $user->active();
+        $user->activate();
+        $user->makeCustomer();
+        $user->save();
 
         return to_route('customers.index');
     }
@@ -60,7 +62,7 @@ class CustomerController extends Controller
      */
     public function edit(User $customer)
     {
-        return view('pages.admin.users.edit', ['user' => $customer]);
+        return view('pages.admin.users.edit' , ['customer' => $customer , 'type_menu' => 'customers'] ,);
     }
 
     /**

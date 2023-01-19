@@ -43,7 +43,7 @@ class CustomerTest extends TestCase
         unset($customer['password_confirmation']);
         unset($customer['password']);
         Storage::disk('public')->assertExists($customer['profile_image']);
-        $this->assertDatabaseHas('users' , array_merge($customer , ['status' => 'active']));
+        $this->assertDatabaseHas('users' , array_merge($customer , ['status' => 'active', 'type' => 'customer']));
 
         //Check User with missing and invalid fields cannot be created
         $customer = [
@@ -71,8 +71,6 @@ class CustomerTest extends TestCase
             'first_name' => 'First Name' ,
             'last_name' => 'Last Name' ,
             'email' => $user->email ,
-            'password' => 'password5P@' ,
-            'password_confirmation' => 'password5P@' ,
             'address' => 'Mallow Karur' ,
             'phone' => $user->phone ,
         ];
@@ -81,21 +79,19 @@ class CustomerTest extends TestCase
         $response = $this->actingAs($user)->put(route('customers.update' , $user->id) , $customer);
         $response->assertSessionHasNoErrors();
 
-        unset($customer['password_confirmation']);
-        unset($customer['password']);
         Storage::disk('public')->assertExists($user->profile_image);
-        $this->assertDatabaseHas('users' , array_merge($customer , ['status' => 'active' , 'id' => $user->id , 'profile_image' => $user->profile_image]));
+        $this->assertDatabaseHas('users' , array_merge($customer , ['status' => 'active' , 'id' => $user->id ,
+            'profile_image' => $user->profile_image ]));
 
         //Check User with missing and invalid fields cannot be created
         $customer = [
             'first_name' => 'FFirst Namess' ,
             'email' => 'email1@ee.com' ,
-            'password' => 'Password' ,
             'phone' => '1323234'
         ];
 
         $response = $this->put(route('customers.update' , $user->id) , $customer);
-        $response->assertSessionHasErrors(['last_name' , 'phone' , 'password']);
+        $response->assertSessionHasErrors(['last_name' , 'phone'    ]);
         $this->assertDatabaseMissing('users' , $customer);
     }
 

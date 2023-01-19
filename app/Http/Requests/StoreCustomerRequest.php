@@ -28,7 +28,7 @@ class StoreCustomerRequest extends FormRequest
     {
         return [
             'first_name' => 'required|string|min:3' ,
-            'last_name' => 'required|string|min:3' ,
+            'last_name' => 'required|string|min:2' ,
             'email' => 'required|email|unique:users' ,
             'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->numbers()->symbols()] ,
             'profile_image' => ['required' , Rule::imageFile()->max(2048)] ,

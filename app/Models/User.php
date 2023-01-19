@@ -27,6 +27,7 @@ class User extends Authenticatable
 {
     use HasApiTokens , HasFactory , Notifiable , HasRoles;
 
+
     /**
      * The attributes that are mass assignable.
      *
@@ -64,25 +65,29 @@ class User extends Authenticatable
     const STATUS_ACTIVE = 'active';
     const STATUS_IN_ACTIVE = 'inactive';
     const STATUS_BANNED = 'banned';
+    const TYPE_CUSTOMER = 'customer';
 
     //Set User status to active
-    public function active()
+    public function activate()
     {
         $this->status = static::STATUS_ACTIVE;
-        $this->save();
     }
 
     //Set User status to inactive
-    public function inactive()
+    public function deactivate()
     {
         $this->status = static::STATUS_IN_ACTIVE;
-        $this->save();
     }
 
     //Set User status to inactive
     public function ban()
     {
         $this->status = static::STATUS_BANNED;
-        $this->save();
+    }
+
+    public function makeCustomer()
+    {
+        $this->assignRole(static::TYPE_CUSTOMER);
+        $this->type = static::TYPE_CUSTOMER;
     }
 }
