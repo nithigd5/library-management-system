@@ -21,6 +21,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $address
  * @property string $phone
  * @property DateTime $last_login
+ * @property int $id
  */
 class User extends Authenticatable
 {

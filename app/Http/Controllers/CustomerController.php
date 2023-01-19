@@ -91,8 +91,8 @@ class CustomerController extends Controller
      */
     public function destroy(User $customer)
     {
+        $customer->deleteOrFail();
         Storage::disk('public')->delete($customer->profile_image);
-        $customer->delete();
 
         return to_route('customers.index');
     }

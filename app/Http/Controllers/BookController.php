@@ -89,8 +89,8 @@ class BookController extends Controller
      */
     public function destroy(Book $book): RedirectResponse
     {
+        $book->deleteOrFail();
         $this->deleteBookFiles($book);
-        $book->delete();
 
         return to_route('books.index');
     }

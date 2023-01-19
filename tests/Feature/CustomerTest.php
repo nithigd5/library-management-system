@@ -7,7 +7,6 @@ use Database\Seeders\PermissionSeeder;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -22,10 +21,7 @@ class CustomerTest extends TestCase
      */
     public function test_customer_can_be_registered()
     {
-        Storage::fake();
-        $this->seed([PermissionSeeder::class , RoleSeeder::class]);
-
-        $user = $this->createAndGetAdmin();
+        $user = $this->initializeAndGetAdmin();
 
         //Check Valid User can be created and profile image is stored correctly
         $customer = [
@@ -68,9 +64,7 @@ class CustomerTest extends TestCase
      */
     public function test_customer_can_be_updated()
     {
-        Storage::fake();
-        $this->seed([PermissionSeeder::class , RoleSeeder::class]);
-        $user = $this->createAndGetAdmin();
+        $user = $this->initializeAndGetAdmin();
 
         //Check Valid User can be created and profile image is stored correctly
         $customer = [
@@ -90,7 +84,7 @@ class CustomerTest extends TestCase
         unset($customer['password_confirmation']);
         unset($customer['password']);
         Storage::disk('public')->assertExists($user->profile_image);
-        $this->assertDatabaseHas('users' , array_merge($customer , ['status' => 'active' , 'id' => $user->id, 'profile_image' => $user->profile_image]));
+        $this->assertDatabaseHas('users' , array_merge($customer , ['status' => 'active' , 'id' => $user->id , 'profile_image' => $user->profile_image]));
 
         //Check User with missing and invalid fields cannot be created
         $customer = [
@@ -105,6 +99,18 @@ class CustomerTest extends TestCase
         $this->assertDatabaseMissing('users' , $customer);
     }
 
+    public function test_book_is_deleted()
+    {
+        $admin = $this->initializeAndGetAdmin();
+        $user = $this->createAndGetAdmin();
+
+        $response = $this->actingAs($admin)->delete(route('customers.destroy' , $user->id));
+
+        Storage::assertMissing($user->profile_image);
+        $this->assertDatabaseMissing('users' , ['id' => $user->id]);
+
+    }
+
     /**
      * Create and return admin user
      * @return User
@@ -112,8 +118,20 @@ class CustomerTest extends TestCase
     function createAndGetAdmin(): User
     {
         return User::factory()->create([
-            'profile_image' => UploadedFile::fake()->image('profile.jpg' , 100 , 100)->store('data/profile-images', ['disk' => 'public']),
+            'profile_image' => UploadedFile::fake()->image('profile.jpg' , 100 , 100)->store('data/profile-images' , ['disk' => 'public']) ,
             'status' => 'active'
         ])->assignRole('admin');
+    }
+
+    /**
+     * @return User
+     */
+    public function initializeAndGetAdmin(): User
+    {
+        Storage::fake();
+        $this->seed([PermissionSeeder::class , RoleSeeder::class]);
+
+        $user = $this->createAndGetAdmin();
+        return $user;
     }
 }
