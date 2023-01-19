@@ -67,32 +67,34 @@ class CustomerTest extends TestCase
         $user = $this->initializeAndGetAdmin();
 
         //Check Valid User can be created and profile image is stored correctly
-        $customer = [
+        $updatedUser = [
             'first_name' => 'First Name' ,
             'last_name' => 'Last Name' ,
             'email' => $user->email ,
             'address' => 'Mallow Karur' ,
             'phone' => $user->phone ,
+            'profile_image' => UploadedFile::fake()->image('profile.jpg')
         ];
 
 
-        $response = $this->actingAs($user)->put(route('customers.update' , $user->id) , $customer);
+        $response = $this->actingAs($user)->put(route('customers.update' , $user->id) , $updatedUser);
         $response->assertSessionHasNoErrors();
 
-        Storage::disk('public')->assertExists($user->profile_image);
-        $this->assertDatabaseHas('users' , array_merge($customer , ['status' => 'active' , 'id' => $user->id ,
-            'profile_image' => $user->profile_image ]));
+        $updatedUser['profile_image'] = config('filesystems.profile_images') . '/' . $updatedUser['profile_image']->hashName();
+        Storage::disk('public')->assertExists($updatedUser['profile_image']);
+        $this->assertDatabaseHas('users' , array_merge($updatedUser , ['status' => 'active' , 'id' => $user->id ,
+            'profile_image' => $updatedUser['profile_image'] ]));
 
         //Check User with missing and invalid fields cannot be created
-        $customer = [
+        $updatedUser = [
             'first_name' => 'FFirst Namess' ,
             'email' => 'email1@ee.com' ,
             'phone' => '1323234'
         ];
 
-        $response = $this->put(route('customers.update' , $user->id) , $customer);
+        $response = $this->put(route('customers.update' , $user->id) , $updatedUser);
         $response->assertSessionHasErrors(['last_name' , 'phone'    ]);
-        $this->assertDatabaseMissing('users' , $customer);
+        $this->assertDatabaseMissing('users' , $updatedUser);
     }
 
     public function test_book_is_deleted()
