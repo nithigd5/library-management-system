@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\Book;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -22,7 +21,7 @@ class PurchaseFactory extends Factory
         $book = Book::factory()->create();
         return [
             'user_id' => User::factory() ,
-            'book_id' => Book::factory()->create() ,
+            'book_id' => Book::factory() ,
             'price' => fn($attr) => Book::find($attr['book_id'])->price ,
             'pending_amount' => fake()->randomElement([0 , $book->price , $book->price / 2]) ,
             'payment_status' => function ($attribute) {
@@ -34,7 +33,7 @@ class PurchaseFactory extends Factory
             'book_issued_at' => fn($attr) => $attr['created_at'] ,
             'purchase_mode' => fake()->randomElement(['online' , 'offline']) ,
             'payment_due' => function ($attr) {
-                return  $attr['book_issued_at']->copy()->addDays(10);
+                return $attr['book_issued_at']->copy()->addDays(10);
             } ,
             'book_returned_at' => function ($attr) {
                 return fake()->randomElement([$attr['book_issued_at']->copy()->addDays(10) , null]);
