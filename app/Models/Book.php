@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Books\Purchasable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
