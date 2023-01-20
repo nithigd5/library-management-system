@@ -22,7 +22,6 @@ class CustomerController extends Controller
     public function index(): View|Factory|Application
     {
         return view('pages.admin.users.index' , ['type_menu' => 'customers' , 'users' => User::where('type' , 'customer')->orderByDesc('updated_at')->get()]);
-
     }
 
     /**
@@ -43,13 +42,13 @@ class CustomerController extends Controller
      */
     public function store(StoreCustomerRequest $request)
     {
-        $input = $request->validated();
-        $input['password'] = Hash::make($input['password']);
-        $input['profile_image'] = $input['profile_image']->store(config('filesystems.profile_images') , ['disk' => 'public']);
-        $user = User::create($input);
-        $user->activate();
-        $user->makeCustomer();
-        $user->save();
+        $validated = $request->validated();
+
+        $this->saveProfileImage($validated);
+
+        $user = User::create($validated);
+
+        $user->activateAndMakeCustomer();
 
         return to_route('customers.index');
     }
@@ -74,13 +73,11 @@ class CustomerController extends Controller
      */
     public function update(UpdateCustomerRequest $request , User $customer): RedirectResponse
     {
-        $customer->first_name = $request->first_name;
-        $customer->last_name = $request->last_name;
-        $customer->address = $request->address;
-        $customer->phone = $request->phone;
-        $customer->email = $request->email;
-        $this->saveProfileImage($request , $customer);
-        $customer->save();
+        $validated = $request->validated();
+
+        $this->saveProfileImage($validated);
+
+        $customer->update($validated);
 
         return to_route('customers.index');
     }
@@ -94,6 +91,7 @@ class CustomerController extends Controller
     public function destroy(User $customer)
     {
         $customer->deleteOrFail();
+
         Storage::disk('public')->delete($customer->profile_image);
 
         return to_route('customers.index');
@@ -104,11 +102,10 @@ class CustomerController extends Controller
      * @param User $customer
      * @return void
      */
-    public function saveProfileImage(UpdateCustomerRequest $request , User $customer): void
+    public function saveProfileImage(array &$validated): void
     {
-        $profile_image = $request->profile_image;
-        if (!is_null($profile_image)) {
-            $customer->profile_image = $profile_image->store(config('filesystems.profile_images') , ['disk' => 'public']);
+        if (array_key_exists('profile_image', $validated)) {
+            $validated['profile_image'] = $validated['profile_image']->store(config('filesystems.profile_images') , ['disk' => 'public']);
         }
     }
 }

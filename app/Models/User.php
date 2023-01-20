@@ -3,10 +3,12 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Users\UserUpdatable;
 use DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -25,7 +27,7 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class User extends Authenticatable
 {
-    use HasApiTokens , HasFactory , Notifiable , HasRoles;
+    use HasApiTokens , HasFactory , Notifiable , HasRoles, UserUpdatable;
 
 
     /**
@@ -66,28 +68,15 @@ class User extends Authenticatable
     const STATUS_IN_ACTIVE = 'inactive';
     const STATUS_BANNED = 'banned';
     const TYPE_CUSTOMER = 'customer';
+    const TYPE_ADMIN = 'admin';
 
-    //Set User status to active
-    public function activate()
+    public function offlineEntries()
     {
-        $this->status = static::STATUS_ACTIVE;
+        return $this->hasMany(OfflineEntry::class, 'user_id');
     }
 
-    //Set User status to inactive
-    public function deactivate()
+    public function setPasswordAttribute($value)
     {
-        $this->status = static::STATUS_IN_ACTIVE;
-    }
-
-    //Set User status to inactive
-    public function ban()
-    {
-        $this->status = static::STATUS_BANNED;
-    }
-
-    public function makeCustomer()
-    {
-        $this->assignRole(static::TYPE_CUSTOMER);
-        $this->type = static::TYPE_CUSTOMER;
+        $this->attributes['password'] = Hash::make($value);
     }
 }

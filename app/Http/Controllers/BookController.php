@@ -41,9 +41,11 @@ class BookController extends Controller
      */
     public function store(StoreBookRequest $request)
     {
-        $input = $request->validated();
-        $input = $this->storeUploadedFilesByArray($input);
-        Book::create($input);
+        $validated = $request->validated();
+
+        $this->storeAndSetUploadedFiles($validated);
+
+        Book::create($validated);
 
         return to_route('books.index');
     }
@@ -69,13 +71,11 @@ class BookController extends Controller
     public function update(UpdateBookRequest $request , Book $book): RedirectResponse
     {
 
-        $book->name = $request->name;
-        $book->author = $request->author;
-        $book->price = $request->price;
-        $book->version = $request->version;
-        $book->mode = $request->mode;
-        $this->storeUploadedFiles($request , $book);
-        $book->save();
+        $validated = $request->validated();
+
+        $this->storeAndSetUploadedFiles($validated);
+
+        $book->update($validated);
 
         return to_route('books.index');
     }
@@ -90,37 +90,27 @@ class BookController extends Controller
     public function destroy(Book $book): RedirectResponse
     {
         $book->deleteOrFail();
+
         $this->deleteBookFiles($book);
 
         return to_route('books.index');
     }
 
-    /**
-     * Store the uploaded image and pdf file
-     * @param array $input
-     * @return array
-     */
-    public function storeUploadedFilesByArray(array $input): array
-    {
-        $input['book_path'] = array_key_exists('book' , $input) ? $input['book']->store(config('filesystems.book_pdf_files')) : null;
-        $input['image'] = $input['image']->store(config('filesystems.book_front_covers') , ['disk' => 'public']);
-        return $input;
-    }
 
     /**
-     * @param UpdateBookRequest $request
-     * @param Book $book
+     *
+     * Store and set Uploaded Book files
+     * @param $validated
      * @return void
      */
-    public function storeUploadedFiles(UpdateBookRequest $request , Book $book): void
+    public function storeAndSetUploadedFiles(&$validated): void
     {
-        if (isset($request->image)) {
-            $book->image = $request->image->store(config('filesystems.book_front_covers') , ['disk' => 'public']);
+        if (array_key_exists('image' , $validated)) {
+            $validated['image'] = $validated['image']->store(config('filesystems.book_front_covers') , ['disk' => 'public']);
         }
 
-        if ($request->file('book_file') !== null && $request->mode === 'online') {
-            $book->book_path = $request->file('book_file')->store(config('filesystems.book_pdf_files'));
-            $book->is_download_allowed = $request->is_download_allowed;
+        if (array_key_exists('book_file' , $validated)) {
+            $validated['book_path'] = $validated['book_file']->store(config('filesystems.book_pdf_files'));
         }
     }
 
