@@ -50,7 +50,7 @@ class CustomerController extends Controller
      */
     public function show($id)
     {
-        //
+        return view('pages.admin.users.userview',['type_menu' => '','user'=>User::find($id)]);
     }
 
     /**

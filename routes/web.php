@@ -55,3 +55,4 @@ Route::get('/utilities-subscribe', function () {
 require 'auth.php';
 require 'book.php';
 require 'admin.php';
+require 'bookRequest.php';

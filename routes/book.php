@@ -11,3 +11,4 @@ Route::middleware('auth')->name('books.')->group(function () {
     Route::put('/books/{book}' , [BookController::class , 'update'])->name('update')->can('books.update');
     Route::delete('/books/{book}' , [BookController::class , 'destroy'])->name('destroy')->can('books.delete');
 });
+

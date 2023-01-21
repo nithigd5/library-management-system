@@ -14,6 +14,7 @@ Route::middleware(['auth'])->group(function (){
 
         Route::get('/customers' , [CustomerController::class, 'index'])->name('index')->can('users.customer.*');
         Route::get('/customers/create' , [CustomerController::class, 'create'])->name('create')->can('users.customer.create');
+        Route::get('/customers/{id}' , [CustomerController::class, 'show'])->name('show');
         Route::get('/customers/edit/{customer}' , [CustomerController::class, 'edit'])->name('edit')->can('users.customer.edit');
         Route::delete('/customers/{customer}' , [CustomerController::class, 'destroy'])->name('destroy')->can('users.customer.edit');
 

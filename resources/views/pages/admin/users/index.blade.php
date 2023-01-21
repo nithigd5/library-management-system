@@ -29,7 +29,7 @@
                                 </div>
                                 <div class="article-details">
                                     <div class="article-cta">
-                                        <a href="#" class="btn btn-primary">View</a>
+                                        <a href="{{route('customers.show',$user->id)}}" class="btn btn-primary">View</a>
                                         <a href="{{ route('customers.edit', $user->id) }}" class="btn btn-secondary">Edit</a>
                                         <a href="#" onclick="$(this).siblings('form').submit()" class="btn btn-danger">Delete</a>
 
