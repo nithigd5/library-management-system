@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -29,7 +30,7 @@ class UserFactory extends Factory
             'profile_image' => fake()->randomElement(Storage::disk('public')->allFiles('data/profile-images')),
             'last_login' => fake()->dateTimeThisYear,
             'address' => fake()->address(),
-            'status' => fake()->randomElement(['active', 'inactive', 'banned']),
+            'status' => fake()->randomElement([User::STATUS_ACTIVE, User::STATUS_IN_ACTIVE, User::STATUS_BANNED]),
             'phone' => fake()->regexify('[6-9][0-9]{9}'),
             'type' => fake()->randomElement(['admin', 'customer', 'guest'])
         ];

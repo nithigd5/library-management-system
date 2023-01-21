@@ -79,5 +79,8 @@ class PermissionSeeder extends Seeder
 
         Permission::create(['name' => 'entry.online.allowed']);
         Permission::create(['name' => 'entry.offline.allowed']);
+
+        Permission::create(['name' => 'entry.offline.create']);
+        Permission::create(['name' => 'entry.offline.update']);
     }
 }

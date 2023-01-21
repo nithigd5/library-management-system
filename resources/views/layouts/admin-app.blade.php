@@ -27,7 +27,6 @@
           href="{{ asset('css/userprofile.css') }}">
 
 </head>
-</head>
 
 <body>
 <div id="app">
@@ -56,33 +55,6 @@
 <script src="{{ asset('js/stisla.js') }}"></script>
 
 @stack('scripts')
-
-<script>
-
-    let bookImage = $("#book_image");
-    let bookImageLabel = bookImage.siblings("label");
-
-    let bookPDF = $("#book_pdf");
-    let bookPDFLabel = bookPDF.siblings("label");
-
-    bookImage.change(() => setFileChange(bookImage, bookImageLabel));
-    bookPDF.change(() => setFileChange(bookPDF, bookPDFLabel));
-
-    function setFileChange(input, label) {
-        label.text(input.val().split('\\').pop());
-    }
-
-    $("input").each(function (){
-        $(this).change(()=>$(this).removeClass('is-invalid'));
-    })
-    $("select").each(function (){
-        $(this).change(()=>$(this).removeClass('is-invalid'));
-    })
-    $("textarea").each(function (){
-        $(this).change(()=>$(this).removeClass('is-invalid'));
-    })
-
-</script>
 
 <!-- Template JS File -->
 <script src="{{ asset('js/scripts.js') }}"></script>

@@ -23,22 +23,22 @@
                             </div>
                             <div class="card-body">
                                 <div class="form-group">
-                                    <label>Book Name</label>
-                                    <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                    <label for="name">Book Name</label>
+                                    <input type="text" id="name" class="form-control @error('name') is-invalid @enderror"
                                            value="{{ old('name') }}" name="name">
                                     <div class="invalid-feedback">
                                         @error('name') {{ $message }} @enderror
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label>Author</label>
+                                    <label for="author">Author</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <div class="input-group-text">
                                                 <i class="fas fa-pencil"></i>
                                             </div>
                                         </div>
-                                        <input type="text" name="author"
+                                        <input type="text" name="author" id="author"
                                                class="form-control @error('author') is-invalid @enderror"
                                                value="{{ old('author') }}">
                                         <div class="invalid-feedback">
@@ -47,26 +47,22 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label>Version</label>
-                                    <div class="input-group">
-                                        <input type="number" name="version"
+                                    <label for="version">Version</label>
+                                        <input type="number" name="version" id="version"
                                                class="form-control @error('version') is-invalid @enderror"
                                                value="{{ old('version') }}">
                                         <div class="invalid-feedback">
                                             @error('version') {{ $message }} @enderror
-                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label>Price</label>
-                                    <div class="input-group">
-                                        <input type="number" name="price"
+                                    <label for="price">Price</label>
+                                        <input type="number" name="price" id="price"
                                                class="form-control @error('price') is-invalid @enderror"
                                                value="{{ old('price') }}">
                                         <div class="invalid-feedback">
                                             @error('price') {{ $message }} @enderror
                                         </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -78,8 +74,8 @@
                             </div>
                             <div class="card-body">
                                 <div class="form-group">
-                                    <label>Book Mode</label>
-                                    <select class="form-control @error('mode') is-invalid @enderror" name="mode">
+                                    <label for="book_mode">Book Mode</label>
+                                    <select id="book_mode" class="form-control @error('mode') is-invalid @enderror" name="mode">
                                         <option disabled selected>Book Mode (Online or Offline ?)</option>
                                         <option value="online" @selected(old('mode') == 'online')>online</option>
                                         <option value="offline" @selected(old('mode') == 'offline')>Offline</option>
@@ -128,21 +124,16 @@
                                             @error('is_download_allowed') {{ $message }} @enderror
                                         </div>
                                     </div>
-
                                 </div>
-
+                                <div class="col flex-row-reverse d-flex">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col flex-row-reverse d-flex">
-                        <button type="submit" class="btn btn-primary">Save</button>
-                    </div>
+
                 </form>
             </div>
         </section>
     </div>
 @endsection
-
-@push('scripts')
-
-@endpush

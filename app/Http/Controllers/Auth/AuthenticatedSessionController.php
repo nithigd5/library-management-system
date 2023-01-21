@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,8 +25,8 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      *
-     * @param \App\Http\Requests\Auth\LoginRequest $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @param LoginRequest $request
+     * @return RedirectResponse
      */
     public function store(LoginRequest $request)
     {
@@ -32,14 +34,18 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return Auth::user()->hasRole('admin') ? redirect()->intended(RouteServiceProvider::ADMIN_DASHBOARD) : redirect()->intended(RouteServiceProvider::HOME);
+        $user = Auth::user();
+
+        $user->setLastLogin();
+
+        return $this->redirectUser($user);
     }
 
     /**
      * Destroy an authenticated session.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @param Request $request
+     * @return RedirectResponse
      */
     public function destroy(Request $request)
     {
@@ -50,5 +56,15 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return to_route('login');
+    }
+
+    /**
+     * Redirect user to correct location
+     * @return RedirectResponse
+     */
+    public function redirectUser($user): RedirectResponse
+    {
+        return $user->hasRole('admin') ? redirect()->intended(RouteServiceProvider::ADMIN_DASHBOARD)
+            : redirect()->intended(RouteServiceProvider::HOME);
     }
 }

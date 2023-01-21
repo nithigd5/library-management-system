@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('offline_entries', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
-            $table->dateTime('entry_at');
-            $table->dateTime('exit_at');
+            $table->dateTime('entry_at')->useCurrent();
+            $table->dateTime('exit_at')->nullable();
         });
     }
 

@@ -22,10 +22,10 @@ class BookTest extends TestCase
      */
     public function test_can_create_book(): void
     {
-        $this->seed([PermissionSeeder::class , RoleSeeder::class]);
+        Storage::fake('public');
         Storage::fake();
 
-        $user = $this->createAndGetUser();
+        $user = $this->seedAndGetAdmin();
 
         //Test admin Can Create an Online book
         $book = [
@@ -33,7 +33,7 @@ class BookTest extends TestCase
             'author' => 'Book Author' ,
             'price' => 50.50 ,
             'version' => 5 ,
-            'book' => $bookFile = UploadedFile::fake()->create('book.pdf' , 100 , 'application/pdf') ,
+            'book_file' => $bookFile = UploadedFile::fake()->create('book.pdf' , 100 , 'application/pdf') ,
             'image' => $image = UploadedFile::fake()->image('thumbnail.jpg' , 100 , 100) ,
             'mode' => 'online' ,
             'is_download_allowed' => true
@@ -43,7 +43,7 @@ class BookTest extends TestCase
         $response->assertStatus(302);
 
         $book['book_path'] = 'books/' . $bookFile->hashName();
-        unset($book['book']);
+        unset($book['book_file']);
         $book['image'] = 'data/books/front-covers/' . $image->hashName();
 
         $this->assertDatabaseHas('books' , $book);
@@ -87,12 +87,10 @@ class BookTest extends TestCase
      */
     public function test_can_update_book(): void
     {
-        $this->seed([PermissionSeeder::class , RoleSeeder::class]);
-
+        Storage::fake('public');
         Storage::fake();
 
-        $user = $this->createAndGetUser();
-
+        $user = $this->seedAndGetAdmin();
         $book = $this->createAndGetBook();
 
         //Test admin can update a book (offline)
@@ -142,20 +140,5 @@ class BookTest extends TestCase
 
         $this->assertDatabaseHas('books' , $new_book);
         Storage::assertExists($new_book['book_path']);
-    }
-
-    function createAndGetUser()
-    {
-        return User::factory()->create([
-            'profile_image' => UploadedFile::fake()->image('profile.jpg' , 100 , 100)
-        ])->assignRole('admin');
-
-    }
-
-    function createAndGetBook(){
-        return Book::factory()->create([
-            'book_path' => UploadedFile::fake()->create('book.pdf' , 100 , 'application/pdf'),
-            'image' => UploadedFile::fake()->image('thumbnail.jpg' , 100 , 100)
-        ]);
     }
 }

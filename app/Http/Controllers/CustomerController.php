@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCustomerRequest;
+use App\Http\Requests\UpdateCustomerRequest;
 use App\Models\User;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class CustomerController extends Controller
 {
@@ -17,73 +21,91 @@ class CustomerController extends Controller
      */
     public function index(): View|Factory|Application
     {
-        return view('pages.admin.users.index' , ['type_menu' => 'customers' , 'users' => User::where('type' , 'customer')->get()]);
-
+        return view('pages.admin.users.index' , ['type_menu' => 'customers' , 'users' => User::where('type' , 'customer')->orderByDesc('updated_at')->get()]);
     }
 
     /**
      * Show the form for creating a new customer.
      *
-     * @return \Illuminate\Http\Response
+     * @return Application|Factory|View
      */
     public function create()
     {
-        //
+        return view('pages.admin.users.create' , ['type_menu' => 'customers']);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created customer in database and profile image is stored in storage correctly.
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(StoreCustomerRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        $this->saveProfileImage($validated);
+
+        $user = User::create($validated);
+
+        $user->activateAndMakeCustomer();
+
+        return to_route('customers.index');
     }
 
     /**
-     * Display the specified resource.
+     * Show the form for editing the customer.
      *
-     * @param int $id
-     * @return \Illuminate\Http\Response
+     * @param User $customer
+     * @return Application|Factory|View
      */
-    public function show($id)
+    public function edit(User $customer)
     {
-        return view('pages.admin.users.userview',['type_menu' => '','user'=>User::find($id)]);
+        return view('pages.admin.users.edit' , ['customer' => $customer , 'type_menu' => 'customers'] ,);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the specified customer in database and profile image if present.
      *
-     * @param int $id
-     * @return \Illuminate\Http\Response
+     * @param UpdateCustomerRequest $request
+     * @param User $customer
+     * @return RedirectResponse
      */
-    public function edit($id)
+    public function update(UpdateCustomerRequest $request , User $customer): RedirectResponse
     {
-        //
+        $validated = $request->validated();
+
+        $this->saveProfileImage($validated);
+
+        $customer->update($validated);
+
+        return to_route('customers.index');
     }
 
     /**
-     * Update the specified resource in storage.
+     * Remove the specified Customer from database and remove his profile image.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response
+     * @param User $customer
+     * @return RedirectResponse
      */
-    public function update(Request $request , $id)
+    public function destroy(User $customer)
     {
-        //
+        $customer->deleteOrFail();
+
+        Storage::disk('public')->delete($customer->profile_image);
+
+        return to_route('customers.index');
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
+     * @param UpdateCustomerRequest $request
+     * @param User $customer
+     * @return void
      */
-    public function destroy($id)
+    public function saveProfileImage(array &$validated): void
     {
-        //
+        if (array_key_exists('profile_image', $validated)) {
+            $validated['profile_image'] = $validated['profile_image']->store(config('filesystems.profile_images') , ['disk' => 'public']);
+        }
     }
 }

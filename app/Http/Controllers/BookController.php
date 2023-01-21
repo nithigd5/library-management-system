@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Storage;
 class BookController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the Books.
      *
      * @return Application|Factory|View
      */
@@ -25,9 +25,9 @@ class BookController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new book.
      *
-     * @return \Illuminate\Http\Response
+     * @return Application|Factory|View
      */
     public function create()
     {
@@ -37,33 +37,16 @@ class BookController extends Controller
     /**
      * Store a newly created valid book in books table.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param StoreBookRequest $request
+     * @return RedirectResponse
      */
     public function store(StoreBookRequest $request)
     {
-        $input = $request->validated();
+        $validated = $request->validated();
 
-        if ($input['mode'] === 'online') {
-            $book = Book::create([
-                'name' => $input['name'] ,
-                'author' => $input['author'] ,
-                'price' => $input['price'] ,
-                'version' => $input['version'] ,
-                'mode' => $input['mode'] ,
-                'is_download_allowed' => $input['is_download_allowed'] ,
-                'book_path' => $input['book']->store('books') ,
-                'image' => $input['image']->store('data/books/front-covers' , ['disk' => 'public'])
-            ]);
-        } else {
-            $book = Book::create([
-                'name' => $input['name'] ,
-                'author' => $input['author'] ,
-                'price' => $input['price'] ,
-                'version' => $input['version'] ,
-                'mode' => $input['mode'] ,
-                'image' => $input['image']->store('data/books/front-covers' , ['disk' => 'public'])]);
-        }
+        $this->storeAndSetUploadedFiles($validated);
+
+        Book::create($validated);
 
         return to_route('books.index');
     }
@@ -80,6 +63,7 @@ class BookController extends Controller
     }
 
     /**
+
      * Show the form for editing the specified book.
      *
      * @param Book $book
@@ -100,23 +84,11 @@ class BookController extends Controller
     public function update(UpdateBookRequest $request , Book $book): RedirectResponse
     {
 
-        $book->name = $request->name;
-        $book->author = $request->author;
-        $book->price = $request->price;
-        $book->version = $request->version;
-        $book->mode = $request->mode;
+        $validated = $request->validated();
 
-        if (isset($request->image)) {
-            $book->image = $request->image->store('data/books/front-covers' , ['disk' => 'public']);
-        }
+        $this->storeAndSetUploadedFiles($validated);
 
-        if ($request->file('book_file') !== null && $request->mode === 'online') {
-
-            $book->book_path = $request->file('book_file')->store('books');
-            $book->is_download_allowed = $request->is_download_allowed;
-        }
-
-        $book->save();
+        $book->update($validated);
 
         return to_route('books.index');
     }
@@ -130,16 +102,43 @@ class BookController extends Controller
      */
     public function destroy(Book $book): RedirectResponse
     {
-        //Delete a Book Front Image from Storage if Present
-        if ($book->image)
-            Storage::disk('public')->delete($book->image);
+        $book->deleteOrFail();
 
-        //Delete a Book PDF File from Storage if present
-        if ($book->book_path)
-            Storage::delete($book->book_path);
-
-        $book->delete();
+        $this->deleteBookFiles($book);
 
         return to_route('books.index');
+    }
+
+
+    /**
+     *
+     * Store and set Uploaded Book files
+     * @param $validated
+     * @return void
+     */
+    public function storeAndSetUploadedFiles(&$validated): void
+    {
+        if (array_key_exists('image' , $validated)) {
+            $validated['image'] = $validated['image']->store(config('filesystems.book_front_covers') , ['disk' => 'public']);
+        }
+
+        if (array_key_exists('book_file' , $validated)) {
+            $validated['book_path'] = $validated['book_file']->store(config('filesystems.book_pdf_files'));
+        }
+    }
+
+    /**
+     *
+     * Delete Book PDF File and Front Image
+     * @param Book $book
+     * @return void
+     */
+    public function deleteBookFiles(Book $book): void
+    {
+        //Delete a Book Front Image from Storage if Present
+        if ($book->image) Storage::disk('public')->delete($book->image);
+
+        //Delete a Book PDF File from Storage if present
+        if ($book->book_path) Storage::delete($book->book_path);
     }
 }

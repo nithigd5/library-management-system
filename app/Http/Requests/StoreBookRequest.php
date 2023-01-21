@@ -31,7 +31,7 @@ class StoreBookRequest extends FormRequest
             'price' => 'required|decimal:0,2',
             'version' => 'required|int',
             'mode' => 'required|in:online,offline',
-            'book' => ['required_if:mode,online', File::types('application/pdf')],
+            'book_file' => ['required_if:mode,online', File::types('application/pdf')],
             'image' => [ 'required', File::image()->max(2048) ],
             'is_download_allowed' => 'required_if:mode,online|boolean',
         ];
