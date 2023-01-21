@@ -24,7 +24,7 @@
     <link rel="stylesheet"
           href="{{ asset('css/components.css') }}">
     <link rel="stylesheet"
-          href="{{ asset('css/userprofile.css') }}">
+          href="{{ asset('css/show.css') }}">
 
 </head>
 

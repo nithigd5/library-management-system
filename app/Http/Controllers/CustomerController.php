@@ -53,6 +53,11 @@ class CustomerController extends Controller
         return to_route('customers.index');
     }
 
+    public function show($id)
+    {
+        $user=User::find($id);
+        return view('pages.admin.users.show',[ 'type_menu'=> '','user'=>$user]);
+    }
     /**
      * Show the form for editing the customer.
      *
