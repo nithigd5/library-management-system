@@ -9,6 +9,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
@@ -47,7 +48,7 @@ class BookController extends Controller
 
         Book::create($validated);
 
-        return to_route('books.index');
+        return back();
     }
 
     /**
@@ -77,7 +78,7 @@ class BookController extends Controller
 
         $book->update($validated);
 
-        return to_route('books.index');
+        return back();
     }
 
     /**
@@ -93,7 +94,7 @@ class BookController extends Controller
 
         $this->deleteBookFiles($book);
 
-        return to_route('books.index');
+        return back();
     }
 
 

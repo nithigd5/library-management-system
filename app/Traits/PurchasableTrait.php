@@ -1,12 +1,25 @@
 <?php
 
-namespace App\Books;
+namespace App\Traits;
 
 use App\Models\Purchase;
 use Illuminate\Database\Eloquent\Builder;
 
-trait Purchasable
+trait PurchasableTrait
 {
+    /**
+     *
+     * Get all books by date range with optional is_rent (default month: current)
+     * @param Builder $query
+     * @param $startDate
+     * @param $endDate
+     * @return Builder
+     */
+    public function scopePurchasedBetween(Builder $query , $startDate , $endDate, $is_rent): Builder
+    {
+        return $query->where('for_rent' , true)->whereBetween('created_at' , [$startDate , $endDate]);
+    }
+
     /**
      *
      * Get all rented books by date range (default month: current)

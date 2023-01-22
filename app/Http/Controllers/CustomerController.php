@@ -50,7 +50,7 @@ class CustomerController extends Controller
 
         $user->activateAndMakeCustomer();
 
-        return to_route('customers.index');
+        return back();
     }
 
     /**
@@ -79,7 +79,7 @@ class CustomerController extends Controller
 
         $customer->update($validated);
 
-        return to_route('customers.index');
+        return back();
     }
 
     /**
@@ -94,7 +94,7 @@ class CustomerController extends Controller
 
         Storage::disk('public')->delete($customer->profile_image);
 
-        return to_route('customers.index');
+        return back();
     }
 
     /**

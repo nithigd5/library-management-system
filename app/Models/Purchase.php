@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Books\Purchasable;
+use App\Traits\PurchasableTrait;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -27,7 +27,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Purchase extends Model
 {
-    use HasFactory , Purchasable;
+    use HasFactory , PurchasableTrait;
 
     const STATUS_OPEN = 'open';
     const STATUS_CLOSE = 'closed';

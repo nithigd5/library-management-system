@@ -45,10 +45,11 @@ abstract class TestCase extends BaseTestCase
      * Create and return a book
      * @return Book
      */
-    function createAndGetBook(): Book
+    function createAndGetBook($is_online = true): Book
     {
         return Book::factory()->create([
-            'book_path' => UploadedFile::fake()->create('book.pdf' , 100 , 'application/pdf') ,
+            'mode' => $is_online ? 'online' : 'offline',
+            'book_path' => $is_online ? UploadedFile::fake()->create('book.pdf' , 100 , 'application/pdf') : null ,
             'image' => UploadedFile::fake()->image('thumbnail.jpg' , 100 , 100)
         ]);
     }
