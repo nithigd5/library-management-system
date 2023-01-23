@@ -9,7 +9,6 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class CustomerController extends Controller
@@ -42,15 +41,11 @@ class CustomerController extends Controller
      */
     public function store(StoreCustomerRequest $request): RedirectResponse
     {
-        $validated = $request->all();
-
-        $this->saveProfileImage($validated);
-
-        $user = User::create($validated);
+        $user = User::create($this->saveProfileImage($request->all()));
 
         $user->activateAndMakeCustomer();
 
-        return back()->with('message', 'Customer has been Successfully Created.');
+        return back()->with('message' , 'Customer has been Successfully Created.');
     }
 
     /**
@@ -73,13 +68,10 @@ class CustomerController extends Controller
      */
     public function update(UpdateCustomerRequest $request , User $customer): RedirectResponse
     {
-        $validated = $request->all();
 
-        $this->saveProfileImage($validated);
+        $customer->update($this->saveProfileImage($request->all()));
 
-        $customer->update($validated);
-
-        return back()->with('message', 'Customer has been Successfully Updated.');
+        return back()->with('message' , 'Customer has been Successfully Updated.');
     }
 
     /**
@@ -94,18 +86,20 @@ class CustomerController extends Controller
 
         Storage::disk('public')->delete($customer->profile_image);
 
-        return back()->with('message', 'Customer has been Successfully deleted.');
+        return back()->with('message' , 'Customer has been Successfully deleted.');
     }
 
     /**
      * Save a profile image to disk and get a path and set in validated array
      * @param array $validated
-     * @return void
+     * @return array
      */
-    public function saveProfileImage(array &$validated): void
+    public function saveProfileImage(array $validated): array
     {
-        if (array_key_exists('profile_image', $validated)) {
+        if (array_key_exists('profile_image' , $validated)) {
             $validated['profile_image'] = $validated['profile_image']->store(config('filesystems.profile_images') , ['disk' => 'public']);
         }
+
+        return $validated;
     }
 }
