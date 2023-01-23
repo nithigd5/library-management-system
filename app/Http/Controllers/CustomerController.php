@@ -37,12 +37,12 @@ class CustomerController extends Controller
     /**
      * Store a newly created customer in database and profile image is stored in storage correctly.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param StoreCustomerRequest $request
      * @return RedirectResponse
      */
-    public function store(StoreCustomerRequest $request)
+    public function store(StoreCustomerRequest $request): RedirectResponse
     {
-        $validated = $request->validated();
+        $validated = $request->all();
 
         $this->saveProfileImage($validated);
 
@@ -73,7 +73,7 @@ class CustomerController extends Controller
      */
     public function update(UpdateCustomerRequest $request , User $customer): RedirectResponse
     {
-        $validated = $request->validated();
+        $validated = $request->all();
 
         $this->saveProfileImage($validated);
 
@@ -98,8 +98,8 @@ class CustomerController extends Controller
     }
 
     /**
-     * @param UpdateCustomerRequest $request
-     * @param User $customer
+     * Save a profile image to disk and get a path and set in validated array
+     * @param array $validated
      * @return void
      */
     public function saveProfileImage(array &$validated): void

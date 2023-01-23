@@ -42,7 +42,7 @@ class BookController extends Controller
      */
     public function store(StoreBookRequest $request)
     {
-        $validated = $request->validated();
+        $validated = $request->all();
 
         $this->storeAndSetUploadedFiles($validated);
 
@@ -72,7 +72,7 @@ class BookController extends Controller
     public function update(UpdateBookRequest $request , Book $book): RedirectResponse
     {
 
-        $validated = $request->validated();
+        $validated = $request->all();
 
         $this->storeAndSetUploadedFiles($validated);
 

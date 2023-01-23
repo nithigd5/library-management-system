@@ -15,9 +15,9 @@ trait PurchasableTrait
      * @param $endDate
      * @return Builder
      */
-    public function scopePurchasedBetween(Builder $query , $startDate , $endDate, $is_rent): Builder
+    public function scopePurchasedBetween(Builder $query , $startDate , $endDate , $is_rent): Builder
     {
-        return $query->where('for_rent' , true)->whereBetween('created_at' , [$startDate , $endDate]);
+        return $query->where('for_rent' , $is_rent)->whereBetween('created_at' , [$startDate , $endDate]);
     }
 
     /**
@@ -30,7 +30,7 @@ trait PurchasableTrait
      */
     public function scopeRentedBetween(Builder $query , $startDate , $endDate): Builder
     {
-        return $query->where('for_rent' , true)->whereBetween('created_at' , [$startDate , $endDate]);
+        return $this->scopePurchasedBetween($query , $startDate , $endDate , true);
     }
 
     /**
@@ -45,12 +45,23 @@ trait PurchasableTrait
     }
 
     /**
+     *
+     * Get all rented books in last month
+     * @param Builder $query
+     * @return Builder
+     */
+    public function scopeOwnedLastMonth(Builder $query): Builder
+    {
+        return $this->scopePurchasedBetween($query , now()->subMonth() , now() , false);
+    }
+
+    /**
      * get all latest purchases
      * @param Builder $query
      * @return Builder
      */
-    public function scopeLatestPurchases(Builder $query): Builder
+    public function scopeLatestPurchases(Builder $query, $status = Purchase::STATUS_OPEN): Builder
     {
-        return $query->latest('created_at')->where('status', Purchase::STATUS_OPEN) ;
+        return $query->latest('created_at')->where('status' , $status);
     }
 }
