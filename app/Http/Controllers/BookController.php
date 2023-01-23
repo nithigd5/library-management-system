@@ -48,7 +48,7 @@ class BookController extends Controller
 
         Book::create($validated);
 
-        return back();
+        return back()->with('message', 'Book has been Successfully Created.');
     }
 
     /**
@@ -78,7 +78,7 @@ class BookController extends Controller
 
         $book->update($validated);
 
-        return back();
+        return back()->with('message', 'Book has been Successfully updated.');
     }
 
     /**
@@ -94,7 +94,7 @@ class BookController extends Controller
 
         $this->deleteBookFiles($book);
 
-        return back();
+        return back()->with('message', 'Book has been Successfully deleted.');
     }
 
 

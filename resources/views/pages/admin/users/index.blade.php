@@ -16,6 +16,11 @@
             </div>
 
             <div class="section-body">
+                @if(session('message'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('message') }}
+                    </div>
+                @endif
                 <div class="row">
                     @foreach($users as $user)
                         <div class="col-12 col-sm-6 col-md-6 col-lg-3">

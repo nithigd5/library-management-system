@@ -50,7 +50,7 @@ class CustomerController extends Controller
 
         $user->activateAndMakeCustomer();
 
-        return back();
+        return back()->with('message', 'Customer has been Successfully Created.');
     }
 
     /**
@@ -79,7 +79,7 @@ class CustomerController extends Controller
 
         $customer->update($validated);
 
-        return back();
+        return back()->with('message', 'Customer has been Successfully Updated.');
     }
 
     /**
@@ -94,7 +94,7 @@ class CustomerController extends Controller
 
         Storage::disk('public')->delete($customer->profile_image);
 
-        return back();
+        return back()->with('message', 'Customer has been Successfully deleted.');
     }
 
     /**

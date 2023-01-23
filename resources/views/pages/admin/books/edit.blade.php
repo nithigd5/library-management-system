@@ -16,7 +16,13 @@
             </div>
 
             <div class="section-body">
-                <form action="{{ route('books.update', $book->id) }}" enctype="multipart/form-data" method="post" class="row">
+                @if(session('message'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('message') }}
+                    </div>
+                @endif
+                <form action="{{ route('books.update', $book->id) }}" enctype="multipart/form-data" method="post"
+                      class="row">
                     @csrf
                     @method('put')
                     <div class="col-12 col-md-6 col-lg-6">
@@ -26,22 +32,23 @@
                             </div>
                             <div class="card-body">
                                 <div class="form-group">
-                                    <label>Book Name</label>
-                                    <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                    <label for="name">Book Name</label>
+                                    <input type="text" id="name"
+                                           class="form-control @error('name') is-invalid @enderror"
                                            value="{{ $book->name }}" name="name">
                                     <div class="invalid-feedback">
                                         @error('name') {{ $message }} @enderror
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label>Author</label>
+                                    <label for="author">Author</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <div class="input-group-text">
                                                 <i class="fas fa-pencil"></i>
                                             </div>
                                         </div>
-                                        <input type="text" name="author"
+                                        <input id="author" type="text" name="author"
                                                class="form-control @error('author') is-invalid @enderror"
                                                value="{{ $book->author }}">
                                         <div class="invalid-feedback">
@@ -50,9 +57,9 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label>Version</label>
+                                    <label for="version">Version</label>
                                     <div class="input-group">
-                                        <input type="number" name="version"
+                                        <input id="version" type="number" name="version"
                                                class="form-control @error('version') is-invalid @enderror"
                                                value="{{ $book->version }}">
                                         <div class="invalid-feedback">
@@ -61,9 +68,9 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label>Price</label>
+                                    <label for="price">Price</label>
                                     <div class="input-group">
-                                        <input type="number" name="price"
+                                        <input id="price" type="number" name="price"
                                                class="form-control @error('price') is-invalid @enderror"
                                                value="{{ $book->price }}">
                                         <div class="invalid-feedback">
@@ -81,8 +88,9 @@
                             </div>
                             <div class="card-body">
                                 <div class="form-group">
-                                    <label>Book Mode</label>
-                                    <select class="form-control @error('mode') is-invalid @enderror" name="mode">
+                                    <label for="mode">Book Mode</label>
+                                    <select id="mode" class="form-control @error('mode') is-invalid @enderror"
+                                            name="mode">
                                         <option disabled selected>Book Mode (Online or Offline ?)</option>
                                         <option value="online" @selected($book->mode == 'online')>online</option>
                                         <option value="offline" @selected($book->mode == 'offline')>Offline</option>
