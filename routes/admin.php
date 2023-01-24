@@ -43,6 +43,10 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/purchases/closed', [PurchaseController::class, 'closed'])->name('closed')->can('books.purchases.viewAny');
 
+        Route::get('/purchases/overdue', [PurchaseController::class, 'overdue'])->name('overdue')->can('books.purchases.viewAny');
+
         Route::get('/purchases/{purchase}', [PurchaseController::class, 'show'])->name('show')->can('books.purchases.viewAny');
+
+        Route::put('/purchases/{purchase}/return-book', [PurchaseController::class, 'returnBook'])->name('return-book')->can('books.purchases.updateAny');
     });
 });

@@ -20,9 +20,9 @@ return new class extends Migration {
             $table->enum('status' , ['open' , 'closed']);
             $table->float('price');
             $table->boolean('for_rent');
-            $table->enum('payment_status' , ['completed' , 'pending' , 'half-paid']);
             $table->float('pending_amount');
             $table->timestamp('payment_due')->nullable();
+            $table->timestamp('book_return_due')->nullable();
             $table->timestamp('book_issued_at')->nullable();
             $table->timestamp('book_returned_at')->nullable();
             $table->enum('mode' , ['online' , 'offline']);

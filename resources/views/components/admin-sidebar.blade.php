@@ -53,6 +53,10 @@
                     <li class="{{ Request::is('purchases/closed') ? 'active' : '' }}">
                         <a href="{{ route('purchases.closed') }}">closed Purchases</a>
                     </li>
+
+                    <li class="{{ Request::is('purchases/overdue') ? 'active' : '' }}">
+                        <a href="{{ route('purchases.overdue') }}">Overdue Purchases</a>
+                    </li>
                 </ul>
             </li>
         </ul>

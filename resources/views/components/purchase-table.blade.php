@@ -6,6 +6,7 @@
         <tr>
             <th>Book</th>
             <th>User</th>
+            <th>Status</th>
             <th>Payment</th>
             <th>Mode</th>
             <th>Type</th>
@@ -18,7 +19,11 @@
                 <td class="font-weight-600">{{ $purchase->user->first_name.' '.$purchase->user->last_name }}</td>
                 <td>
                     <div
-                        class="badge badge-{{ $getPaymentStatusBadge($purchase->payment_status) }}">{{ $purchase->payment_status }}</div>
+                        class="badge badge-{{ $getPurchaseStatusBadge($purchase) }}">{{ $purchase->getPurchaseStatus() }}</div>
+                </td>
+                <td>
+                    <div
+                        class="badge badge-{{ $getPaymentStatusBadge($purchase) }}">{{ $purchase->getPaymentStatus() }}</div>
                 </td>
                 <td>{{ $purchase->mode }}</td>
                 <td>{{ $purchase->for_rent ? 'Rent' : 'Owned'  }}</td>
