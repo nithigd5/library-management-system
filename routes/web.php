@@ -56,3 +56,5 @@ require 'auth.php';
 require 'book.php';
 require 'admin.php';
 require 'bookRequest.php';
+require 'customer.php';
+require 'customerBook.php';
