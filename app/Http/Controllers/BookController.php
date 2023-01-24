@@ -67,6 +67,15 @@ class BookController extends Controller
     }
 
     /**
+     * @param $id
+     * @return Application|Factory|View
+     */
+    public function show($id)
+    {
+        $book=Book::find($id);
+        return view('pages.admin.books.showBooks',[ 'type_menu'=> '','book'=>$book]);
+    }
+    /**
 
      * Show the form for editing the specified book.
      *

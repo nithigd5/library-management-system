@@ -53,6 +53,10 @@ class CustomerController extends Controller
         return to_route('customers.index');
     }
 
+    /**
+     * @param $id
+     * @return Application|Factory|View
+     */
     public function show($id)
     {
         $user=User::find($id);
