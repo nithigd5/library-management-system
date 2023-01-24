@@ -17,14 +17,14 @@ class AdminDashboardController extends Controller
      */
     public function index(): Factory|View|Application
     {
-        $rentedBooks = Purchase::rentedLastMonth()->count();
+        $rentedBooksCount = Purchase::rentedLastMonth()->count();
+        $ownedLastMonth = Purchase::ownedLastMonth()->count();
+
         $latestPurchases = Purchase::with('book' , 'user')->latestPurchases()->limit(5)->get();
         $topBooks = Book::limit(5)->get();
 
-        return view('pages.admin.dashboard' , ['type_menu' => 'dashboard' ,
-            'rentedBooks' => $rentedBooks ,
-            'latestPurchases' => $latestPurchases ,
-            'topBooks' => $topBooks
-        ]);
+        return view('pages.admin.dashboard' ,
+            compact('rentedBooksCount' , 'ownedLastMonth' , 'latestPurchases' , 'topBooks') ,
+            ['type_menu' => 'dashboard']);
     }
 }

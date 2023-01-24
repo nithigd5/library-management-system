@@ -9,7 +9,6 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class CustomerController extends Controller
@@ -37,20 +36,16 @@ class CustomerController extends Controller
     /**
      * Store a newly created customer in database and profile image is stored in storage correctly.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param StoreCustomerRequest $request
      * @return RedirectResponse
      */
-    public function store(StoreCustomerRequest $request)
+    public function store(StoreCustomerRequest $request): RedirectResponse
     {
-        $validated = $request->validated();
-
-        $this->saveProfileImage($validated);
-
-        $user = User::create($validated);
+        $user = User::create($this->saveProfileImage($request->all()));
 
         $user->activateAndMakeCustomer();
 
-        return to_route('customers.index');
+        return back()->with('message' , 'Customer has been Successfully Created.');
     }
 
     /**
@@ -82,13 +77,10 @@ class CustomerController extends Controller
      */
     public function update(UpdateCustomerRequest $request , User $customer): RedirectResponse
     {
-        $validated = $request->validated();
 
-        $this->saveProfileImage($validated);
+        $customer->update($this->saveProfileImage($request->all()));
 
-        $customer->update($validated);
-
-        return to_route('customers.index');
+        return back()->with('message' , 'Customer has been Successfully Updated.');
     }
 
     /**
@@ -103,18 +95,20 @@ class CustomerController extends Controller
 
         Storage::disk('public')->delete($customer->profile_image);
 
-        return to_route('customers.index');
+        return back()->with('message' , 'Customer has been Successfully deleted.');
     }
 
     /**
-     * @param UpdateCustomerRequest $request
-     * @param User $customer
-     * @return void
+     * Save a profile image to disk and get a path and set in validated array
+     * @param array $validated
+     * @return array
      */
-    public function saveProfileImage(array &$validated): void
+    public function saveProfileImage(array $validated): array
     {
-        if (array_key_exists('profile_image', $validated)) {
+        if (array_key_exists('profile_image' , $validated)) {
             $validated['profile_image'] = $validated['profile_image']->store(config('filesystems.profile_images') , ['disk' => 'public']);
         }
+
+        return $validated;
     }
 }

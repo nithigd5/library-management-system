@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Users;
+namespace App\Traits;
 
 use App\Models\User;
 
-trait UserUpdatable
+trait UserUpdatableTrait
 {
     //Set User status to active
     public function activate()

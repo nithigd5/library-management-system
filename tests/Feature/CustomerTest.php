@@ -35,7 +35,7 @@ class CustomerTest extends TestCase
             'phone' => '9876543210' ,
         ];
         $response = $this->actingAs($user)->post(route('customers.store') , $customer);
-
+        $response->assertRedirect();
         $response->assertSessionHasNoErrors();
 
         $customer['profile_image'] = config('filesystems.profile_images') . '/' . $customer['profile_image']->hashName();
@@ -56,8 +56,8 @@ class CustomerTest extends TestCase
             'phone' => '1323234'
         ];
         $response = $this->post(route('customers.store') , $customer);
-
         $response->assertSessionHasErrors(['last_name' , 'phone' , 'profile_image' , 'password']);
+        $response->assertRedirect();
 
         $this->assertDatabaseMissing('users' , $customer);
     }
@@ -85,6 +85,7 @@ class CustomerTest extends TestCase
         $response = $this->actingAs($user)->put(route('customers.update' , $user->id) , $updatedUser);
 
         $response->assertSessionHasNoErrors();
+        $response->assertRedirect();
 
         $updatedUser['profile_image'] = config('filesystems.profile_images') . '/' . $updatedUser['profile_image']->hashName();
         Storage::disk('public')->assertExists($updatedUser['profile_image']);
@@ -100,18 +101,19 @@ class CustomerTest extends TestCase
             'phone' => '1323234'
         ];
         $response = $this->put(route('customers.update' , $user->id) , $updatedUser);
-
+        $response->assertRedirect();
         $response->assertSessionHasErrors(['last_name' , 'phone']);
 
         $this->assertDatabaseMissing('users' , $updatedUser);
     }
 
-    public function test_book_is_deleted()
+    public function test_customer_is_deleted()
     {
         $admin = $this->seedAndGetAdmin();
-        $user = $this->createAndGetAdmin();
+        $user = $this->createAndGetCustomer(true);
 
         $response = $this->actingAs($admin)->delete(route('customers.destroy' , $user->id));
+        $response->assertRedirect();
 
         Storage::assertMissing($user->profile_image);
         $this->assertDatabaseMissing('users' , ['id' => $user->id]);

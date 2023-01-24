@@ -14,6 +14,11 @@
             </div>
 
             <div class="section-body">
+                @if(session('message'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('message') }}
+                    </div>
+                @endif
                 <form action="{{ route('books.store') }}" enctype="multipart/form-data" method="post" class="row">
                     @csrf
                     <div class="col-12 col-md-6 col-lg-6">

@@ -72,6 +72,8 @@ class PermissionSeeder extends Seeder
 
         Permission::create(['name' => 'books.purchase.rent']);
         Permission::create(['name' => 'books.purchase.buy']);
+        Permission::create(['name' => 'books.purchase.viewAny']);
+        Permission::create(['name' => 'books.purchase.view']);
 
         Permission::create(['name' => 'books.purchase.offline']);
         Permission::create(['name' => 'books.purchase.online']);

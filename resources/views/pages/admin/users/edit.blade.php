@@ -18,6 +18,11 @@
                 <h1>Edit a Customer</h1>
             </div>
             <div class="section-body">
+                @if(session('message'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('message') }}
+                    </div>
+                @endif
                 <x-forms.user-register method="put" route="{{ route('customers.update', $customer->id) }}"
                                        :first_name="$customer->first_name" :last_name="$customer->last_name"
                                        :email="$customer->email" :phone="$customer->phone" :address="$customer->address"

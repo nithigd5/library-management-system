@@ -17,19 +17,29 @@ class PurchaseSeeder extends Seeder
     public function run()
     {
         Purchase::factory(10)->create([
-            'book_issued_at' => now()->subMonth() ,
-            'created_at' => now()->subMonth() ,
-            'updated_at' => now()->subMonth() ,
+            'book_issued_at' => now()->subDays(20) ,
+            'created_at' => now()->subDays(20) ,
+            'updated_at' => now()->subDays(20) ,
             'for_rent' => true ,
             'book_id' => fake()->randomElement(Book::all('id'))
         ]);
 
         Purchase::factory(5)->create([
-            'book_issued_at' => now()->subMonth() ,
-            'created_at' => now()->subMonth() ,
-            'updated_at' => now()->subMonth() ,
+            'book_issued_at' => now()->subDays(20) ,
+            'created_at' => now()->subDays(20) ,
+            'updated_at' => now()->subDays(20) ,
             'for_rent' => false ,
             'book_id' => fake()->randomElement(Book::all('id'))
         ]);
+
+        Purchase::factory(5)->create([
+            'book_issued_at' => now()->subDays(20) ,
+            'created_at' => now()->subDays(20) ,
+            'updated_at' => now()->subDays(20) ,
+            'for_rent' => true ,
+            'pending_amount'  => 0,
+            'book_id' => fake()->randomElement(Book::all('id'))
+        ]);
+
     }
 }

@@ -44,13 +44,9 @@ class BookController extends Controller
      */
     public function store(StoreBookRequest $request)
     {
-        $validated = $request->validated();
+        Book::create($this->storeAndSetUploadedFiles($request->all()));
 
-        $this->storeAndSetUploadedFiles($validated);
-
-        Book::create($validated);
-
-        return to_route('books.index');
+        return back()->with('message' , 'Book has been Successfully Created.');
     }
 
     public function search(Request $request)
@@ -96,14 +92,9 @@ class BookController extends Controller
      */
     public function update(UpdateBookRequest $request , Book $book): RedirectResponse
     {
+        $book->update($this->storeAndSetUploadedFiles($request->all()));
 
-        $validated = $request->validated();
-
-        $this->storeAndSetUploadedFiles($validated);
-
-        $book->update($validated);
-
-        return to_route('books.index');
+        return back()->with('message' , 'Book has been Successfully updated.');
     }
 
     /**
@@ -119,7 +110,7 @@ class BookController extends Controller
 
         $this->deleteBookFiles($book);
 
-        return to_route('books.index');
+        return back()->with('message' , 'Book has been Successfully deleted.');
     }
 
 
@@ -127,9 +118,9 @@ class BookController extends Controller
      *
      * Store and set Uploaded Book files
      * @param $validated
-     * @return void
+     * @return array
      */
-    public function storeAndSetUploadedFiles(&$validated): void
+    public function storeAndSetUploadedFiles($validated): array
     {
         if (array_key_exists('image' , $validated)) {
             $validated['image'] = $validated['image']->store(config('filesystems.book_front_covers') , ['disk' => 'public']);
@@ -138,6 +129,8 @@ class BookController extends Controller
         if (array_key_exists('book_file' , $validated)) {
             $validated['book_path'] = $validated['book_file']->store(config('filesystems.book_pdf_files'));
         }
+
+        return $validated;
     }
 
     /**

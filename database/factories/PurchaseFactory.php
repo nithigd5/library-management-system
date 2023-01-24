@@ -21,25 +21,25 @@ class PurchaseFactory extends Factory
         $book = Book::factory()->create();
         return [
             'user_id' => User::factory() ,
-            'book_id' => Book::factory() ,
-            'price' => fn($attr) => Book::find($attr['book_id'])->price ,
+            'book_id' => $book->id ,
+            'price' => fn($attr) => $book->price ,
             'pending_amount' => fake()->randomElement([0 , $book->price , $book->price / 2]) ,
-            'payment_status' => function ($attribute) {
+            'payment_status' => function ($attribute) use ($book) {
                 if ($attribute['pending_amount'] == 0) return 'completed';
-                elseif ($attribute['pending_amount'] == $attribute['price']) return 'pending';
+                elseif ($attribute['pending_amount'] == $book->price) return 'pending';
                 else return 'half-paid';
             } ,
             'for_rent' => fake()->boolean() ,
             'book_issued_at' => fn($attr) => $attr['created_at'] ,
-            'purchase_mode' => fake()->randomElement(['online' , 'offline']) ,
+            'mode' => fake()->randomElement(['online' , 'offline']) ,
             'payment_due' => function ($attr) {
                 return $attr['book_issued_at']->copy()->addDays(10);
             } ,
             'book_returned_at' => function ($attr) {
-                return fake()->randomElement([$attr['book_issued_at']->copy()->addDays(10) , null]);
+                return $attr['for_rent'] ? fake()->randomElement([$attr['book_issued_at']->copy()->addDays(10) , null]) : null;
             } ,
             'status' => function ($attr) {
-                return !is_null($attr['book_returned_at']) ? 'closed' : 'open';
+                return !is_null($attr['book_returned_at']) && $attr['payment_status'] == 'completed' ? 'closed' : 'open';
             } ,
         ];
     }

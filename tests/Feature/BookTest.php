@@ -40,7 +40,7 @@ class BookTest extends TestCase
         ];
         $response = $this->actingAs($user)->post(route('books.store') , $book);
         $response->assertSessionHasNoErrors();
-        $response->assertStatus(302);
+        $response->assertRedirect();
 
         $book['book_path'] = 'books/' . $bookFile->hashName();
         unset($book['book_file']);
@@ -59,6 +59,7 @@ class BookTest extends TestCase
         ];
         $response = $this->actingAs($user)->post(route('books.store') , $book);
         $response->assertSessionHasErrors(['name' , 'image']);
+        $response->assertRedirect();
 
         //Test admin cannot an Offline Book
         $book = [
@@ -71,7 +72,7 @@ class BookTest extends TestCase
         ];
         $response = $this->actingAs($user)->post(route('books.store') , $book);
         $response->assertSessionHasNoErrors();
-        $response->assertStatus(302);
+        $response->assertRedirect();
 
         $book['image'] = 'data/books/front-covers/' . $image->hashName();
         $book['is_download_allowed'] = false;
@@ -103,7 +104,7 @@ class BookTest extends TestCase
 
         $response = $this->actingAs($user)->put(route('books.update' , $book->id) , $new_book);
         $response->assertSessionHasNoErrors();
-        $response->assertStatus(302);
+        $response->assertRedirect();
 
         $new_book['image'] = 'data/books/front-covers/' . $new_book['image']->hashName();
         $this->assertDatabaseHas('books' , $new_book);
@@ -120,6 +121,7 @@ class BookTest extends TestCase
         $response = $this->actingAs($user)->put(route('books.update' , $book->id) , $new_book);
 
         $response->assertSessionHasErrors(['book_file' , 'is_download_allowed']);
+        $response->assertRedirect();
 
         //Test admin can update a book to online with PDF
         $new_book = array();
@@ -133,12 +135,30 @@ class BookTest extends TestCase
 
         $response = $this->actingAs($user)->put(route('books.update' , $book->id) , $new_book);
         $response->assertSessionHasNoErrors();
-        $response->assertStatus(302);
+        $response->assertRedirect();
 
         $new_book['book_path'] = 'books/' . $new_book['book_file']->hashName();
         unset($new_book['book_file']);
 
         $this->assertDatabaseHas('books' , $new_book);
         Storage::assertExists($new_book['book_path']);
+    }
+
+    public function test_book_is_deleted()
+    {
+        Storage::fake('public');
+        Storage::fake();
+
+        $admin = $this->seedAndGetAdmin();
+
+        $book = $this->createAndGetBook();
+
+        $response = $this->actingAs($admin)->delete(route('books.destroy' , $book->id));
+        $response->assertRedirect();
+
+        Storage::assertMissing($book->book_path);
+        Storage::assertMissing($book->image);
+        $this->assertDatabaseMissing('books' , ['id' => $book->id]);
+
     }
 }

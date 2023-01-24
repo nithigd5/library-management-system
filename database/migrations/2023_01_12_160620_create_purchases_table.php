@@ -25,7 +25,7 @@ return new class extends Migration {
             $table->timestamp('payment_due')->nullable();
             $table->timestamp('book_issued_at')->nullable();
             $table->timestamp('book_returned_at')->nullable();
-            $table->enum('purchase_mode' , ['online' , 'offline']);
+            $table->enum('mode' , ['online' , 'offline']);
         });
     }
 

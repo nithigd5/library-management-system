@@ -18,7 +18,7 @@
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="card card-statistic-2">
                             <div class="card-stats">
-                                <div class="card-stats-title">Book Purchase Statistics -
+                                <div class="card-stats-title">Book Acquisitions Statistics -
                                     <div class="dropdown d-inline">
                                         <a class="font-weight-600 dropdown-toggle" data-toggle="dropdown" href="#"
                                            id="orders-month">August</a>
@@ -41,11 +41,11 @@
                                 </div>
                                 <div class="card-stats-items">
                                     <div class="card-stats-item">
-                                        <div class="card-stats-item-count">{{ $rentedBooks }}</div>
+                                        <div class="card-stats-item-count">{{ $rentedBooksCount }}</div>
                                         <div class="card-stats-item-label">Rented</div>
                                     </div>
                                     <div class="card-stats-item">
-                                        <div class="card-stats-item-count">12</div>
+                                        <div class="card-stats-item-count">{{ $ownedLastMonth }}</div>
                                         <div class="card-stats-item-label">Owned</div>
                                     </div>
                                     <div class="card-stats-item">
@@ -59,10 +59,10 @@
                             </div>
                             <div class="card-wrap">
                                 <div class="card-header">
-                                    <h4>Total Purchases</h4>
+                                    <h4>Total Acquisitions</h4>
                                 </div>
                                 <div class="card-body">
-                                    59
+                                    {{ $rentedBooksCount + $ownedLastMonth }}
                                 </div>
                             </div>
                         </div>
@@ -164,7 +164,7 @@
                                                 <td class="font-weight-600">{{ $purchase->user->first_name.' '.$purchase->user->last_name }}</td>
                                                 <td>
                                                     <div
-                                                        class="badge badge-warning">{{ $purchase->payment_status }}</div>
+                                                        class="badge badge-{{ $purchase->payment_status == 'completed' ? 'success': 'warning' }}">{{ $purchase->payment_status }}</div>
                                                 </td>
                                                 <td>{{ $purchase->created_at->toDayDateTimeString() }}</td>
                                                 <td>
