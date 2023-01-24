@@ -119,14 +119,16 @@
                                 <ul class="list-unstyled list-unstyled-border">
                                     @foreach($topBooks as $book)
                                         <li class="media">
-                                            <img class="mr-3 rounded" width="55"
-                                                 src="{{ Storage::url($book->image) }}"
-                                                 alt="product">
+                                            <a href="#"><img class="mr-3 rounded" width="55"
+                                                             src="{{ Storage::url($book->image) }}"
+                                                             alt="product">
+                                            </a>
                                             <div class="media-body">
                                                 <div class="float-right">
                                                     <div class="font-weight-600 text-muted text-small">86 Sales</div>
                                                 </div>
-                                                <div class="media-title text-truncate" style="width: 200px;">{{ $book->name }}</div>
+                                                <div class="media-title text-truncate"
+                                                     style="width: 200px;"><a href="#"> {{ $book->name }}</a></div>
                                                 <div class="mt-1">
                                                     {{ $book->author }}
                                                 </div>
@@ -143,7 +145,7 @@
                             <div class="card-header">
                                 <h4>Latest Book Purchases</h4>
                                 <div class="card-header-action">
-                                    <a href="#" class="btn btn-danger">View More <i
+                                    <a href="{{ route('purchases.index') }}" class="btn btn-danger">View More <i
                                             class="fas fa-chevron-right"></i></a>
                                 </div>
                             </div>
@@ -156,19 +158,25 @@
                                             <th>User</th>
                                             <th>Payment</th>
                                             <th>Purchased at</th>
+                                            <th>Type</th>
                                             <th>Action</th>
                                         </tr>
                                         @foreach($latestPurchases as $purchase)
                                             <tr>
-                                                <td><a href="#">{{ $purchase->book->name }}</a></td>
-                                                <td class="font-weight-600">{{ $purchase->user->first_name.' '.$purchase->user->last_name }}</td>
+                                                <td><a href="#" class="d-block text-truncate"
+                                                       style="max-width: 120px;">{{ $purchase->book->name }}</a></td>
+                                                <td><a href="#" class="d-block text-truncate"
+                                                       style="max-width: 120px;">{{ $purchase->user->first_name.' '.$purchase->user->last_name }}</a>
+                                                </td>
                                                 <td>
                                                     <div
-                                                        class="badge badge-{{ $purchase->payment_status == 'completed' ? 'success': 'warning' }}">{{ $purchase->payment_status }}</div>
+                                                        class="badge badge-{{ $purchase->getPaymentStatus() == 'Completed' ? 'success': 'warning' }}">{{ $purchase->getPaymentStatus() }}</div>
                                                 </td>
-                                                <td>{{ $purchase->created_at->toDayDateTimeString() }}</td>
+                                                <td>{{ $purchase->created_at->toFormattedDateString() }}</td>
+                                                <td>{{ $purchase->for_rent ? 'Rent' : 'Owned'  }}</td>
                                                 <td>
-                                                    <a href="#" class="btn btn-primary">Detail</a>
+                                                    <a href="{{ route('purchases.show', $purchase->id) }}"
+                                                       class="btn btn-primary">Detail</a>
                                                 </td>
                                             </tr>
                                         @endforeach
