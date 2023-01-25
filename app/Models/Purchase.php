@@ -14,9 +14,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property  int user_id
  * @property  string status
  * @property  float price
- * @property  string payment_status
  * @property  string mode
  * @property  DateTime book_issued_at
+ * @property  DateTime book_return_due
  * @property  DateTime payment_due
  * @property  DateTime book_returned_at
  * @property  float pending_amount
@@ -31,6 +31,10 @@ class Purchase extends Model
 
     const STATUS_OPEN = 'open';
     const STATUS_CLOSE = 'closed';
+
+    const PAYMENT_COMPLETED = 'Completed';
+    const PAYMENT_HALF_PAID = 'Half-Paid';
+    const PAYMENT_PENDING = 'Pending';
 
     /**
      * The attributes that should be mutated to dates.

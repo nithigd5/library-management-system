@@ -2,6 +2,7 @@
 
 namespace App\View\Components;
 
+use App\Models\Purchase;
 use Illuminate\View\Component;
 
 class PurchaseTable extends Component
@@ -16,13 +17,28 @@ class PurchaseTable extends Component
         //
     }
 
-    public function getPaymentStatusBadge($paymentStatus)
+    /**
+     * get a payment status badge for bootstrap class
+     * @param $purchase
+     * @return string
+     */
+    public function getPaymentStatusBadge($purchase)
     {
-        return match ($paymentStatus) {
-            'pending' => 'danger',
-            'half-paid' => 'warning',
-            'completed' => 'success'
+        return match ($purchase->getPaymentStatus()) {
+            Purchase::PAYMENT_PENDING => 'danger',
+            Purchase::PAYMENT_HALF_PAID => 'warning',
+            Purchase::PAYMENT_COMPLETED => 'success'
         };
+    }
+
+    /**
+     * get a purchase status badge for bootstrap class
+     * @param $purchase
+     * @return string
+     */
+    public function getPurchaseStatusBadge($purchase)
+    {
+        return $purchase->isOpen() ? 'info' : 'success';
     }
 
     /**
