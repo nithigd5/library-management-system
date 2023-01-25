@@ -9,12 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->group(function () {
 
-    //Admin Dashboard Routes
-    Route::name('customer.')->group(function () {
-
-        Route::get('/customer/dashboard' , [CustomerDashboardController::class , 'index'])->name('dashboard');
-
-    });
+    Route::get('/dashboard' , [CustomerDashboardController::class , 'index'])->name('dashboard');
 
     Route::name('offline.')->group(function () {
 
@@ -23,13 +18,4 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/offline-entry/{offlineEntry}' , [OfflineEntryController::class , 'setUserExit'])->name('exit')->can('entry.offline.update');
     });
 
-    Route::name('purchases.')->group(function (){
-        Route::get('/purchases', [PurchaseController::class, 'index'])->name('index')->can('books.purchases.viewAny');
-
-        Route::get('/purchases/open', [PurchaseController::class, 'open'])->name('open')->can('books.purchases.viewAny');
-
-        Route::get('/purchases/closed', [PurchaseController::class, 'closed'])->name('closed')->can('books.purchases.viewAny');
-
-        Route::get('/purchases/{purchase}', [PurchaseController::class, 'show'])->name('show')->can('books.purchases.viewAny');
-    });
 });

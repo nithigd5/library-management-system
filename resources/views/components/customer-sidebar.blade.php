@@ -1,15 +1,15 @@
 <div class="main-sidebar sidebar-style-2">
     <aside id="sidebar-wrapper">
         <div class="sidebar-brand">
-            <a href="{{ route('customer.dashboard') }}">Library Management</a>
+            <a href="{{ route('dashboard') }}">Library Management</a>
         </div>
         <div class="sidebar-brand sidebar-brand-sm">
-            <a href="{{ route('customer.dashboard') }}">LMS</a>
+            <a href="{{ route('dashboard') }}">LMS</a>
         </div>
         <ul class="sidebar-menu">
             <li class='nav-item {{ Request::is('admin') ? 'active' : '' }}'>
                 <a class="nav-link"
-                   href="{{ route('customer.dashboard') }}"><i class="fas fa-fire"></i><span>Dashboard</span></a>
+                   href="{{ route('dashboard') }}"><i class="fas fa-fire"></i><span>Dashboard</span></a>
             </li>
             <li class="menu-header">Books</li>
             <li class="nav-item dropdown {{ $type_menu === 'books' ? 'active' : '' }}">

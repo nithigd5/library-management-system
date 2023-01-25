@@ -95,7 +95,7 @@
                                     </div>
                                         <div class="row">
                                         <div class="col-6">
-                                            <button type="submit" class="btn btn-primary">Purchase</button>
+                                            <a href="{{route('purchase.create',$book->id)}}" class="btn btn-primary">Purchase</a>
                                         </div>
                                         <br>
                                         <div class="col-6">
