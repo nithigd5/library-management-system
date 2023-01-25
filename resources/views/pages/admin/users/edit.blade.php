@@ -18,12 +18,9 @@
                 <h1>Edit a Customer</h1>
             </div>
             <div class="section-body">
-                @if(session('message'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('message') }}
-                    </div>
-                @endif
-                <x-forms.user-register method="put" route="{{ route('customers.update', $customer->id) }}"
+                <x-session-message :message="session('message')" :status="session('status')"></x-session-message>
+                <x-forms.user-register method="put" route="{{ route('admin.customers.update', $customer->id) }}" class="col-12 col-md-6 col-lg-6 m-auto"
+                                       header="Update a Customer"
                                        :first_name="$customer->first_name" :last_name="$customer->last_name"
                                        :email="$customer->email" :phone="$customer->phone" :address="$customer->address"
                 />

@@ -9,11 +9,17 @@
 @section('main')
     <div class="main-content">
         <section class="section">
-            <div class="section-header">
-                <h1>Dashboard - A Simple analytics</h1>
+            <div class="section-header row justify-content-between">
+                <h1 class="col-6">Dashboard - A Simple analytics</h1>
+
+                <button type="button" class="btn btn-primary col-3 btn btn-primary"
+                        onclick="generateLink()">
+                    Generate a Customer Invitation Link
+                </button>
             </div>
 
             <div class="section-body">
+                <x-session-message :message="session('message')" :status="session('status')"></x-session-message>
                 <div class="row">
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="card card-statistic-2">
@@ -145,7 +151,7 @@
                             <div class="card-header">
                                 <h4>Latest Book Purchases</h4>
                                 <div class="card-header-action">
-                                    <a href="{{ route('purchases.index') }}" class="btn btn-danger">View More <i
+                                    <a href="{{ route('admin.purchases.index') }}" class="btn btn-danger">View More <i
                                             class="fas fa-chevron-right"></i></a>
                                 </div>
                             </div>
@@ -175,7 +181,7 @@
                                                 <td>{{ $purchase->created_at->toFormattedDateString() }}</td>
                                                 <td>{{ $purchase->for_rent ? 'Rent' : 'Owned'  }}</td>
                                                 <td>
-                                                    <a href="{{ route('purchases.show', $purchase->id) }}"
+                                                    <a href="{{ route('admin.purchases.show', $purchase->id) }}"
                                                        class="btn btn-primary">Detail</a>
                                                 </td>
                                             </tr>
@@ -191,10 +197,10 @@
             </div>
         </section>
     </div>
-@endsection
 
+    <x-invite-link-modal></x-invite-link-modal>
+@endsection
 @push('scripts')
     <!-- JS Libraies -->
-
     <!-- Page Specific JS File -->
 @endpush

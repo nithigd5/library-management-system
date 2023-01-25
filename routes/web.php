@@ -1,8 +1,6 @@
 <?php
 
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,11 +12,18 @@ use Illuminate\Support\Facades\Storage;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::redirect('/' , '/login');
 
-Route::redirect('/', '/login');
+// auth
+Route::get('/auth-forgot-password' , function () {
+    return view('pages.auth-forgot-password' , ['type_menu' => 'auth']);
+});
+
+Route::get('/auth-reset-password' , function () {
+    return view('pages.auth-reset-password' , ['type_menu' => 'auth']);
+});
 
 require 'auth.php';
-require 'book.php';
 require 'admin.php';
 require 'bookRequest.php';
 require 'customer.php';

@@ -1,105 +1,60 @@
+@php use Illuminate\Support\Facades\URL; @endphp
+@extends('layouts.guest')
 
-@section('title', 'Register')
+@section('title', 'Register as a Customer')
 
 @push('style')
     <!-- CSS Libraries -->
     <link rel="stylesheet"
-        href="{{ asset('library/selectric/public/selectric.css') }}">
+          href="{{ asset('library/selectric/public/selectric.css') }}">
 
 @endpush
 
 @section('main')
-    <div class="card card-primary">
-        <div class="card-header">
-            <h4>Customer Registrations</h4>
-        </div>
+    <section class="section">
+        <div class="d-flex align-items-stretch flex-wrap">
+            <div class="col-md-8 col-12 order-lg-1 min-vh-100 order-2 m-auto bg-white">
+                <div class="m-3 p-4">
+                    <img src="{{ asset('img/lib_icon.png') }}"
+                         alt="logo"
+                         width="80"
+                         class="shadow-light rounded-circle mb-5 mt-2">
+                    <h4 class="text-dark font-weight-normal">Welcome to <span class="font-weight-bold">Library Management System.</span>
+                        <span class="text-primary">Invitations Only!</span>
+                    </h4>
+                    <p class="text-muted">Register if you already
+                        have an account you can <a class="font-weight-bold" href="{{ route('login') }}">log in</a>
+                        instead.</p>
 
-        <div class="card-body">
-            <form method="POST" data-parsley-validate>
-                <div class="row">
-                    <div class="form-group col-6">
-                        <label for="first_name">First Name</label>
-                        <input id="first_name"
-                            type="text"
-                            class="form-control"
-                            name="first_name"
-                            autofocus required data-parsley-errors-container="#firstname-error">
-                        <div id="firstname-error" style="color: red"></div>
-                    </div>
-                    <div class="form-group col-6">
-                        <label for="last_name">Last Name</label>
-                        <input id="last_name"
-                            type="text"
-                            class="form-control"
-                            name="last_name" required data-parsley-errors-container="#lastname-error">
-                        <div id="lastname-error" style="color: red"></div>
-                    </div>
-                </div>
+                    <x-session-message :message="session('message')" :status="session('status')"></x-session-message>
+                    <x-forms.user-register header="Register as Customer" method="post"
+                                           :route="$url"
+                                           first_name="{{ old('first_name') }}" last_name="{{ old('last_name') }}"
+                                           email="{{ old('email') }}" phone="{{ old('phone')  }}"
+                                           address="{{ old('address') }}"
+                    />
 
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input id="email"
-                        type="email"
-                        class="form-control"
-                        name="email" required data-parsley-errors-container="#email-error" data-parsley-type="email">
-                    <div id="email-error" style="color: red"></div>
-                </div>
-
-                <div class="row">
-                    <div class="form-group col-6">
-                        <label for="password"
-                            class="d-block">Password</label>
-                        <input id="password"
-                            type="password"
-                            class="form-control pwstrength"
-                            data-indicator="pwindicator"
-                            name="password" required data-parsley-errors-container="#password-error" data-parsley-minlength="8">
-                        <div id="password-error" style="color: red"></div>
-                        <div id="pwindicator"
-                            class="pwindicator">
-                            <div class="bar"></div>
-                            <div class="label"></div>
+                    <div class="text-small mt-5 text-center">
+                        Copyright &copy; Your Company. Made with 💙 by Aman & Nithi
+                        <div class="mt-2">
+                            <a href="#">Privacy Policy</a>
+                            <div class="bullet"></div>
+                            <a href="#">Terms of Service</a>
                         </div>
                     </div>
-                    <div class="form-group col-6">
-                        <label for="password2"
-                            class="d-block">Password Confirmation</label>
-                        <input id="password2"
-                            type="password"
-                            class="form-control"
-                            name="password-confirm" required data-parsley-errors-container="#confirm-password" data-parsley-equalto="#password">
-                        <div id="confirm-password" style="color: red"></div>
-                    </div>
                 </div>
-
-                <div class="form-group">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox"
-                            name="agree"
-                            class="custom-control-input"
-                            id="agree" required>
-                        <label class="custom-control-label"
-                            for="agree">I agree with the terms and conditions</label>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <button type="submit"
-                        class="btn btn-primary btn-lg btn-block">
-                        Register
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
-    </div>
+    </section>
+
 @endsection
 
 @push('scripts')
     <!-- JS Libraies -->
     <script src="{{ asset('library/selectric/public/jquery.selectric.min.js') }}"></script>
     <script src="{{ asset('library/jquery.pwstrength/jquery.pwstrength.min.js') }}"></script>
+    <script src="{{ asset('js/parsley.js') }}"></script>
 
     <!-- Page Specific JS File -->
     <script src="{{ asset('js/page/auth-register.js') }}"></script>
-    <script src="{{ asset('js/parsley.js') }}"></script>
 @endpush

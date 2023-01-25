@@ -14,12 +14,8 @@
             </div>
 
             <div class="section-body">
-                @if(session('message'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('message') }}
-                    </div>
-                @endif
-                <form action="{{ route('books.store') }}" enctype="multipart/form-data" method="post" class="row">
+                <x-session-message :message="session('message')" :status="session('status')"></x-session-message>
+                <form action="{{ route('admin.books.store') }}" enctype="multipart/form-data" method="post" class="row">
                     @csrf
                     <div class="col-12 col-md-6 col-lg-6">
                         <div class="card">

@@ -38,7 +38,7 @@ class BookTest extends TestCase
             'mode' => 'online' ,
             'is_download_allowed' => true
         ];
-        $response = $this->actingAs($user)->post(route('books.store') , $book);
+        $response = $this->actingAs($user)->post(route('admin.books.store') , $book);
         $response->assertSessionHasNoErrors();
         $response->assertRedirect();
 
@@ -57,7 +57,7 @@ class BookTest extends TestCase
             'version' => 5 ,
             'mode' => 'offline' ,
         ];
-        $response = $this->actingAs($user)->post(route('books.store') , $book);
+        $response = $this->actingAs($user)->post(route('admin.books.store') , $book);
         $response->assertSessionHasErrors(['name' , 'image']);
         $response->assertRedirect();
 
@@ -70,7 +70,7 @@ class BookTest extends TestCase
             'mode' => 'offline' ,
             'image' => $image = UploadedFile::fake()->image('thumbnail.jpg' , 100 , 100) ,
         ];
-        $response = $this->actingAs($user)->post(route('books.store') , $book);
+        $response = $this->actingAs($user)->post(route('admin.books.store') , $book);
         $response->assertSessionHasNoErrors();
         $response->assertRedirect();
 
@@ -102,7 +102,7 @@ class BookTest extends TestCase
         $new_book['mode'] = 'offline';
         $new_book['image'] = UploadedFile::fake()->image('thumbnail.jpg' , 100 , 100);
 
-        $response = $this->actingAs($user)->put(route('books.update' , $book->id) , $new_book);
+        $response = $this->actingAs($user)->put(route('admin.books.update' , $book->id) , $new_book);
         $response->assertSessionHasNoErrors();
         $response->assertRedirect();
 
@@ -118,7 +118,7 @@ class BookTest extends TestCase
         $new_book['version'] = 6;
         $new_book['mode'] = 'online';
 
-        $response = $this->actingAs($user)->put(route('books.update' , $book->id) , $new_book);
+        $response = $this->actingAs($user)->put(route('admin.books.update' , $book->id) , $new_book);
 
         $response->assertSessionHasErrors(['book_file' , 'is_download_allowed']);
         $response->assertRedirect();
@@ -133,7 +133,7 @@ class BookTest extends TestCase
         $new_book['book_file'] = UploadedFile::fake()->create('book.pdf' , 100 , 'application/pdf');
         $new_book['is_download_allowed'] = false;
 
-        $response = $this->actingAs($user)->put(route('books.update' , $book->id) , $new_book);
+        $response = $this->actingAs($user)->put(route('admin.books.update' , $book->id) , $new_book);
         $response->assertSessionHasNoErrors();
         $response->assertRedirect();
 
@@ -153,7 +153,7 @@ class BookTest extends TestCase
 
         $book = $this->createAndGetBook();
 
-        $response = $this->actingAs($admin)->delete(route('books.destroy' , $book->id));
+        $response = $this->actingAs($admin)->delete(route('admin.books.destroy' , $book->id));
         $response->assertRedirect();
 
         Storage::assertMissing($book->book_path);

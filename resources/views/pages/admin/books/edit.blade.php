@@ -16,12 +16,8 @@
             </div>
 
             <div class="section-body">
-                @if(session('message'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('message') }}
-                    </div>
-                @endif
-                <form action="{{ route('books.update', $book->id) }}" enctype="multipart/form-data" method="post"
+                <x-session-message :message="session('message')" :status="session('status')"></x-session-message>
+                <form action="{{ route('admin.books.update', $book->id) }}" enctype="multipart/form-data" method="post"
                       class="row">
                     @csrf
                     @method('put')

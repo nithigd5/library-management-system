@@ -17,5 +17,4 @@ Route::middleware(['auth'])->group(function () {
 
         Route::patch('/offline-entry/{offlineEntry}' , [OfflineEntryController::class , 'setUserExit'])->name('exit')->can('entry.offline.update');
     });
-
 });

@@ -12,11 +12,7 @@
     <div class="main-content">
         <section class="section">
             <div class="section-body">
-                @if(session('message'))
-                    <div class="alert alert-{{ session('status') }}" role="alert">
-                        {{ session('message') }}
-                    </div>
-                @endif
+                <x-session-message :message="session('message')" :status="session('status')"></x-session-message>
                 <div class="row d-flex justify-content-center">
                     <div class="col-lg-8 col-xl-7">
                         <div class="card border-top border-bottom border-3 shadow-lg"
@@ -128,7 +124,7 @@
                                             <a href="#" onclick="$(this).siblings('form').submit()"
                                                class="btn btn-primary col mx-2">Set as returned</a>
                                             <form class="d-none"
-                                                  action="{{ route('purchases.return-book', $purchase->id) }}"
+                                                  action="{{ route('admin.purchases.return-book', $purchase->id) }}"
                                                   method="post"> @csrf @method('put')</form>
                                         @endif
                                         @if($purchase->toPay())

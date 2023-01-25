@@ -1,7 +1,7 @@
 @php use Illuminate\Support\Facades\Auth; @endphp
 <div class="navbar-bg"></div>
 <nav class="navbar navbar-expand-lg main-navbar">
-    <form class="form-inline mr-auto" action="{{route('books.search')}}" method="GET">
+    <form class="form-inline mr-auto" action="{{route('admin.books.search')}}" method="GET">
         <ul class="navbar-nav mr-3">
             <li><a href="#"
                    data-toggle="sidebar"

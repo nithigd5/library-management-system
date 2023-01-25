@@ -20,7 +20,7 @@ class OfflineEntryTest extends TestCase
         $admin = $this->seedAndGetAdmin();
         $user = $this->createAndGetCustomer();
 
-        $response = $this->actingAs($admin)->post(route('offline.entry' , $user->id));
+        $response = $this->actingAs($admin)->post(route('admin.offline.entry' , $user->id));
         $response->assertRedirect();
         $response->assertSessionHasNoErrors();
 
@@ -28,7 +28,7 @@ class OfflineEntryTest extends TestCase
 
         $offlineEntry = $user->offlineEntries()->whereNull('exit_at')->first();
 
-        $response = $this->actingAs($admin)->patch(route('offline.exit' , $offlineEntry->id));
+        $response = $this->actingAs($admin)->patch(route('admin.offline.exit' , $offlineEntry->id));
         $response->assertRedirect();
         $response->assertSessionHasNoErrors();
 
