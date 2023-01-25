@@ -17,7 +17,7 @@
 
             <div class="section-body">
                 <x-session-message :message="session('message')" :status="session('status')"></x-session-message>
-                <form action="{{ route('books.update', $book->id) }}" enctype="multipart/form-data" method="post"
+                <form action="{{ route('admin.books.update', $book->id) }}" enctype="multipart/form-data" method="post"
                       class="row">
                     @csrf
                     @method('put')

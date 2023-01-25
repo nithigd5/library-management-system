@@ -15,7 +15,7 @@
 
             <div class="section-body">
                 <x-session-message :message="session('message')" :status="session('status')"></x-session-message>
-                <form action="{{ route('books.store') }}" enctype="multipart/form-data" method="post" class="row">
+                <form action="{{ route('admin.books.store') }}" enctype="multipart/form-data" method="post" class="row">
                     @csrf
                     <div class="col-12 col-md-6 col-lg-6">
                         <div class="card">

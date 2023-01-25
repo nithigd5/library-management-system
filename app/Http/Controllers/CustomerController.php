@@ -83,9 +83,9 @@ class CustomerController extends Controller
     {
 
         if ($customer->update($this->saveProfileImage($request->all()))) {
-            return back()->with('message' , __('customer.update.failed'))->with('status' , Constants::SUCCESS_STATUS);
+            return back()->with('message' , __('customer.update.success'))->with('status' , Constants::SUCCESS_STATUS);
         }
-        return back()->with('message' , __('customer.update.success'))->with('status' , Constants::FAILED_STATUS);
+        return back()->with('message' , __('customer.update.failed'))->with('status' , Constants::FAILED_STATUS);
 
     }
 
@@ -114,7 +114,7 @@ class CustomerController extends Controller
     public function invite()
     {
         return URL::temporarySignedRoute(
-            'customers.invitations.create-customer' , now()->addMinutes(60)
+            'admin.customers.invitations.create-customer' , now()->addMinutes(60)
         );
     }
 
@@ -125,7 +125,7 @@ class CustomerController extends Controller
      */
     public function signedCreate(Request $request)
     {
-        return view('pages.auth-register', ['url' =>  URL::temporarySignedRoute('customers.invitations.store-customer', now()->addMinutes(15))]);
+        return view('pages.auth-register', ['url' =>  URL::temporarySignedRoute('admin.customers.invitations.store-customer', now()->addMinutes(15))]);
     }
 
     /**

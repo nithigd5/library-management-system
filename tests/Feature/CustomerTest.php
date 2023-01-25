@@ -34,7 +34,7 @@ class CustomerTest extends TestCase
             'address' => 'Mallow Karur' ,
             'phone' => '9876543210' ,
         ];
-        $response = $this->actingAs($user)->post(route('customers.store') , $customer);
+        $response = $this->actingAs($user)->post(route('admin.customers.store') , $customer);
         $response->assertRedirect();
         $response->assertSessionHasNoErrors();
 
@@ -55,7 +55,7 @@ class CustomerTest extends TestCase
             'password' => 'Password' ,
             'phone' => '1323234'
         ];
-        $response = $this->post(route('customers.store') , $customer);
+        $response = $this->post(route('admin.customers.store') , $customer);
         $response->assertSessionHasErrors(['last_name' , 'phone' , 'profile_image' , 'password']);
         $response->assertRedirect();
 
@@ -82,7 +82,7 @@ class CustomerTest extends TestCase
             'phone' => $user->phone ,
             'profile_image' => UploadedFile::fake()->image('profile.jpg')
         ];
-        $response = $this->actingAs($user)->put(route('customers.update' , $user->id) , $updatedUser);
+        $response = $this->actingAs($user)->put(route('admin.customers.update' , $user->id) , $updatedUser);
 
         $response->assertSessionHasNoErrors();
         $response->assertRedirect();
@@ -100,7 +100,7 @@ class CustomerTest extends TestCase
             'email' => 'email1@ee.com' ,
             'phone' => '1323234'
         ];
-        $response = $this->put(route('customers.update' , $user->id) , $updatedUser);
+        $response = $this->put(route('admin.customers.update' , $user->id) , $updatedUser);
         $response->assertRedirect();
         $response->assertSessionHasErrors(['last_name' , 'phone']);
 
@@ -112,7 +112,7 @@ class CustomerTest extends TestCase
         $admin = $this->seedAndGetAdmin();
         $user = $this->createAndGetCustomer(true);
 
-        $response = $this->actingAs($admin)->delete(route('customers.destroy' , $user->id));
+        $response = $this->actingAs($admin)->delete(route('admin.customers.destroy' , $user->id));
         $response->assertRedirect();
 
         Storage::assertMissing($user->profile_image);

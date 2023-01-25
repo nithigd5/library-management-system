@@ -24,7 +24,6 @@ Route::get('/auth-reset-password' , function () {
 });
 
 require 'auth.php';
-require 'book.php';
 require 'admin.php';
 require 'bookRequest.php';
 require 'customer.php';

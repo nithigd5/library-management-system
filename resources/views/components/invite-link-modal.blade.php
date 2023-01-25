@@ -21,7 +21,7 @@
 <script>
 
     function generateLink() {
-        $.get('{{ route('customers.invite') }}', function (response) {
+        $.get('{{ route('admin.customers.invite') }}', function (response) {
             $('#generate-link-modal').modal('show').find('#invite-link').val(response);
         })
     }

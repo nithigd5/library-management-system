@@ -19,7 +19,7 @@
             </div>
             <div class="section-body">
                 <x-session-message :message="session('message')" :status="session('status')"></x-session-message>
-                <x-forms.user-register method="put" route="{{ route('customers.update', $customer->id) }}" class="col-12 col-md-6 col-lg-6 m-auto"
+                <x-forms.user-register method="put" route="{{ route('admin.customers.update', $customer->id) }}" class="col-12 col-md-6 col-lg-6 m-auto"
                                        header="Update a Customer"
                                        :first_name="$customer->first_name" :last_name="$customer->last_name"
                                        :email="$customer->email" :phone="$customer->phone" :address="$customer->address"

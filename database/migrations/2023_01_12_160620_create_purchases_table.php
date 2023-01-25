@@ -17,7 +17,6 @@ return new class extends Migration {
             $table->timestamps();
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('book_id')->constrained('books');
-            $table->enum('status' , ['open' , 'closed']);
             $table->float('price');
             $table->boolean('for_rent');
             $table->float('pending_amount');

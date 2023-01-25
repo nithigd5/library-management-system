@@ -7,7 +7,7 @@
             <a href="{{ route('admin.dashboard') }}">LMS</a>
         </div>
         <ul class="sidebar-menu">
-            <li class='nav-item {{ Request::is('admin') ? 'active' : '' }}'>
+            <li class='nav-item {{ Request::is('admin/admin') ? 'active' : '' }}'>
                 <a class="nav-link"
                    href="{{ route('admin.dashboard') }}"><i class="fas fa-fire"></i><span>Dashboard</span></a>
             </li>
@@ -16,11 +16,11 @@
                 <a href="#"
                    class="nav-link has-dropdown"><i class="fa-solid fa-book"></i> <span>Books</span></a>
                 <ul class="dropdown-menu">
-                    <li class="{{ Request::is('books') ? 'active' : '' }}">
-                        <a href="{{ route('books.index') }}">All Books</a>
+                    <li class="{{ Request::is('admin/books') ? 'active' : '' }}">
+                        <a href="{{ route('admin.books.index') }}">All Books</a>
                     </li>
-                    <li class="{{ Request::is('books/create') ? 'active' : '' }}">
-                        <a href="{{ route('books.create') }}">Add a Book</a>
+                    <li class="{{ Request::is('admin/books/create') ? 'active' : '' }}">
+                        <a href="{{ route('admin.books.create') }}">Add a Book</a>
                     </li>
                 </ul>
             </li>
@@ -29,11 +29,11 @@
                 <a href="#"
                    class="nav-link has-dropdown"><i class="far fa-user"></i> <span>Customers</span></a>
                 <ul class="dropdown-menu">
-                    <li class="{{ Request::is('customers') ? 'active' : '' }}">
-                        <a href="{{ route('customers.index') }}">All Customers</a>
+                    <li class="{{ Request::is('admin/customers') ? 'active' : '' }}">
+                        <a href="{{ route('admin.customers.index') }}">All Customers</a>
                     </li>
-                    <li class="{{ Request::is('customers/create') ? 'active' : '' }}">
-                        <a href="{{ route('customers.create') }}">Add a Customer</a>
+                    <li class="{{ Request::is('admin/customers/create') ? 'active' : '' }}">
+                        <a href="{{ route('admin.customers.create') }}">Add a Customer</a>
                     </li>
                 </ul>
             </li>
@@ -42,20 +42,20 @@
                 <a href="#"
                    class="nav-link has-dropdown"><i class="fa-solid fa-money-bill"></i><span>Purchases</span></a>
                 <ul class="dropdown-menu">
-                    <li class="{{ Request::is('purchases') ? 'active' : '' }}">
-                        <a href="{{ route('purchases.index') }}">All Purchases</a>
+                    <li class="{{ Request::is('admin/purchases') ? 'active' : '' }}">
+                        <a href="{{ route('admin.purchases.index') }}">All Purchases</a>
                     </li>
 
-                    <li class="{{ Request::is('purchases/open') ? 'active' : '' }}">
-                        <a href="{{ route('purchases.open') }}">Open Purchases</a>
+                    <li class="{{ Request::is('admin/purchases/open') ? 'active' : '' }}">
+                        <a href="{{ route('admin.purchases.open') }}">Open Purchases</a>
                     </li>
 
-                    <li class="{{ Request::is('purchases/closed') ? 'active' : '' }}">
-                        <a href="{{ route('purchases.closed') }}">closed Purchases</a>
+                    <li class="{{ Request::is('admin/purchases/closed') ? 'active' : '' }}">
+                        <a href="{{ route('admin.purchases.closed') }}">closed Purchases</a>
                     </li>
 
-                    <li class="{{ Request::is('purchases/overdue') ? 'active' : '' }}">
-                        <a href="{{ route('purchases.overdue') }}">Overdue Purchases</a>
+                    <li class="{{ Request::is('admin/purchases/overdue') ? 'active' : '' }}">
+                        <a href="{{ route('admin.purchases.overdue') }}">Overdue Purchases</a>
                     </li>
                 </ul>
             </li>

@@ -36,11 +36,11 @@
                                 </div>
                                 <div class="article-details">
                                     <div class="article-cta">
-                                        <a href="{{route('customers.show',$user->id)}}" class="btn btn-primary">View</a>
-                                        <a href="{{ route('customers.edit', $user->id) }}" class="btn btn-secondary">Edit</a>
+                                        <a href="{{route('admin.customers.show',$user->id)}}" class="btn btn-primary">View</a>
+                                        <a href="{{ route('admin.customers.edit', $user->id) }}" class="btn btn-secondary">Edit</a>
                                         <a href="#" onclick="$(this).siblings('form').submit()" class="btn btn-danger">Delete</a>
 
-                                        <form style="display: none" action="{{ route('customers.destroy', $user->id) }}"
+                                        <form style="display: none" action="{{ route('admin.customers.destroy', $user->id) }}"
                                               method="post">
                                             @csrf
                                             @method('DELETE')

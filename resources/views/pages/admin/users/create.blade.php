@@ -17,7 +17,7 @@
             </div>
             <div class="section-body">
                 <x-session-message :message="session('message')" :status="session('status')"></x-session-message>
-                <x-forms.user-register method="post" route="{{ route('customers.store') }}" class="col-12 col-md-6 col-lg-6 m-auto"
+                <x-forms.user-register method="post" route="{{ route('admin.customers.store') }}" class="col-12 col-md-6 col-lg-6 m-auto"
                                        first_name="{{ old('first_name') }}" last_name="{{ old('last_name') }}"
                                        email="{{ old('email') }}" phone="{{ old('phone')  }}"
                                        address="{{ old('address') }}"

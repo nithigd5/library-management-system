@@ -64,7 +64,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function redirectUser($user): RedirectResponse
     {
-        return $user->hasRole('admin') ? redirect()->intended(RouteServiceProvider::ADMIN_DASHBOARD)
-            : redirect()->intended(RouteServiceProvider::HOME);
+        return $user->hasRole('admin') ? redirect()->intended(route(RouteServiceProvider::ADMIN_DASHBOARD))
+            : redirect()->intended(route(RouteServiceProvider::HOME));
     }
 }

@@ -32,11 +32,11 @@
                                 <div class="article-details">
                                     <p>{{ $book->author }}. </p>
                                     <div class="article-cta">
-                                        <a href="{{ route('books.show', $book->id) }}" class="btn btn-primary">View</a>
-                                        <a href="{{ route('books.edit', $book->id) }}" class="btn btn-secondary">Edit</a>
+                                        <a href="{{ route('admin.books.show', $book->id) }}" class="btn btn-primary">View</a>
+                                        <a href="{{ route('admin.books.edit', $book->id) }}" class="btn btn-secondary">Edit</a>
                                         <a href="#" onclick="$(this).siblings('form').submit()" class="btn btn-danger">Delete</a>
 
-                                        <form style="display: none" action="{{ route('books.destroy', $book->id) }}"
+                                        <form style="display: none" action="{{ route('admin.books.destroy', $book->id) }}"
                                               method="post">
                                             @csrf
                                             @method('DELETE')

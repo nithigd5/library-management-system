@@ -151,7 +151,7 @@
                             <div class="card-header">
                                 <h4>Latest Book Purchases</h4>
                                 <div class="card-header-action">
-                                    <a href="{{ route('purchases.index') }}" class="btn btn-danger">View More <i
+                                    <a href="{{ route('admin.purchases.index') }}" class="btn btn-danger">View More <i
                                             class="fas fa-chevron-right"></i></a>
                                 </div>
                             </div>
@@ -181,7 +181,7 @@
                                                 <td>{{ $purchase->created_at->toFormattedDateString() }}</td>
                                                 <td>{{ $purchase->for_rent ? 'Rent' : 'Owned'  }}</td>
                                                 <td>
-                                                    <a href="{{ route('purchases.show', $purchase->id) }}"
+                                                    <a href="{{ route('admin.purchases.show', $purchase->id) }}"
                                                        class="btn btn-primary">Detail</a>
                                                 </td>
                                             </tr>

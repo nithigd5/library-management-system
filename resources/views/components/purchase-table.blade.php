@@ -29,7 +29,7 @@
                 <td>{{ $purchase->for_rent ? 'Rent' : 'Owned'  }}</td>
                 <td>{{ $purchase->created_at->toDayDateTimeString() }}</td>
                 <td>
-                    <a href="{{ route('purchases.show', $purchase->id) }}" class="btn btn-primary">Detail</a>
+                    <a href="{{ route('admin.purchases.show', $purchase->id) }}" class="btn btn-primary">Detail</a>
                 </td>
             </tr>
         @endforeach
