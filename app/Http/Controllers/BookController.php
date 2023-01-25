@@ -6,7 +6,10 @@ use App\Constants;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -48,7 +51,30 @@ class BookController extends Controller
         return back()->with('message' , __('book.store.failed'))->with('status' , Constants::FAILED_STATUS);
     }
 
+    public function search(Request $request)
+    {
+        // Get the search value from the request
+        $search = $request->input('search');
+
+        // Search in the title and body columns from the posts table
+        $books = Book::query()
+            ->where('name', 'LIKE', "%{$search}%")
+            ->orWhere('author', 'LIKE', "%{$search}%")
+            ->get();
+        return view('pages.admin.books.index' , ['type_menu' => 'books' , 'books' => $books]);
+    }
+
     /**
+     * @param $id
+     * @return Application|Factory|View
+     */
+    public function show($id)
+    {
+        $book=Book::find($id);
+        return view('pages.admin.books.showBooks',[ 'type_menu'=> '','book'=>$book]);
+    }
+    /**
+
      * Show the form for editing the specified book.
      *
      * @param Book $book

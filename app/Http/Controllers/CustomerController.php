@@ -53,6 +53,15 @@ class CustomerController extends Controller
     }
 
     /**
+     * @param $id
+     * @return Application|Factory|View
+     */
+    public function show($id)
+    {
+        $user=User::find($id);
+        return view('pages.admin.users.show',[ 'type_menu'=> '','user'=>$user]);
+    }
+    /**
      * Show the form for editing the customer.
      *
      * @param User $customer

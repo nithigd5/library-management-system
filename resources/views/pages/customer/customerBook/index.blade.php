@@ -1,6 +1,6 @@
 @props(['books'])
 
-@extends('layouts.admin-app')
+@extends('layouts.customer-app')
 
 @section('title', 'Books')
 
@@ -12,37 +12,30 @@
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>Manage All Books</h1>
+                <h1>Books</h1>
             </div>
 
             <div class="section-body">
-                <x-session-message :message="session('message')" :status="session('status')"></x-session-message>
+                @if(session('message'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('message') }}
+                    </div>
+                @endif
                 <div class="row">
                     @foreach($books as $book)
                         <div class="col-12 col-sm-6 col-md-6 col-lg-3">
-                            <article class="article">
+                            <article class="article" onclick="location.href='{{route('book.show',['id'=>$book->id])}}'" style="border: 2px solid blue;" >
                                 <div class="article-header">
                                     <div class="article-image"
                                          style="background-image: url({{ Storage::url($book->image) }});">
                                     </div>
                                     <div class="article-title">
+                                        <img src="{{asset('img/dummy.jpg')}}" alt="image">
                                         <h2><a href="#">{{ $book->name }}</a></h2>
                                     </div>
                                 </div>
                                 <div class="article-details">
                                     <p>{{ $book->author }}. </p>
-                                    <div class="article-cta">
-                                        <a href="{{ route('books.show', $book->id) }}" class="btn btn-primary">View</a>
-                                        <a href="{{ route('books.edit', $book->id) }}" class="btn btn-secondary">Edit</a>
-                                        <a href="#" onclick="$(this).siblings('form').submit()" class="btn btn-danger">Delete</a>
-
-                                        <form style="display: none" action="{{ route('books.destroy', $book->id) }}"
-                                              method="post">
-                                            @csrf
-                                            @method('DELETE')
-
-                                        </form>
-                                    </div>
                                 </div>
 
                             </article>
