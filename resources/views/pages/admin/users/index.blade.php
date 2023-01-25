@@ -27,7 +27,8 @@
                         <div class="col-12 col-sm-6 col-md-6 col-lg-3">
                             <article class="article">
                                 <div class="article-header">
-                                    <div class="article-image"  style="background-image: url({{ Storage::url($user->profile_image) }});">
+                                    <div class="article-image"
+                                         style="background-image: url({{ Storage::url($user->profile_image) }});">
                                     </div>
                                     <div class="article-title">
                                         <h2><a href="#">{{ $user->first_name.' '.$user->last_name }}</a></h2>
@@ -39,7 +40,8 @@
                                         <a href="{{ route('customers.edit', $user->id) }}" class="btn btn-secondary">Edit</a>
                                         <a href="#" onclick="$(this).siblings('form').submit()" class="btn btn-danger">Delete</a>
 
-                                        <form style="display: none" action="{{ route('customers.destroy', $user->id) }}" method="post">
+                                        <form style="display: none" action="{{ route('customers.destroy', $user->id) }}"
+                                              method="post">
                                             @csrf
                                             @method('DELETE')
 
@@ -56,8 +58,8 @@
         </section>
     </div>
 
+    <x-invite-link-modal></x-invite-link-modal>
 @endsection
-<x-invite-link-modal></x-invite-link-modal>
 
 @push('scripts')
 @endpush

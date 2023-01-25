@@ -198,8 +198,8 @@
         </section>
     </div>
 
+    <x-invite-link-modal></x-invite-link-modal>
 @endsection
-<x-invite-link-modal></x-invite-link-modal>
 @push('scripts')
     <!-- JS Libraies -->
     <!-- Page Specific JS File -->
