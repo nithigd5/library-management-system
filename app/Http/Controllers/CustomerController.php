@@ -58,7 +58,7 @@ class CustomerController extends Controller
      */
     public function show($id)
     {
-        $user=User::find($id);
+        $user=User::findOrFail($id);
         return view('pages.admin.users.show',[ 'type_menu'=> '','user'=>$user]);
     }
     /**

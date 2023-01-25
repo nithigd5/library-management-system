@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Models\Purchase;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 trait PurchasableTrait
 {
@@ -76,6 +77,20 @@ trait PurchasableTrait
             ->where('book_return_due' , '<' , now())
             ->whereNull('book_returned_at')
             ->where('for_rent' , true);
+    }
+
+    /**
+     * Get all books which are bought highest in order.
+     * @param Builder $query
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public function scopeOrderByMostPurchased(Builder $query): \Illuminate\Database\Query\Builder
+    {
+        return DB::table('books')
+            ->joinSub($query->select('book_id' , DB::raw('count(book_id) as sales'))
+                ->groupBy('book_id') , 'purchases' , function ($join) {
+                $join->on('purchases.book_id' , '=' , 'books.id');
+            })->orderBy('sales', 'Desc');
     }
 
     /**

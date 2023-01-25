@@ -21,7 +21,7 @@ class AdminDashboardController extends Controller
         $ownedLastMonth = Purchase::ownedLastMonth()->count();
 
         $latestPurchases = Purchase::with('book' , 'user')->latestPurchases()->limit(5)->get();
-        $topBooks = Book::limit(5)->get();
+        $topBooks = Purchase::orderByMostPurchased()->limit(5)->get();
 
         return view('pages.admin.dashboard' ,
             compact('rentedBooksCount' , 'ownedLastMonth' , 'latestPurchases' , 'topBooks') ,

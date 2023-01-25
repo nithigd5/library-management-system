@@ -87,8 +87,34 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="card card-statistic-2">
+                            <div class="card-icon shadow-primary bg-primary">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="card-wrap">
+                                <div class="card-header">
+                                    <h4>Balance</h4>
+                                </div>
+                                <div class="card-body">
+                                    $187,13
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="card card-statistic-2">
+                            <div class="card-icon shadow-primary bg-primary">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <div class="card-wrap">
+                                <div class="card-header">
+                                    <h4>Sales</h4>
+                                </div>
+                                <div class="card-body">
+                                    4,732
+                                </div>
+                            </div>
+                        </div>
                         <div class="card card-statistic-2">
                             <div class="card-icon shadow-primary bg-primary">
                                 <i class="fas fa-shopping-bag"></i>
@@ -125,16 +151,16 @@
                                 <ul class="list-unstyled list-unstyled-border">
                                     @foreach($topBooks as $book)
                                         <li class="media">
-                                            <a href="#"><img class="mr-3 rounded" width="55"
+                                            <a href="{{ route('admin.books.show', $book->id) }}"><img class="mr-3 rounded" width="55"
                                                              src="{{ Storage::url($book->image) }}"
                                                              alt="product">
                                             </a>
                                             <div class="media-body">
                                                 <div class="float-right">
-                                                    <div class="font-weight-600 text-muted text-small">86 Sales</div>
+                                                    <div class="font-weight-600 text-muted text-small">{{ $book->sales }} Sales</div>
                                                 </div>
                                                 <div class="media-title text-truncate"
-                                                     style="width: 200px;"><a href="#"> {{ $book->name }}</a></div>
+                                                     style="width: 200px;"><a href="{{ route('admin.books.show', $book->id) }}"> {{ $book->name }}</a></div>
                                                 <div class="mt-1">
                                                     {{ $book->author }}
                                                 </div>
@@ -169,9 +195,9 @@
                                         </tr>
                                         @foreach($latestPurchases as $purchase)
                                             <tr>
-                                                <td><a href="#" class="d-block text-truncate"
+                                                <td><a href="{{ route('admin.books.show', $purchase->book->id) }}" class="d-block text-truncate"
                                                        style="max-width: 120px;">{{ $purchase->book->name }}</a></td>
-                                                <td><a href="#" class="d-block text-truncate"
+                                                <td><a href="{{ route('admin.customers.show', $purchase->user->id) }}" class="d-block text-truncate"
                                                        style="max-width: 120px;">{{ $purchase->user->first_name.' '.$purchase->user->last_name }}</a>
                                                 </td>
                                                 <td>

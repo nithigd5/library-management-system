@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\BookTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,6 +19,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Book extends Model
 {
-    use HasFactory;
+    use HasFactory, BookTrait;
     protected $fillable = ['name', 'author', 'price', 'version', 'mode', 'image', 'book_path', 'is_download_allowed'];
 }
