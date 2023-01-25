@@ -32,7 +32,9 @@
     <section class="section">
         <div class="d-flex align-items-stretch flex-wrap">
             <div class="col-lg-4 col-md-6 col-12 order-lg-1 min-vh-100 order-2 bg-white">
+
                 <div class="m-3 p-4">
+                    <x-session-message :message="session('message')" :status="session('status')"></x-session-message>
                     <img src="{{ asset('img/lib_icon.png') }}"
                          alt="logo"
                          width="80"

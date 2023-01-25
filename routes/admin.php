@@ -14,19 +14,22 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin' , [AdminDashboardController::class , 'index'])->name('dashboard');
     });
 
-    Route::name('customers.')->group(function () {
+    Route::name('customers.')->prefix('customers')->group(function () {
 
-        Route::get('/customers' , [CustomerController::class , 'index'])->name('index')->can('users.customer.*');
+        Route::get('/' , [CustomerController::class , 'index'])->name('index')->can('users.customer.*');
 
-        Route::get('/customers/create' , [CustomerController::class , 'create'])->name('create')->can('users.customer.create');
+        Route::get('/create' , [CustomerController::class , 'create'])->name('create')->can('users.customer.create');
 
-        Route::post('/customers' , [CustomerController::class , 'store'])->name('store')->can('users.customer.create');
+        Route::post('' , [CustomerController::class , 'store'])->name('store')->can('users.customer.create');
 
-        Route::put('/customers/{customer:users}' , [CustomerController::class , 'update'])->name('update')->can('users.customer.updateAny');
+        Route::put('/{customer:users}' , [CustomerController::class , 'update'])->name('update')->can('users.customer.updateAny');
 
-        Route::get('/customers/edit/{customer:users}' , [CustomerController::class , 'edit'])->name('edit')->can('users.customer.updateAny');
+        Route::get('/edit/{customer:users}' , [CustomerController::class , 'edit'])->name('edit')->can('users.customer.updateAny');
 
-        Route::delete('/customers/{customer:users}' , [CustomerController::class , 'destroy'])->name('destroy')->can('users.customer.deleteAny');
+        Route::delete('/{customer:users}' , [CustomerController::class , 'destroy'])->name('destroy')->can('users.customer.deleteAny');
+
+        Route::get('/invite', [CustomerController::class, 'invite'])->name('invite')->can('users.invite.create');
+
     });
 
     Route::name('offline.')->group(function () {
@@ -36,17 +39,24 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/offline-entry/{offlineEntry}' , [OfflineEntryController::class , 'setUserExit'])->name('exit')->can('entry.offline.update');
     });
 
-    Route::name('purchases.')->group(function (){
-        Route::get('/purchases', [PurchaseController::class, 'index'])->name('index')->can('books.purchases.viewAny');
+    Route::name('purchases.')->prefix('purchases')->group(function (){
+        Route::get('/', [PurchaseController::class, 'index'])->name('index')->can('books.purchases.viewAny');
 
-        Route::get('/purchases/open', [PurchaseController::class, 'open'])->name('open')->can('books.purchases.viewAny');
+        Route::get('/open', [PurchaseController::class, 'open'])->name('open')->can('books.purchases.viewAny');
 
-        Route::get('/purchases/closed', [PurchaseController::class, 'closed'])->name('closed')->can('books.purchases.viewAny');
+        Route::get('/closed', [PurchaseController::class, 'closed'])->name('closed')->can('books.purchases.viewAny');
 
-        Route::get('/purchases/overdue', [PurchaseController::class, 'overdue'])->name('overdue')->can('books.purchases.viewAny');
+        Route::get('/overdue', [PurchaseController::class, 'overdue'])->name('overdue')->can('books.purchases.viewAny');
 
-        Route::get('/purchases/{purchase}', [PurchaseController::class, 'show'])->name('show')->can('books.purchases.viewAny');
+        Route::get('/{purchase}', [PurchaseController::class, 'show'])->name('show')->can('books.purchases.viewAny');
 
-        Route::put('/purchases/{purchase}/return-book', [PurchaseController::class, 'returnBook'])->name('return-book')->can('books.purchases.updateAny');
+        Route::put('/{purchase}/return-book', [PurchaseController::class, 'returnBook'])->name('return-book')->can('books.purchases.updateAny');
     });
+
+
+});
+
+Route::middleware('signed')->group(function () {
+    Route::get('register' , [CustomerController::class , 'signedCreate'])->name('customers.invitations.create-customer');
+    Route::post('register' , [CustomerController::class , 'signedStore'])->name('customers.invitations.store-customer');
 });

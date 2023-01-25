@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Constants;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
@@ -41,9 +42,10 @@ class BookController extends Controller
      */
     public function store(StoreBookRequest $request)
     {
-        Book::create($this->storeAndSetUploadedFiles($request->all()));
-
-        return back()->with('message' , 'Book has been Successfully Created.');
+        if (Book::create($this->storeAndSetUploadedFiles($request->all()))) {
+            return back()->with('message' , __('book.store.success'))->with('status' , Constants::SUCCESS_STATUS);
+        }
+        return back()->with('message' , __('book.store.failed'))->with('status' , Constants::FAILED_STATUS);
     }
 
     /**
@@ -66,9 +68,10 @@ class BookController extends Controller
      */
     public function update(UpdateBookRequest $request , Book $book): RedirectResponse
     {
-        $book->update($this->storeAndSetUploadedFiles($request->all()));
-
-        return back()->with('message' , 'Book has been Successfully updated.');
+        if ($book->update($this->storeAndSetUploadedFiles($request->all()))) {
+            return back()->with('message' , __('book.update.success'))->with('status' , Constants::SUCCESS_STATUS);
+        }
+        return back()->with('message' , __('book.update.failed'))->with('status' , Constants::FAILED_STATUS);
     }
 
     /**
@@ -76,15 +79,14 @@ class BookController extends Controller
      *
      * @param Book $book
      * @return RedirectResponse
-     * @throws \Throwable
      */
     public function destroy(Book $book): RedirectResponse
     {
-        $book->deleteOrFail();
-
-        $this->deleteBookFiles($book);
-
-        return back()->with('message' , 'Book has been Successfully deleted.');
+        if ($book->delete()) {
+            $this->deleteBookFiles($book);
+            return back()->with('message' , __('book.delete.success'))->with('status' , Constants::SUCCESS_STATUS);
+        }
+        return back()->with('message' , __('book.delete.failed'))->with('status' , Constants::FAILED_STATUS);
     }
 
 

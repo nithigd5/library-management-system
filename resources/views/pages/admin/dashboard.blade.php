@@ -9,11 +9,17 @@
 @section('main')
     <div class="main-content">
         <section class="section">
-            <div class="section-header">
-                <h1>Dashboard - A Simple analytics</h1>
+            <div class="section-header row justify-content-between">
+                <h1 class="col-6">Dashboard - A Simple analytics</h1>
+
+                <button type="button" class="btn btn-primary col-3 btn btn-primary"
+                        onclick="generateLink()">
+                    Generate a Customer Invitation Link
+                </button>
             </div>
 
             <div class="section-body">
+                <x-session-message :message="session('message')" :status="session('status')"></x-session-message>
                 <div class="row">
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="card card-statistic-2">
@@ -191,10 +197,10 @@
             </div>
         </section>
     </div>
-@endsection
 
+@endsection
+<x-invite-link-modal></x-invite-link-modal>
 @push('scripts')
     <!-- JS Libraies -->
-
     <!-- Page Specific JS File -->
 @endpush

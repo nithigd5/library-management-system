@@ -16,12 +16,8 @@
                 <h1>Register a Customer</h1>
             </div>
             <div class="section-body">
-                @if(session('message'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('message') }}
-                    </div>
-                @endif
-                <x-forms.user-register method="post" route="{{ route('customers.store') }}"
+                <x-session-message :message="session('message')" :status="session('status')"></x-session-message>
+                <x-forms.user-register method="post" route="{{ route('customers.store') }}" class="col-12 col-md-6 col-lg-6 m-auto"
                                        first_name="{{ old('first_name') }}" last_name="{{ old('last_name') }}"
                                        email="{{ old('email') }}" phone="{{ old('phone')  }}"
                                        address="{{ old('address') }}"

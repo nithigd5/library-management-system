@@ -11,16 +11,17 @@
 @section('main')
     <div class="main-content">
         <section class="section">
-            <div class="section-header">
-                <h1>Manage all Customers</h1>
+            <div class="section-header row justify-content-between">
+                <h1 class="col-6">Manage All Customers</h1>
+
+                <button type="button" class="btn btn-primary col-3 btn btn-primary"
+                        onclick="generateLink()">
+                    Generate a Customer Invitation Link
+                </button>
             </div>
 
             <div class="section-body">
-                @if(session('message'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('message') }}
-                    </div>
-                @endif
+                <x-session-message :message="session('message')" :status="session('status')"></x-session-message>
                 <div class="row">
                     @foreach($users as $user)
                         <div class="col-12 col-sm-6 col-md-6 col-lg-3">
@@ -56,6 +57,7 @@
     </div>
 
 @endsection
+<x-invite-link-modal></x-invite-link-modal>
 
 @push('scripts')
 @endpush

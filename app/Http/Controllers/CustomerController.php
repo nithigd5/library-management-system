@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Constants;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
 use App\Models\User;
@@ -9,7 +10,9 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class CustomerController extends Controller
 {
@@ -41,11 +44,12 @@ class CustomerController extends Controller
      */
     public function store(StoreCustomerRequest $request): RedirectResponse
     {
-        $user = User::create($this->saveProfileImage($request->all()));
+        if ($user = User::create($this->saveProfileImage($request->all()))) {
+            $user->activateAndMakeCustomer();
+            return back()->with('message' , __('customer.store.success'))->with('status' , Constants::SUCCESS_STATUS);
+        }
 
-        $user->activateAndMakeCustomer();
-
-        return back()->with('message' , 'Customer has been Successfully Created.');
+        return back()->with('message' , __('customer.store.failed'))->with('status' , Constants::FAILED_STATUS);
     }
 
     /**
@@ -69,9 +73,11 @@ class CustomerController extends Controller
     public function update(UpdateCustomerRequest $request , User $customer): RedirectResponse
     {
 
-        $customer->update($this->saveProfileImage($request->all()));
+        if ($customer->update($this->saveProfileImage($request->all()))) {
+            return back()->with('message' , __('customer.update.failed'))->with('status' , Constants::SUCCESS_STATUS);
+        }
+        return back()->with('message' , __('customer.update.success'))->with('status' , Constants::FAILED_STATUS);
 
-        return back()->with('message' , 'Customer has been Successfully Updated.');
     }
 
     /**
@@ -82,11 +88,50 @@ class CustomerController extends Controller
      */
     public function destroy(User $customer)
     {
-        $customer->deleteOrFail();
+        if ($customer->delete()) {
+            Storage::disk('public')->delete($customer->profile_image);
+            return back()->with('message' , __('customer.delete.success'))->with('status' , Constants::SUCCESS_STATUS);
+        }
 
-        Storage::disk('public')->delete($customer->profile_image);
+        return back()->with('message' , __('customer.delete.failed'))->with('status' , Constants::FAILED_STATUS);
 
-        return back()->with('message' , 'Customer has been Successfully deleted.');
+    }
+
+    /**
+     *
+     * generate a invitation link for a customer to generate
+     * @return string
+     */
+    public function invite()
+    {
+        return URL::temporarySignedRoute(
+            'customers.invitations.create-customer' , now()->addMinutes(60)
+        );
+    }
+
+    /**
+     * Show a page for creating a customer if valid signature
+     * @param Request $request
+     * @return Application|Factory|View
+     */
+    public function signedCreate(Request $request)
+    {
+        return view('pages.auth-register', ['url' =>  URL::temporarySignedRoute('customers.invitations.store-customer', now()->addMinutes(15))]);
+    }
+
+    /**
+     * Verify the signature and call store method
+     * @param StoreCustomerRequest $request
+     * @return RedirectResponse
+     */
+    public function signedStore(StoreCustomerRequest $request): RedirectResponse
+    {
+        if ($user = User::create($this->saveProfileImage($request->all()))) {
+            $user->activateAndMakeCustomer();
+            return to_route('login')->with('message' , __('customer.register.success'))->with('status' , Constants::SUCCESS_STATUS);
+        }
+
+        return back()->with('message' , __('customer.store.failed'))->with('status' , Constants::FAILED_STATUS);
     }
 
     /**

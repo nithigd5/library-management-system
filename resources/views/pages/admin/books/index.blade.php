@@ -16,11 +16,7 @@
             </div>
 
             <div class="section-body">
-                @if(session('message'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('message') }}
-                    </div>
-                @endif
+                <x-session-message :message="session('message')" :status="session('status')"></x-session-message>
                 <div class="row">
                     @foreach($books as $book)
                         <div class="col-12 col-sm-6 col-md-6 col-lg-3">

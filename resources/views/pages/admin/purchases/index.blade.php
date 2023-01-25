@@ -14,18 +14,13 @@
             <div class="section-header">
                 <h1>View recent {{ $status }} Purchases</h1>
             </div>
-
             <div class="section-body">
-                @if(session('message'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('message') }}
-                    </div>
-                @endif
+                <x-session-message :message="session('message')" :status="session('status')"></x-session-message>
                 <div class="row">
                     <div class="col">
                         <div class="card">
                             <div class="card-body p-0">
-                                <x-purchase-table :$purchases />
+                                <x-purchase-table :$purchases/>
                             </div>
                         </div>
                     </div>
