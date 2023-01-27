@@ -15,12 +15,19 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('profile_image')->nullable();
+            $table->dateTime('last_login')->useCurrent();
+            $table->text('address')->nullable();
+            $table->enum('status', ['active', 'inactive', 'banned'])->default('inactive');
+            $table->string('phone', 10)->unique();
+            $table->enum('type', ['admin', 'customer', 'guest'])->default('guest');
         });
     }
 
