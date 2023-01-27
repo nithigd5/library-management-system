@@ -15,7 +15,7 @@
         </tr>
         @foreach($purchases as $purchase)
             <tr>
-                <td><a href="{{ route('admin.books.show', $purchase->user->id) }}">{{ $purchase->book->name }}</a></td>
+                <td><a href="{{ route('admin.books.show', $purchase->book->id) }}">{{ $purchase->book->name }}</a></td>
                 <td class="font-weight-600"><a
                         href="{{ route('admin.customers.show', $purchase->user->id) }}">{{ $purchase->user->first_name.' '.$purchase->user->last_name }}</a>
                 </td>
