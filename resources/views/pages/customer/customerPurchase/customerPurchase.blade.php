@@ -27,7 +27,7 @@
                                         class="fab fa-cc-amex fa-2x me-2"></i></a>
                                 <a href="#!" type="submit" class="text-white"><i class="fab fa-cc-paypal fa-2x"></i></a>
 
-                                <form class="mt-4" action="{{route('purchase.store',3)}}" method="post"
+                                <form class="mt-4" action="{{route('purchase.store',$book->id)}}" method="post"
                                       enctype="multipart/form-data">
                                     @csrf
                                     <div class="form-outline form-white mb-4">
@@ -82,10 +82,16 @@
                                                     <span class="input-group-text">Rs.</span>
                                                 </div>
                                                 <input type="text" class="form-control col-sm-8" name="paidPrice"
-                                                       data-variable="{{$book->price}}" value="" id="subTotal"
+                                                       data-variable="{{$book->price}}" value="{{old('paidPrice')}}" id="subTotal"
                                                        aria-describedby="helpId" placeholder="">
                                             </div>
                                         </div>
+                                    </div>
+
+                                    <div class="my-2">
+                                    @error('paidPrice')
+                                    <span class="text-white">{{ $message }}</span>
+                                    @enderror
                                     </div>
 
                                     <button type="submit" class="btn btn-info btn-block btn-lg">

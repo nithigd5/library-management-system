@@ -37,7 +37,7 @@ class Purchase extends Model
     const PAYMENT_PENDING = 'Pending';
 
 
-    protected $fillable = ['user_id','book_id','price','for_rent','pending_amount','mode'];
+    protected $fillable = ['user_id','book_id','price','for_rent','pending_amount','payment_due','book_return_due','book_issued_at','mode'];
     /**
      * The attributes that should be mutated to dates.
      *

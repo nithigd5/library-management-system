@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PaymentRequest;
 use App\Models\Book;
 use App\Models\Purchase;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use PhpParser\Node\NullableType;
 
 class CustomerPurchaseController extends Controller
 {
@@ -27,7 +31,22 @@ class CustomerPurchaseController extends Controller
     public function create($id)
     {
         $book = Book::find($id);
-        return view('pages.customer.customerPurchase.customerPurchase', ['type_menu' => '', 'book' => $book]);
+        if ($book->mode == "online") {
+            $purchased = Purchase::where('user_id', auth()->user()->id)
+                ->where('book_id', $book->id)
+                ->where('book_return_due', '>=', Carbon::now())
+                ->orWhere('book_return_due', null)
+                ->exists();
+
+            if ($purchased) {
+                return back()->with('status', 'Book Already Purchased');
+            } else {
+                //user has not purchased the book
+                return view('pages.customer.customerPurchase.customerPurchase', ['type_menu' => '', 'book' => $book]);
+            }
+        }
+        else{
+            return back()->with('status', 'Book is available only in OFFLINE.');        }
     }
 
     /**
@@ -39,12 +58,21 @@ class CustomerPurchaseController extends Controller
     public function store(Request $request, $id)
     {
         $book = Book::find($id);
+        $validatedData = Validator::make($request->all(), (new PaymentRequest($book->price))->rules());
+        if ($validatedData->fails()) {
+            return redirect()->back()->withErrors($validatedData->errors());
+        }
+
         if ($request->rentOrBuy == true) {
             $pendingAmount = ($book->price - ($request->paidPrice));
+            $payDue = null;
             $rentOrBuy = 0;
+            $book_return_due = null;
         } else {
             $pendingAmount = 0;
             $rentOrBuy = 1;
+            $payDue = Carbon::now()->addDays(10);
+            $book_return_due = Carbon::now()->addDays(30);
         }
         Purchase::create([
             'user_id' => auth()->user()->id,
@@ -52,9 +80,12 @@ class CustomerPurchaseController extends Controller
             'price' => $book->price,
             'for_rent' => $rentOrBuy,
             'pending_amount' => $pendingAmount,
+            'payment_due' => Carbon::now()->addDays(15),
+            'book_return_due' => $book_return_due,
+            'book_issued_at' => Carbon::now(),
             'mode' => $book->mode,
         ]);
-        return to_route('book.show',$book->id);
+        return view('pages.customer.customerPurchase.paymentSuccess', ['type_menu' => '', 'book' => $book]);
     }
 
     /**

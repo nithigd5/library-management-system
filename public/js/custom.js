@@ -33,14 +33,18 @@ $(document).ready(function () {
         if (this.checked) {
             var orgPrice = (value).toFixed(2);
             $("#subTotal").val(orgPrice);
-            $("#subTotal").prop("disabled", false);
-            $("#subTotalPrice").text(orgPrice);
+            $("#subTotal").prop("readOnly", false);
         } else {
             var rentPrice = (value * 0.1).toFixed(2);
             $("#subTotal").val(rentPrice);
-            $("#subTotal").prop("disabled", true);
+            $("#subTotal").prop("readOnly", true);
             $("#subTotalPrice").text(rentPrice);
         }
+    });
+
+    $("#subTotal").keyup(function(){
+        var inputValue = $(this).val();
+        $("#subTotalPrice").text(inputValue);
     });
 
     $("#subTotal").on("input", function () {
@@ -50,6 +54,7 @@ $(document).ready(function () {
         }
     });
 });
+
 
 
 
