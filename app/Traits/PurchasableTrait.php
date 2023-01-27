@@ -71,9 +71,26 @@ trait PurchasableTrait
      * @param Builder $query
      * @return Builder
      */
-    public function scopeLatestPurchases(Builder $query , $status = Purchase::STATUS_OPEN): Builder
+    public function scopeLatestPurchases(Builder $query , $status = null): Builder
     {
-        return $query->latest('created_at')->where('status' , $status);
+        if ($status === Purchase::STATUS_OPEN) {
+            return $query->latest('created_at')
+                ->where('pending_amount' , '>' , 0)
+                ->Orwhere(function (Builder $query) {
+                    $query->where('for_rent' , true)
+                        ->whereNull('book_returned_at');
+                });
+        }
+        if ($status === Purchase::STATUS_CLOSE) {
+            return $query->latest('created_at')
+                ->where('pending_amount' , '=' , 0)
+                ->Orwhere(function (Builder $query) {
+                    $query->where('for_rent' , true)
+                        ->whereNotNull('book_returned_at');
+                });
+        }
+
+        return $query->latest('created_at');
     }
 
     /**
@@ -98,7 +115,7 @@ trait PurchasableTrait
     {
         return $query->oldest('created_at')
             ->where('payment_due' , '<' , now())
-            ->where('pending_amount', '>', 0);
+            ->where('pending_amount' , '>' , 0);
     }
 
     /**
