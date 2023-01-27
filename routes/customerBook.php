@@ -14,7 +14,7 @@ Route::middleware('auth')->group(function () {
 
     Route::name('purchase.')->group(function () {
         Route::get('purchase/{id}', [CustomerPurchaseController::class, 'create'])->name('create');
-//        Route::post('customer/purchase', [CustomerPurchaseController::class, 'store'])->name('store');
+        Route::post('purchase/{id}', [CustomerPurchaseController::class, 'store'])->name('store');
     });
 
 });

@@ -27,7 +27,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Purchase extends Model
 {
-    use HasFactory , PurchasableTrait;
+    use HasFactory, PurchasableTrait;
 
     const STATUS_OPEN = 'open';
     const STATUS_CLOSE = 'closed';
@@ -36,14 +36,16 @@ class Purchase extends Model
     const PAYMENT_HALF_PAID = 'Half-Paid';
     const PAYMENT_PENDING = 'Pending';
 
+
+    protected $fillable = ['user_id','book_id','price','for_rent','pending_amount','mode'];
     /**
      * The attributes that should be mutated to dates.
      *
      * @var array
      */
     protected $casts = [
-        'book_issued_at' => 'datetime' ,
-        'payment_due' => 'datetime' ,
+        'book_issued_at' => 'datetime',
+        'payment_due' => 'datetime',
         'book_returned_at' => 'datetime'
     ];
 

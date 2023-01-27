@@ -23,7 +23,7 @@ class CustomerDashboardController extends Controller
         $latestPurchases = Purchase::with('book' , 'user')->latestPurchases()->limit(5)->get();
         $topBooks = Book::limit(5)->get();
 
-        return view('pages.customer.customerDashboard' ,
+        return view('pages.admin.dashboard' ,
             compact('rentedBooksCount' , 'ownedLastMonth' , 'latestPurchases' , 'topBooks') ,
             ['type_menu' => 'dashboard']);
     }
