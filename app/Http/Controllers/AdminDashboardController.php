@@ -27,11 +27,15 @@ class AdminDashboardController extends Controller
 
         $latestPurchases = Purchase::with('book' , 'user')->latestPurchases()->limit(5)->get();
 
+        $lastMonthRevenueSum = Purchase::revenueSumBetween(now()->subMonth(), now())->first()->revenue;
+
+        $lastMonthRentedRevenueSum = Purchase::revenueSumBetween(now()->subMonth(), now(), true)->first()->revenue;
+
         $topBooks = Book::orderByMostPurchased()->limit(5)->get();
 
         return view('pages.admin.dashboard' ,
             compact('rentedBooksCount' , 'ownedLastMonth' , 'latestPurchases' ,
-                    'topBooks' , 'returnedBooksCount' , 'overDueBooksCount' , 'overDuePaymentsSum') ,
+                    'topBooks' , 'returnedBooksCount' , 'overDueBooksCount' , 'overDuePaymentsSum', 'lastMonthRevenueSum', 'lastMonthRentedRevenueSum') ,
             ['type_menu' => 'dashboard']);
     }
 }

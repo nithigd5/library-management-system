@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Purchase;
+use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use function PHPUnit\Framework\matches;
 
 class PurchaseController extends Controller
 {
@@ -14,9 +17,11 @@ class PurchaseController extends Controller
      * View all Purchases ordered by recent
      * @return Application|Factory|View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $purchases = Purchase::with('book' , 'user')->orderBy('updated_at')->paginate(10);
+
+
+        $purchases = $this->getPurchases($request->due, $request->type, $request->date_range);
 
         return view('pages.admin.purchases.index' , compact('purchases') , ['type_menu' => 'purchases' , 'status' => 'all']);
     }
@@ -83,5 +88,39 @@ class PurchaseController extends Controller
         } else {
             return back()->with('message' , 'Book is already returned')->with('status' , 'danger');
         }
+    }
+
+    public function getPurchases($due, $type, $date_range)
+    {
+        $query = Purchase::with('book' , 'user')->orderBy('updated_at');
+
+        $query = match($type){
+            'rent' => $query->where('for_rent', true),
+            'owned' => $query->where('for_rent', false),
+            default => $query
+        };
+
+        $query = match ($due){
+            'all' => $query->bookOverDue()->paymentOverDue(),
+            'book_due' => $query->bookOverDue(),
+            'payment_due' => $query->paymentOverDue(),
+            default => $query
+        };
+
+        $date_range = explode(' - ', $date_range);
+
+        //Handle Invalid Date Format Error
+        try{
+            $start = Carbon::createFromFormat('m/d/Y', $date_range[0]);
+            $end = Carbon::createFromFormat('m/d/Y', $date_range[1]);
+
+            if($date_range){
+                $query->whereBetween('created_at', [$start, $end]);
+            }
+        }catch (\Exception $e){
+
+        }
+
+       return $query->paginate(10);
     }
 }

@@ -15,7 +15,7 @@
           integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
           crossorigin="anonymous"
           referrerpolicy="no-referrer" />
-
+    <link rel="stylesheet" href="{{ asset('library/bootstrap-daterangepicker/daterangepicker.css') }}">
     @stack('style')
 
     <!-- Template CSS -->
@@ -53,6 +53,8 @@
 <script src="{{ asset('library/jquery.nicescroll/dist/jquery.nicescroll.min.js') }}"></script>
 <script src="{{ asset('library/moment/min/moment.min.js') }}"></script>
 <script src="{{ asset('js/stisla.js') }}"></script>
+<script src="{{ asset('library/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
+<script src="{{ asset('library/bootstrap-daterangepicker/moment.min.js') }}"></script>
 
 @stack('scripts')
 
