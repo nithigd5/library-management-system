@@ -56,6 +56,9 @@ trait PurchasableTrait
         return $this->scopeRentedBetween($query , now()->subMonth() , now())->whereNotNull('book_returned_at');
     }
 
+
+
+
     /**
      *
      * Get all rented books in last month
@@ -72,25 +75,40 @@ trait PurchasableTrait
      * @param Builder $query
      * @return Builder
      */
-    public function scopeLatestPurchases(Builder $query , $status = null): Builder
+    public function scopeByStatus(Builder $query , $status = Purchase::STATUS_OPEN): Builder
     {
         if ($status === Purchase::STATUS_OPEN) {
-            return $query->latest('created_at')
+            return $query
                 ->where('pending_amount' , '>' , 0)
-                ->Orwhere(function (Builder $query) {
-                    $query->where('for_rent' , true)
-                        ->whereNull('book_returned_at');
-                });
-        }
-        if ($status === Purchase::STATUS_CLOSE) {
-            return $query->latest('created_at')
-                ->where('pending_amount' , '=' , 0)
                 ->Orwhere(function (Builder $query) {
                     $query->where('for_rent' , true)
                         ->whereNotNull('book_returned_at');
                 });
         }
 
+        if ($status === Purchase::STATUS_CLOSE) {
+            return $query
+                ->where('pending_amount' , '=' , 0)
+                ->where(function (Builder $query) {
+                    $query->where('for_rent' , true)
+                        ->whereNotNull('book_returned_at')
+                        ->Orwhere('for_rent', false);
+                });
+        }
+
+        return $query;
+    }
+
+    /**
+     * get all latest purchases
+     * @param Builder $query
+     * @param null $status
+     * @return Builder
+     */
+    public function scopeLatestPurchases(Builder $query , $status = null): Builder
+    {
+        if ($status)
+            $query = $this->scopeByStatus($query , $status);
         return $query->latest('created_at');
     }
 
@@ -102,9 +120,9 @@ trait PurchasableTrait
     public function scopeBookOverDue(Builder $query): Builder
     {
         return $query
+            ->where('for_rent' , true)
             ->where('book_return_due' , '<' , now())
-            ->whereNull('book_returned_at')
-            ->where('for_rent' , true);
+            ->whereNull('book_returned_at');
     }
 
     /**

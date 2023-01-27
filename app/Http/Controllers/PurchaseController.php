@@ -9,7 +9,6 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use function PHPUnit\Framework\matches;
 
 class PurchaseController extends Controller
 {
@@ -19,33 +18,10 @@ class PurchaseController extends Controller
      */
     public function index(Request $request)
     {
-
-
-        $purchases = $this->getPurchases($request->due, $request->type, $request->date_range);
+        $purchases = $this->getPurchases($request->due , $request->type , $request->date_range ,
+            $request->status , $request->sort , $request->returned , $request->payment)->paginate(10);
 
         return view('pages.admin.purchases.index' , compact('purchases') , ['type_menu' => 'purchases' , 'status' => 'all']);
-    }
-
-    /**
-     * View all open Purchases ordered by recent
-     * @return Application|Factory|View
-     */
-    public function open()
-    {
-        $purchases = Purchase::with('book' , 'user')->latestPurchases()->paginate(10);
-
-        return view('pages.admin.purchases.index' , compact('purchases') , ['type_menu' => 'purchases' , 'status' => 'open']);
-    }
-
-    /**
-     * View all closed Purchases ordered by recent
-     * @return Application|Factory|View
-     */
-    public function closed()
-    {
-        $purchases = Purchase::with('book' , 'user')->latestPurchases(Purchase::STATUS_CLOSE)->paginate(10);
-
-        return view('pages.admin.purchases.index' , compact('purchases') , ['type_menu' => 'purchases' , 'status' => 'closed']);
     }
 
     /**
@@ -81,8 +57,8 @@ class PurchaseController extends Controller
             try {
                 $purchase->book_returned_at = now();
                 $purchase->saveOrFail();
-            }catch (\Throwable $e){
-                 return back()->with('message' , 'Book cannot be returned. Try again later')->with('status' , 'danger');
+            } catch (\Throwable $e) {
+                return back()->with('message' , 'Book cannot be returned. Try again later')->with('status' , 'danger');
             }
             return back()->with('message' , 'Book has been returned successfully')->with('status' , 'success');
         } else {
@@ -90,37 +66,67 @@ class PurchaseController extends Controller
         }
     }
 
-    public function getPurchases($due, $type, $date_range)
+    public function getPurchases($due = null , $type = null , $date_range = null , $status = null , $sort = null , $isReturned = null , $isPaid = null)
     {
-        $query = Purchase::with('book' , 'user')->orderBy('updated_at');
+        $query = Purchase::with('book' , 'user');
 
-        $query = match($type){
-            'rent' => $query->where('for_rent', true),
-            'owned' => $query->where('for_rent', false),
+        //Query By Type
+        $query = match ($type) {
+            'rented' => $query->where('for_rent' , true) ,
+            'owned' => $query->where('for_rent' , false) ,
             default => $query
         };
 
-        $query = match ($due){
-            'all' => $query->bookOverDue()->paymentOverDue(),
-            'book_due' => $query->bookOverDue(),
-            'payment_due' => $query->paymentOverDue(),
+        //Query By Due Date
+        $query = match ($due) {
+            'all' => $query->bookOverDue()->paymentOverDue() ,
+            'book_due' => $query->bookOverDue() ,
+            'payment_due' => $query->paymentOverDue() ,
             default => $query
         };
 
-        $date_range = explode(' - ', $date_range);
+        //Query by Status
+        $query = match ($status) {
+            'active' => $query->byStatus(Purchase::STATUS_OPEN) ,
+            'inactive' => $query->byStatus(Purchase::STATUS_CLOSE) ,
+            default => $query
+        };
 
-        //Handle Invalid Date Format Error
-        try{
-            $start = Carbon::createFromFormat('m/d/Y', $date_range[0]);
-            $end = Carbon::createFromFormat('m/d/Y', $date_range[1]);
+        $date_range = explode(' - ' , $date_range);
 
-            if($date_range){
-                $query->whereBetween('created_at', [$start, $end]);
+        //Handle Invalid Date Format Error and query between given date ranges
+        try {
+            $start = Carbon::createFromFormat('m/d/Y' , $date_range[0]);
+            $end = Carbon::createFromFormat('m/d/Y' , $date_range[1]);
+
+            if ($date_range) {
+                $query->whereBetween('created_at' , [$start , $end]);
             }
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
 
         }
 
-       return $query->paginate(10);
+        $query = match ($isReturned) {
+            '1' => $query->where('for_rent' , true)->whereNotNull('book_returned_at') ,
+            '0' => $query->where('for_rent' , true)->whereNull('book_returned_at') ,
+            default => $query
+        };
+
+        $query = match ($isPaid) {
+            '1' => $query->where('pending_amount' , '=' , 0) ,
+            '0' => $query->whereColumn('pending_amount' , '=' , 'price') ,
+            '2' => $query->where('pending_amount' , '>' , 0)
+                ->whereColumn('pending_amount' , '<' , 'price') ,
+            default => $query
+        };
+
+        //Sort the result
+        if ($sort == 'oldest') {
+            $query = $query->orderBy('updated_at');
+        } else {
+            $query = $query->orderByDesc('updated_at');
+        }
+
+        return $query;
     }
 }
