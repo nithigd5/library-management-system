@@ -14,7 +14,7 @@
             <li class="menu-header">Books</li>
             <li class="nav-item dropdown {{ $type_menu === 'books' ? 'active' : '' }}">
                 <a href="#"
-                   class="nav-link has-dropdown"><i class="fa-solid fa-book"></i> <span>Books</span></a>
+                   class="nav-link has-dropdown"><i class="fa  far fa-solid fa-book"></i> <span>Books</span></a>
                 <ul class="dropdown-menu">
                     <li class="{{ Request::is('admin/books') ? 'active' : '' }}">
                         <a href="{{ route('admin.books.index') }}">All Books</a>
@@ -27,7 +27,7 @@
             <li class="menu-header">Users</li>
             <li class="nav-item dropdown {{ $type_menu === 'customers' ? 'active' : '' }}">
                 <a href="#"
-                   class="nav-link has-dropdown"><i class="far fa-user"></i> <span>Customers</span></a>
+                   class="nav-link has-dropdown"><i class=" far fa-user"></i> <span>Customers</span></a>
                 <ul class="dropdown-menu">
                     <li class="{{ Request::is('admin/customers') ? 'active' : '' }}">
                         <a href="{{ route('admin.customers.index') }}">All Customers</a>
@@ -40,7 +40,7 @@
             <li class="menu-header">Purchases</li>
             <li class="nav-item dropdown {{ $type_menu === 'purchases' ? 'active' : '' }}">
                 <a href="#"
-                   class="nav-link has-dropdown"><i class="fa-solid fa-money-bill"></i><span>Purchases</span></a>
+                   class="nav-link has-dropdown"><i class="fa far fa-solid fa-solid fa-money-bill"></i><span>Purchases</span></a>
                 <ul class="dropdown-menu">
                     <li class="{{ Request::is('admin/purchases') ? 'active' : '' }}">
                         <a href="{{ route('admin.purchases.index') }}">All Purchases</a>

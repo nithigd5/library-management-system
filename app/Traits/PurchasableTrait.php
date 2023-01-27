@@ -50,6 +50,17 @@ trait PurchasableTrait
      * @param Builder $query
      * @return Builder
      */
+    public function scopeReturnedLastMonth(Builder $query): Builder
+    {
+        return $this->scopeRentedBetween($query , now()->subMonth() , now())->whereNotNull('book_returned_at');
+    }
+
+    /**
+     *
+     * Get all rented books in last month
+     * @param Builder $query
+     * @return Builder
+     */
     public function scopeOwnedLastMonth(Builder $query): Builder
     {
         return $this->scopePurchasedBetween($query , now()->subMonth() , now() , false);
@@ -60,9 +71,26 @@ trait PurchasableTrait
      * @param Builder $query
      * @return Builder
      */
-    public function scopeLatestPurchases(Builder $query , $status = Purchase::STATUS_OPEN): Builder
+    public function scopeLatestPurchases(Builder $query , $status = null): Builder
     {
-        return $query->latest('created_at')->where('status' , $status);
+        if ($status === Purchase::STATUS_OPEN) {
+            return $query->latest('created_at')
+                ->where('pending_amount' , '>' , 0)
+                ->Orwhere(function (Builder $query) {
+                    $query->where('for_rent' , true)
+                        ->whereNull('book_returned_at');
+                });
+        }
+        if ($status === Purchase::STATUS_CLOSE) {
+            return $query->latest('created_at')
+                ->where('pending_amount' , '=' , 0)
+                ->Orwhere(function (Builder $query) {
+                    $query->where('for_rent' , true)
+                        ->whereNotNull('book_returned_at');
+                });
+        }
+
+        return $query->latest('created_at');
     }
 
     /**
@@ -70,12 +98,24 @@ trait PurchasableTrait
      * @param Builder $query
      * @return Builder
      */
-    public function scopeBookOverDuePurchases(Builder $query): Builder
+    public function scopeBookOverDue(Builder $query): Builder
     {
         return $query->oldest('created_at')
             ->where('book_return_due' , '<' , now())
             ->whereNull('book_returned_at')
             ->where('for_rent' , true);
+    }
+
+    /**
+     * get all latest purchases
+     * @param Builder $query
+     * @return Builder
+     */
+    public function scopePaymentOverDue(Builder $query): Builder
+    {
+        return $query->oldest('created_at')
+            ->where('payment_due' , '<' , now())
+            ->where('pending_amount' , '>' , 0);
     }
 
     /**

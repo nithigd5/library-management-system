@@ -70,7 +70,7 @@ class BookController extends Controller
      */
     public function show($id)
     {
-        $book=Book::find($id);
+        $book=Book::findOrFail($id);
         return view('pages.admin.books.showBooks',[ 'type_menu'=> '','book'=>$book]);
     }
     /**

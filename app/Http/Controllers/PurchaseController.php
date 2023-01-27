@@ -49,7 +49,7 @@ class PurchaseController extends Controller
      */
     public function overdue()
     {
-        $purchases = Purchase::with('book' , 'user')->bookOverDuePurchases()->paginate(10);
+        $purchases = Purchase::with('book' , 'user')->bookOverDue()->paginate(10);
 
         return view('pages.admin.purchases.index' , compact('purchases') , ['type_menu' => 'purchases' , 'status' => 'closed']);
     }
