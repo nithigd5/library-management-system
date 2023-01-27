@@ -36,9 +36,6 @@ class PurchaseFactory extends Factory
             'book_returned_at' => function ($attr) {
                 return $attr['for_rent'] ? fake()->randomElement([$attr['book_issued_at']->copy()->addDays(10) , null]) : null;
             } ,
-            'status' => function ($attr) {
-                return !is_null($attr['book_returned_at']) && $attr['pending_amount'] === 0 ? 'closed' : 'open';
-            } ,
         ];
     }
 }

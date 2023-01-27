@@ -4,7 +4,6 @@ namespace App\Traits;
 
 use App\Models\Purchase;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
 
 trait PurchasableTrait
 {
@@ -51,6 +50,17 @@ trait PurchasableTrait
      * @param Builder $query
      * @return Builder
      */
+    public function scopeReturnedLastMonth(Builder $query): Builder
+    {
+        return $this->scopeRentedBetween($query , now()->subMonth() , now())->whereNotNull('book_returned_at');
+    }
+
+    /**
+     *
+     * Get all rented books in last month
+     * @param Builder $query
+     * @return Builder
+     */
     public function scopeOwnedLastMonth(Builder $query): Builder
     {
         return $this->scopePurchasedBetween($query , now()->subMonth() , now() , false);
@@ -71,7 +81,7 @@ trait PurchasableTrait
      * @param Builder $query
      * @return Builder
      */
-    public function scopeBookOverDuePurchases(Builder $query): Builder
+    public function scopeBookOverDue(Builder $query): Builder
     {
         return $query->oldest('created_at')
             ->where('book_return_due' , '<' , now())
@@ -80,17 +90,15 @@ trait PurchasableTrait
     }
 
     /**
-     * Get all books which are bought highest in order.
+     * get all latest purchases
      * @param Builder $query
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
-    public function scopeOrderByMostPurchased(Builder $query): \Illuminate\Database\Query\Builder
+    public function scopePaymentOverDue(Builder $query): Builder
     {
-        return DB::table('books')
-            ->joinSub($query->select('book_id' , DB::raw('count(book_id) as sales'))
-                ->groupBy('book_id') , 'purchases' , function ($join) {
-                $join->on('purchases.book_id' , '=' , 'books.id');
-            })->orderBy('sales', 'Desc');
+        return $query->oldest('created_at')
+            ->where('payment_due' , '<' , now())
+            ->where('pending_amount', '>', 0);
     }
 
     /**

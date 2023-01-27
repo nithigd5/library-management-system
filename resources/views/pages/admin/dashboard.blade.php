@@ -22,50 +22,49 @@
                 <x-session-message :message="session('message')" :status="session('status')"></x-session-message>
                 <div class="row">
                     <div class="col-lg-4 col-md-4 col-sm-12">
-                        <div class="card card-statistic-2">
+                        <div class="card card-statistic-2 pb-2">
                             <div class="card-stats">
-                                <div class="card-stats-title">Book Acquisitions Statistics -
-                                    <div class="dropdown d-inline">
-                                        <a class="font-weight-600 dropdown-toggle" data-toggle="dropdown" href="#"
-                                           id="orders-month">August</a>
-                                        <ul class="dropdown-menu dropdown-menu-sm">
-                                            <li class="dropdown-title">Select Month</li>
-                                            <li><a href="#" class="dropdown-item">January</a></li>
-                                            <li><a href="#" class="dropdown-item">February</a></li>
-                                            <li><a href="#" class="dropdown-item">March</a></li>
-                                            <li><a href="#" class="dropdown-item">April</a></li>
-                                            <li><a href="#" class="dropdown-item">May</a></li>
-                                            <li><a href="#" class="dropdown-item">June</a></li>
-                                            <li><a href="#" class="dropdown-item">July</a></li>
-                                            <li><a href="#" class="dropdown-item active">August</a></li>
-                                            <li><a href="#" class="dropdown-item">September</a></li>
-                                            <li><a href="#" class="dropdown-item">October</a></li>
-                                            <li><a href="#" class="dropdown-item">November</a></li>
-                                            <li><a href="#" class="dropdown-item">December</a></li>
-                                        </ul>
-                                    </div>
+                                <div class="card-stats-title">Book Rented Statistics
                                 </div>
                                 <div class="card-stats-items">
-                                    <div class="card-stats-item">
-                                        <div class="card-stats-item-count">{{ $rentedBooksCount }}</div>
+                                    <div class="card-stats-item text-primary">
+                                        <div class="card-stats-item-count text-primary">{{ $rentedBooksCount }}</div>
                                         <div class="card-stats-item-label">Rented</div>
                                     </div>
-                                    <div class="card-stats-item">
-                                        <div class="card-stats-item-count">{{ $ownedLastMonth }}</div>
-                                        <div class="card-stats-item-label">Owned</div>
+                                    <div class="card-stats-item text-danger">
+                                        <div class="card-stats-item-count text-danger">{{ $overDueBooksCount }}</div>
+                                        <div class="card-stats-item-label">Overdue</div>
                                     </div>
-                                    <div class="card-stats-item">
-                                        <div class="card-stats-item-count">23</div>
+                                    <div class="card-stats-item text-success">
+                                        <div class="card-stats-item-count ">{{ $returnedBooksCount }}</div>
                                         <div class="card-stats-item-label">Returned</div>
                                     </div>
                                 </div>
                             </div>
+
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="card card-statistic-2">
+                            <div class="card-icon shadow-primary bg-primary">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <div class="card-wrap">
+                                <div class="card-header">
+                                    <h4>Owned Last 30 Days</h4>
+                                </div>
+                                <div class="card-body">
+                                    {{ $ownedLastMonth }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card card-statistic-2">
                             <div class="card-icon shadow-primary bg-primary">
                                 <i class="fas fa-archive"></i>
                             </div>
                             <div class="card-wrap">
                                 <div class="card-header">
-                                    <h4>Total Acquisitions</h4>
+                                    <h4>Total Book Acquisitions Last 30 days</h4>
                                 </div>
                                 <div class="card-body">
                                     {{ $rentedBooksCount + $ownedLastMonth }}
@@ -73,6 +72,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="card card-statistic-2">
                             <div class="card-icon shadow-primary bg-primary">
@@ -80,7 +80,7 @@
                             </div>
                             <div class="card-wrap">
                                 <div class="card-header">
-                                    <h4>Balance</h4>
+                                    <h4>Total Revenue last 30 Days</h4>
                                 </div>
                                 <div class="card-body">
                                     $187,13
@@ -93,43 +93,16 @@
                             </div>
                             <div class="card-wrap">
                                 <div class="card-header">
-                                    <h4>Balance</h4>
+                                    <h4>Total Unpaid Payment</h4>
                                 </div>
                                 <div class="card-body">
-                                    $187,13
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-4 col-sm-12">
-                        <div class="card card-statistic-2">
-                            <div class="card-icon shadow-primary bg-primary">
-                                <i class="fas fa-shopping-bag"></i>
-                            </div>
-                            <div class="card-wrap">
-                                <div class="card-header">
-                                    <h4>Sales</h4>
-                                </div>
-                                <div class="card-body">
-                                    4,732
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card card-statistic-2">
-                            <div class="card-icon shadow-primary bg-primary">
-                                <i class="fas fa-shopping-bag"></i>
-                            </div>
-                            <div class="card-wrap">
-                                <div class="card-header">
-                                    <h4>Sales</h4>
-                                </div>
-                                <div class="card-body">
-                                    4,732
+                                   @money($overDuePaymentsSum)
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="col-md-4">
                         <div class="card gradient-bottom">
@@ -151,16 +124,22 @@
                                 <ul class="list-unstyled list-unstyled-border">
                                     @foreach($topBooks as $book)
                                         <li class="media">
-                                            <a href="{{ route('admin.books.show', $book->id) }}"><img class="mr-3 rounded" width="55"
-                                                             src="{{ Storage::url($book->image) }}"
-                                                             alt="product">
+                                            <a href="{{ route('admin.books.show', $book->id) }}"><img
+                                                    class="mr-3 rounded" width="55"
+                                                    src="{{ Storage::url($book->image) }}"
+                                                    alt="product">
                                             </a>
                                             <div class="media-body">
                                                 <div class="float-right">
-                                                    <div class="font-weight-600 text-muted text-small">{{ $book->sales }} Sales</div>
+                                                    <div
+                                                        class="font-weight-600 text-muted text-small">{{ $book->sales }}
+                                                        Sales
+                                                    </div>
                                                 </div>
                                                 <div class="media-title text-truncate"
-                                                     style="width: 200px;"><a href="{{ route('admin.books.show', $book->id) }}"> {{ $book->name }}</a></div>
+                                                     style="width: 200px;"><a
+                                                        href="{{ route('admin.books.show', $book->id) }}"> {{ $book->name }}</a>
+                                                </div>
                                                 <div class="mt-1">
                                                     {{ $book->author }}
                                                 </div>
@@ -195,9 +174,11 @@
                                         </tr>
                                         @foreach($latestPurchases as $purchase)
                                             <tr>
-                                                <td><a href="{{ route('admin.books.show', $purchase->book->id) }}" class="d-block text-truncate"
+                                                <td><a href="{{ route('admin.books.show', $purchase->book->id) }}"
+                                                       class="d-block text-truncate"
                                                        style="max-width: 120px;">{{ $purchase->book->name }}</a></td>
-                                                <td><a href="{{ route('admin.customers.show', $purchase->user->id) }}" class="d-block text-truncate"
+                                                <td><a href="{{ route('admin.customers.show', $purchase->user->id) }}"
+                                                       class="d-block text-truncate"
                                                        style="max-width: 120px;">{{ $purchase->user->first_name.' '.$purchase->user->last_name }}</a>
                                                 </td>
                                                 <td>
