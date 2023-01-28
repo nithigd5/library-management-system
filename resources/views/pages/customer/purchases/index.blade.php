@@ -2,7 +2,7 @@
 
 @extends('layouts.customer-app')
 
-@section('title', 'My Purchases')
+@section('title', 'Customers')
 
 @push('style')
     <!-- CSS Libraries -->

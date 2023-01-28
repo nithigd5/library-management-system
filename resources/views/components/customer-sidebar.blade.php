@@ -22,22 +22,14 @@
                 </ul>
             </li>
             <li class="menu-header">Purchases</li>
-            <li class="nav-item dropdown {{ $type_menu === 'purchases' ? 'active' : '' }}">
+            <li class="nav-item dropdown {{ $type_menu === 'purchase' ? 'active' : '' }}">
                 <a href="#"
-                   class="nav-link has-dropdown"><i class="fa-solid fa-money-bill"></i><span>Purchases</span></a>
-{{--                <ul class="dropdown-menu">--}}
-{{--                    <li class="{{ Request::is('purchases') ? 'active' : '' }}">--}}
-{{--                        <a href="{{ route('admin.purchases.index') }}">All Purchases</a>--}}
-{{--                    </li>--}}
-
-{{--                    <li class="{{ Request::is('purchases/open') ? 'active' : '' }}">--}}
-{{--                        <a href="{{ route('admin.purchases.open') }}">Open Purchases</a>--}}
-{{--                    </li>--}}
-
-{{--                    <li class="{{ Request::is('purchases/closed') ? 'active' : '' }}">--}}
-{{--                        <a href="{{ route('admin.purchases.closed') }}">closed Purchases</a>--}}
-{{--                    </li>--}}
-{{--                </ul>--}}
+                   class="nav-link has-dropdown"><i class="fa far fa-solid fa-solid fa-money-bill"></i><span>Purchases</span></a>
+                <ul class="dropdown-menu">
+                    <li class="{{ Request::is('purchase') ? 'active' : '' }}">
+                        <a href="{{ route('purchase.index') }}">All Purchases</a>
+                    </li>
+                </ul>
             </li>
         </ul>
     </aside>

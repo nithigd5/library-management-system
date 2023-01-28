@@ -12,9 +12,10 @@ class CustomerDashboardController extends Controller
 {
 
     /**
-     * @return Application|Factory|View
+     * Admin Dashboard View
+     * @return Factory|View|Application
      */
-    public function index()
+    public function index(): Factory|View|Application
     {
         $rentedBooksCount = Purchase::rentedLastMonth()->count();
         $returnedBooksCount = Purchase::returnedLastMonth()->count();
@@ -26,77 +27,15 @@ class CustomerDashboardController extends Controller
 
         $latestPurchases = Purchase::with('book' , 'user')->latestPurchases()->limit(5)->get();
 
+        $lastMonthRevenueSum = Purchase::revenueSumBetween(now()->subMonth(), now())->first()->revenue;
+
+        $lastMonthRentedRevenueSum = Purchase::revenueSumBetween(now()->subMonth(), now(), true)->first()->revenue;
+
         $topBooks = Book::orderByMostPurchased()->limit(5)->get();
 
         return view('pages.customer.customerDashboard' ,
             compact('rentedBooksCount' , 'ownedLastMonth' , 'latestPurchases' ,
-                'topBooks' , 'returnedBooksCount' , 'overDueBooksCount' , 'overDuePaymentsSum') ,
+                'topBooks' , 'returnedBooksCount' , 'overDueBooksCount' , 'overDuePaymentsSum', 'lastMonthRevenueSum', 'lastMonthRentedRevenueSum') ,
             ['type_menu' => 'dashboard']);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

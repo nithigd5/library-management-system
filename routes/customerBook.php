@@ -18,6 +18,10 @@ Route::middleware('auth')->group(function () {
     Route::name('purchase.')->group(function () {
         Route::get('purchase/{id}', [CustomerPurchaseController::class, 'create'])->name('create');
         Route::post('purchase/{id}', [CustomerPurchaseController::class, 'store'])->name('store');
+        Route::get('/purchase' , [CustomerPurchaseController::class , 'index'])->name('index');
+        Route::get('/purchase/open' , [CustomerPurchaseController::class , 'open'])->name('open');
+        Route::get('/purchase/closed' , [CustomerPurchaseController::class  , 'closed'])->name('closed');
+        Route::get('/purchase/{purchase}' , [CustomerPurchaseController::class , 'show'])->name('show');
     });
 
 
