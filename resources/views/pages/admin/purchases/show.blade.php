@@ -110,8 +110,9 @@
 
                                 <div class="row text-right my-4 justify-content-end">
                                     <div class="col-md-8">
-                                        <p class="lead mb-0" style="color: var(--primary);"><span
-                                                class="mr-2">Pending Amount </span> @money($purchase->pending_amount)
+                                        <p class="lead mb-0" style="color: var(--primary);">
+                                            <span class="mr-2">Pending Amount </span>
+                                            <span id="pending_amount">@money($purchase->pending_amount)</span>
                                         </p>
                                     </div>
                                 </div>
@@ -128,7 +129,9 @@
                                                   method="post"> @csrf @method('put')</form>
                                         @endif
                                         @if($purchase->toPay())
-                                            <a href="#" class="btn btn-primary col mx-2">Pay Balance amount</a>
+                                            <button onclick="showPaymentUpdateModal()"
+                                                    class="btn btn-primary col mx-2">Pay Balance amount
+                                            </button>
                                         @endif
                                     </div>
                                 @endif
@@ -143,8 +146,51 @@
             </div>
         </section>
     </div>
-
+    <div class="modal fade" id="payment-update-modal" tabindex="-1" style="display: none">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update a Payment</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('admin.purchases.update', $purchase->id) }}"
+                          method="post" id="update-payment">
+                        <div class="form-group">
+                            <label for="amount">Payment Amount</label>
+                            <input type="number" class="form-control text-primary" id="amount" name="amount"
+                                   style="height: auto"/>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        @csrf @method('PUT')
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <p class="text-success" id="update-success"></p>
+                    <button type="button" class="btn btn-primary" onclick="updatePayment()">Save
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
+    <script>
+        function showPaymentUpdateModal() {
+            $('#payment-update-modal').modal('show');
+        }
+
+        function updatePayment() {
+            createAndValidateAjax("#update-payment", function (data) {
+                console.log(data)
+                let text = `${data.message}. Pending Amount: ${data.data.pending_amount}`
+                $("#update-success").text(text)
+                $("#pending_amount").text(`$${data.data.pending_amount}`)
+            })
+        }
+    </script>
 @endpush
