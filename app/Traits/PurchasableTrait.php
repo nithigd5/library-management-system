@@ -138,6 +138,17 @@ trait PurchasableTrait
     }
 
     /**
+     * get all latest purchases
+     * @param Builder $query
+     * @return Builder
+     */
+    public function scopeUnpaidPayment(Builder $query): Builder
+    {
+        return $query
+            ->where('pending_amount' , '>' , 0);
+    }
+
+    /**
      * get a revenue column = price - pending_amount between given dates
      * @param Builder $query
      * @param $start
@@ -155,6 +166,8 @@ trait PurchasableTrait
 
         return $query;
     }
+
+
 
     /**
      * get a total revenue between given dates
