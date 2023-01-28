@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Models\Purchase;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 trait PurchasableTrait
 {
@@ -55,6 +56,9 @@ trait PurchasableTrait
         return $this->scopeRentedBetween($query , now()->subMonth() , now())->whereNotNull('book_returned_at');
     }
 
+
+
+
     /**
      *
      * Get all rented books in last month
@@ -71,25 +75,40 @@ trait PurchasableTrait
      * @param Builder $query
      * @return Builder
      */
-    public function scopeLatestPurchases(Builder $query , $status = null): Builder
+    public function scopeByStatus(Builder $query , $status = Purchase::STATUS_OPEN): Builder
     {
         if ($status === Purchase::STATUS_OPEN) {
-            return $query->latest('created_at')
+            return $query
                 ->where('pending_amount' , '>' , 0)
-                ->Orwhere(function (Builder $query) {
-                    $query->where('for_rent' , true)
-                        ->whereNull('book_returned_at');
-                });
-        }
-        if ($status === Purchase::STATUS_CLOSE) {
-            return $query->latest('created_at')
-                ->where('pending_amount' , '=' , 0)
                 ->Orwhere(function (Builder $query) {
                     $query->where('for_rent' , true)
                         ->whereNotNull('book_returned_at');
                 });
         }
 
+        if ($status === Purchase::STATUS_CLOSE) {
+            return $query
+                ->where('pending_amount' , '=' , 0)
+                ->where(function (Builder $query) {
+                    $query->where('for_rent' , true)
+                        ->whereNotNull('book_returned_at')
+                        ->Orwhere('for_rent', false);
+                });
+        }
+
+        return $query;
+    }
+
+    /**
+     * get all latest purchases
+     * @param Builder $query
+     * @param null $status
+     * @return Builder
+     */
+    public function scopeLatestPurchases(Builder $query , $status = null): Builder
+    {
+        if ($status)
+            $query = $this->scopeByStatus($query , $status);
         return $query->latest('created_at');
     }
 
@@ -100,10 +119,10 @@ trait PurchasableTrait
      */
     public function scopeBookOverDue(Builder $query): Builder
     {
-        return $query->oldest('created_at')
+        return $query
+            ->where('for_rent' , true)
             ->where('book_return_due' , '<' , now())
-            ->whereNull('book_returned_at')
-            ->where('for_rent' , true);
+            ->whereNull('book_returned_at');
     }
 
     /**
@@ -113,9 +132,47 @@ trait PurchasableTrait
      */
     public function scopePaymentOverDue(Builder $query): Builder
     {
-        return $query->oldest('created_at')
+        return $query
             ->where('payment_due' , '<' , now())
             ->where('pending_amount' , '>' , 0);
+    }
+
+    /**
+     * get a revenue column = price - pending_amount between given dates
+     * @param Builder $query
+     * @param $start
+     * @param $end
+     * @param bool $for_rent
+     * @return Builder
+     */
+    public function scopeRevenueBetween(Builder $query , $start , $end , $for_rent = true): Builder
+    {
+        $query = $query
+            ->select(DB::raw('price - pending_amount as revenue'))
+            ->whereBetween('created_at' , [$start , $end]);
+
+        if ($for_rent) $query->where('for_rent' , $for_rent);
+
+        return $query;
+    }
+
+    /**
+     * get a total revenue between given dates
+     * @param Builder $query
+     * @param $start
+     * @param $end
+     * @param bool $for_rent
+     * @return Builder
+     */
+    public function scopeRevenueSumBetween(Builder $query , $start , $end , $for_rent = false): Builder
+    {
+        $query = $query
+            ->select(DB::raw('SUM(price - pending_amount) as revenue'))
+            ->whereBetween('created_at' , [$start , $end]);
+
+        if ($for_rent) $query->where('for_rent' , $for_rent);
+
+        return $query;
     }
 
     /**

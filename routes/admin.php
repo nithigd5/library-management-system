@@ -41,12 +41,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::name('purchases.')->prefix('purchases')->group(function () {
         Route::get('/' , [PurchaseController::class , 'index'])->name('index')->can('books.purchases.viewAny');
 
-        Route::get('/open' , [PurchaseController::class , 'open'])->name('open')->can('books.purchases.viewAny');
-
-        Route::get('/closed' , [PurchaseController::class , 'closed'])->name('closed')->can('books.purchases.viewAny');
-
-        Route::get('/overdue' , [PurchaseController::class , 'overdue'])->name('overdue')->can('books.purchases.viewAny');
-
         Route::get('/{purchase}' , [PurchaseController::class , 'show'])->name('show')->can('books.purchases.viewAny');
 
         Route::put('/{purchase}/return-book' , [PurchaseController::class , 'returnBook'])->name('return-book')->can('books.purchases.updateAny');

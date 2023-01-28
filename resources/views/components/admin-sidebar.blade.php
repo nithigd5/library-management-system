@@ -45,18 +45,6 @@
                     <li class="{{ Request::is('admin/purchases') ? 'active' : '' }}">
                         <a href="{{ route('admin.purchases.index') }}">All Purchases</a>
                     </li>
-
-                    <li class="{{ Request::is('admin/purchases/open') ? 'active' : '' }}">
-                        <a href="{{ route('admin.purchases.open') }}">Open Purchases</a>
-                    </li>
-
-                    <li class="{{ Request::is('admin/purchases/closed') ? 'active' : '' }}">
-                        <a href="{{ route('admin.purchases.closed') }}">closed Purchases</a>
-                    </li>
-
-                    <li class="{{ Request::is('admin/purchases/overdue') ? 'active' : '' }}">
-                        <a href="{{ route('admin.purchases.overdue') }}">Overdue Purchases</a>
-                    </li>
                 </ul>
             </li>
         </ul>
