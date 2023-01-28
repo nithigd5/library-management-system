@@ -63,7 +63,7 @@
                                 <h4>Total Unpaid Money</h4>
                                 </div>
                                 <div class="card-body">
-                                    @money($overDuePaymentsSum)
+                                    @money($unPaidSum)
                                 </div>
                             </div>
                         </div>

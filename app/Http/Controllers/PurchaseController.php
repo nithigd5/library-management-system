@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PaymentUpdateRequest;
 use App\Models\Purchase;
 use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
@@ -25,17 +26,6 @@ class PurchaseController extends Controller
     }
 
     /**
-     * View all closed Purchases ordered by recent
-     * @return Application|Factory|View
-     */
-    public function overdue()
-    {
-        $purchases = Purchase::with('book' , 'user')->bookOverDue()->paginate(10);
-
-        return view('pages.admin.purchases.index' , compact('purchases') , ['type_menu' => 'purchases' , 'status' => 'closed']);
-    }
-
-    /**
      * Show a particular book view page
      * @param $book
      * @return Application|Factory|View
@@ -44,6 +34,60 @@ class PurchaseController extends Controller
     {
         $purchase = Purchase::with('user' , 'book')->findOrFail($id);
         return view('pages.admin.purchases.show' , compact('purchase') , ['type_menu' => 'purchases']);
+    }
+
+    /**
+     * Show a view for creating a new offline Purchase
+     * @return void
+     */
+    public function create()
+    {
+
+    }
+
+    /**
+     * store new offline Purchase
+     * @return void
+     */
+    public function store()
+    {
+
+    }
+
+    /**
+     * store updated purchase offline Purchase
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Purchase $purchase , PaymentUpdateRequest $request)
+    {
+        //Check if given amount is not greater than pending amount
+
+        if ($purchase->pending_amount < $request->amount)
+            return response()->json([
+                'message' => 'failed' ,
+                'errors' => [
+                    'amount' => ['Payment Amount cannot be greater than pending amount: '.$purchase->pending_amount]
+                ]
+            ] , 422);
+
+        $purchase->pending_amount = $purchase->pending_amount - $request->amount;
+
+        if (!$purchase->save()) {
+            return response()->json([
+                'message' => 'failed' ,
+                'errors' => [
+                    'amount' => ['Payment Amount cannot be updated. Please try again later.']
+                ]
+            ] , 400);
+        }
+
+        return response()->json([
+            'message' => 'success' ,
+            'data' => [
+                'pending_amount' => $purchase->pending_amount
+            ]
+        ] , 200);
+
     }
 
     /**

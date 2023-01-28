@@ -39,11 +39,17 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     });
 
     Route::name('purchases.')->prefix('purchases')->group(function () {
-        Route::get('/' , [PurchaseController::class , 'index'])->name('index')->can('books.purchases.viewAny');
+        Route::get('' , [PurchaseController::class , 'index'])->name('index')->can('books.purchases.viewAny');
 
-        Route::get('/{purchase}' , [PurchaseController::class , 'show'])->name('show')->can('books.purchases.viewAny');
+        Route::get('{purchase}' , [PurchaseController::class , 'show'])->name('show')->can('books.purchases.viewAny');
 
-        Route::put('/{purchase}/return-book' , [PurchaseController::class , 'returnBook'])->name('return-book')->can('books.purchases.updateAny');
+        Route::get('create' , [PurchaseController::class , 'create'])->name('create')->can('books.purchases.createAny');
+
+        Route::post('store' , [PurchaseController::class , 'store'])->name('store')->can('books.purchases.createAny');
+
+        Route::put('{purchase}/update' , [PurchaseController::class , 'update'])->name('update')->can('books.purchases.updateAny');
+
+        Route::put('{purchase}/return-book' , [PurchaseController::class , 'returnBook'])->name('return-book')->can('books.purchases.updateAny');
     });
 
     Route::middleware('auth')->name('books.')->group(function () {

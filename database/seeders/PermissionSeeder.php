@@ -78,6 +78,9 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'books.purchase.updateAny']);
         Permission::create(['name' => 'books.purchase.update']);
 
+        Permission::create(['name' => 'books.purchase.create']);
+        Permission::create(['name' => 'books.purchase.createAny']);
+
         Permission::create(['name' => 'books.purchase.offline']);
         Permission::create(['name' => 'books.purchase.online']);
         Permission::create(['name' => 'books.purchase.pay.later']);

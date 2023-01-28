@@ -21,21 +21,28 @@ class AdminDashboardController extends Controller
         $returnedBooksCount = Purchase::returnedLastMonth()->count();
         $overDueBooksCount = Purchase::bookOverDue()->count();
 
-        $overDuePaymentsSum = Purchase::paymentOverDue()->sum('pending_amount');
+        $unPaidSum = Purchase::unpaidPayment()->sum('pending_amount');
 
         $ownedLastMonth = Purchase::ownedLastMonth()->count();
 
         $latestPurchases = Purchase::with('book' , 'user')->latestPurchases()->limit(5)->get();
 
-        $lastMonthRevenueSum = Purchase::revenueSumBetween(now()->subMonth(), now())->first()->revenue;
+        $lastMonthRevenueSum = Purchase::revenueSumBetween(now()->subMonth() , now())->first()->revenue;
 
-        $lastMonthRentedRevenueSum = Purchase::revenueSumBetween(now()->subMonth(), now(), true)->first()->revenue;
+        $lastMonthRentedRevenueSum = Purchase::revenueSumBetween(now()->subMonth() , now() , true)->first()->revenue;
 
         $topBooks = Book::orderByMostPurchased()->limit(5)->get();
 
         return view('pages.admin.dashboard' ,
-            compact('rentedBooksCount' , 'ownedLastMonth' , 'latestPurchases' ,
-                    'topBooks' , 'returnedBooksCount' , 'overDueBooksCount' , 'overDuePaymentsSum', 'lastMonthRevenueSum', 'lastMonthRentedRevenueSum') ,
+            compact('rentedBooksCount' ,
+                'ownedLastMonth' ,
+                'latestPurchases' ,
+                'topBooks' ,
+                'returnedBooksCount' ,
+                'overDueBooksCount' ,
+                'unPaidSum' ,
+                'lastMonthRevenueSum' ,
+                'lastMonthRentedRevenueSum') ,
             ['type_menu' => 'dashboard']);
     }
 }
