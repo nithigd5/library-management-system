@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             BookRequestSeeder::class,
             OfflineEntrySeeder::class,
+            PurchaseSeeder::class
         ]);
     }
 }

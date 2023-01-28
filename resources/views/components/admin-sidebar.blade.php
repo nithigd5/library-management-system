@@ -7,7 +7,7 @@
             <a href="{{ route('admin.dashboard') }}">LMS</a>
         </div>
         <ul class="sidebar-menu">
-            <li class='nav-item {{ Request::is('admin/admin') ? 'active' : '' }}'>
+            <li class='nav-item {{ Request::is('admin') ? 'active' : '' }}'>
                 <a class="nav-link"
                    href="{{ route('admin.dashboard') }}"><i class="fas fa-fire"></i><span>Dashboard</span></a>
             </li>

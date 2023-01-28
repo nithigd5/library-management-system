@@ -18,10 +18,14 @@ class AdminDashboardController extends Controller
     public function index(): Factory|View|Application
     {
         $rentedBooksCount = Purchase::rentedLastMonth()->count();
+
         $returnedBooksCount = Purchase::returnedLastMonth()->count();
+
         $overDueBooksCount = Purchase::bookOverDue()->count();
 
         $unPaidSum = Purchase::unpaidPayment()->sum('pending_amount');
+
+        $overDueSum = Purchase::unpaidPayment()->where('payment_due' , '<' , now())->sum('pending_amount');
 
         $ownedLastMonth = Purchase::ownedLastMonth()->count();
 
@@ -33,6 +37,7 @@ class AdminDashboardController extends Controller
 
         $topBooks = Book::orderByMostPurchased()->limit(5)->get();
 
+
         return view('pages.admin.dashboard' ,
             compact('rentedBooksCount' ,
                 'ownedLastMonth' ,
@@ -42,7 +47,9 @@ class AdminDashboardController extends Controller
                 'overDueBooksCount' ,
                 'unPaidSum' ,
                 'lastMonthRevenueSum' ,
-                'lastMonthRentedRevenueSum') ,
+                'lastMonthRentedRevenueSum' ,
+                'overDueSum'
+            ) ,
             ['type_menu' => 'dashboard']);
     }
 }
