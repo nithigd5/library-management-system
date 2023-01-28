@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PaymentRequest;
+use App\Http\Requests\PaymentUpdateRequest;
 use App\Models\Book;
 use App\Models\Purchase;
 use Carbon\Carbon;
@@ -24,7 +25,7 @@ class CustomerPurchaseController extends Controller
     public function index(Request $request)
     {
         $purchases = $this->getPurchases($request->due , $request->type , $request->date_range ,
-            $request->status , $request->sort , $request->returned , $request->payment)->where('user_id',auth()->user()->id)->paginate(10);
+            $request->status , $request->sort , $request->returned , $request->payment)->paginate(10);
 
         return view('pages.customer.purchases.index' , compact('purchases') , ['type_menu' => 'purchase' , 'status' => 'all']);
     }
@@ -91,17 +92,6 @@ class CustomerPurchaseController extends Controller
     }
 
     /**
-     * View all closed Purchases ordered by recent
-     * @return Application|Factory|View
-     */
-    public function overdue()
-    {
-        $purchases = Purchase::with('book' , 'user')->bookOverDue()->paginate(10);
-
-        return view('pages.customer.purchase.index' , compact('purchases') , ['type_menu' => 'purchase' , 'status' => 'closed']);
-    }
-
-    /**
      * Show a particular book view page
      * @param $book
      * @return Application|Factory|View
@@ -109,7 +99,43 @@ class CustomerPurchaseController extends Controller
     public function show($id)
     {
         $purchase = Purchase::with('user' , 'book')->findOrFail($id);
-        return view('pages.admin.purchase.show' , compact('purchase') , ['type_menu' => 'purchase']);
+        return view('pages.customer.purchases.show' , compact('purchase') , ['type_menu' => 'purchase']);
+    }
+
+    /**
+     * store updated purchase offline Purchase
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Purchase $purchase , PaymentUpdateRequest $request)
+    {
+        //Check if given amount is not greater than pending amount
+
+        if ($purchase->pending_amount < $request->amount)
+            return response()->json([
+                'message' => 'failed' ,
+                'errors' => [
+                    'amount' => ['Payment Amount cannot be greater than pending amount: '.$purchase->pending_amount]
+                ]
+            ] , 422);
+
+        $purchase->pending_amount = $purchase->pending_amount - $request->amount;
+
+        if (!$purchase->save()) {
+            return response()->json([
+                'message' => 'failed' ,
+                'errors' => [
+                    'amount' => ['Payment Amount cannot be updated. Please try again later.']
+                ]
+            ] , 400);
+        }
+
+        return response()->json([
+            'message' => 'success' ,
+            'data' => [
+                'pending_amount' => $purchase->pending_amount
+            ]
+        ] , 200);
+
     }
 
     /**
@@ -196,7 +222,7 @@ class CustomerPurchaseController extends Controller
         return $query;
     }
 
-    function checkIfPurchased($book) {
+    public function checkIfPurchased($book) {
         return Purchase::where(function ($query) use ($book) {
             $query->where('user_id', auth()->user()->id)
                 ->where('book_id', $book->id);

@@ -20,7 +20,7 @@
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="card card-statistic-2">
                             <div class="card-icon shadow-primary bg-primary">
-                                <i class="fas fa-dollar-sign"></i>
+                                <i class="fas fa-rupee-sign"></i>
                             </div>
                             <div class="card-wrap">
                                 <div class="card-header">
@@ -36,7 +36,7 @@
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="card card-statistic-2">
                             <div class="card-icon shadow-primary bg-primary">
-                                <i class="fas fa-dollar-sign"></i>
+                                <i class="fas fa-rupee-sign"></i>
                             </div>
                             <div class="card-wrap">
                                 <div class="card-header">
@@ -52,14 +52,14 @@
                     <div class="col-lg-4 col-md-4 col-sm-12">
                         <div class="card card-statistic-2">
                             <div class="card-icon shadow-primary bg-primary">
-                                <i class="fas fa-dollar-sign"></i>
+                                <i class="fas fa-rupee-sign"></i>
                             </div>
                             <div class="card-wrap">
                                 <div class="card-header">
                                     <h4>Total Unpaid Money</h4>
                                 </div>
                                 <div class="card-body">
-                                    @money($overDuePaymentsSum)
+                                    @money($unPaidSum)
                                 </div>
                             </div>
                         </div>
@@ -177,7 +177,6 @@
                                         <tbody>
                                         <tr>
                                             <th>Book</th>
-                                            <th>User</th>
                                             <th>Payment</th>
                                             <th>Purchased at</th>
                                             <th>Type</th>
@@ -188,10 +187,6 @@
                                                 <td><a href="{{ route('book.show', $purchase->book->id) }}"
                                                        class="d-block text-truncate"
                                                        style="max-width: 120px;">{{ $purchase->book->name }}</a></td>
-                                                <td><a href="#"
-                                                       class="d-block text-truncate"
-                                                       style="max-width: 120px;">{{ $purchase->user->first_name.' '.$purchase->user->last_name }}</a>
-                                                </td>
                                                 <td>
                                                     <div
                                                         class="badge badge-{{ $purchase->getPaymentStatus() == 'Completed' ? 'success': 'warning' }}">{{ $purchase->getPaymentStatus() }}</div>

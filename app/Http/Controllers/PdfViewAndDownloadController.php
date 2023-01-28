@@ -44,7 +44,7 @@ class PdfViewAndDownloadController extends Controller
     }
     }
 
-    function checkIfPurchased($book) {
+    public function checkIfPurchased($book) {
         return Purchase::where(function ($query) use ($book) {
             $query->where('user_id', auth()->user()->id)
                 ->where('book_id', $book->id);

@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class BookRequest extends Model
 {
     use HasFactory;
+    protected $fillable = ['book_name','book_author','user_id','description','status'];
 }

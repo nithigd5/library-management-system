@@ -19,6 +19,9 @@
                     <li class="{{ Request::is('books') ? 'active' : '' }}">
                         <a href="{{ route('book.index') }}">All Books</a>
                     </li>
+                    <li class="{{ Request::is('books') ? 'active' : '' }}">
+                        <a href="{{ route('bookrequest.index') }}">Request Books</a>
+                    </li>
                 </ul>
             </li>
             <li class="menu-header">Purchases</li>

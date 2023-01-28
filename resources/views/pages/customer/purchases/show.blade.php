@@ -37,10 +37,6 @@
                                         <p class="small text-muted mb-1">Book</p>
                                         <a href="#">{{ $purchase->book->name }}</a>
                                     </div>
-                                    <div class="col mb-3">
-                                        <p class="small text-muted mb-1">User</p>
-                                        <a href="#">{{ $purchase->user->first_name.' '.$purchase->user->last_name }}</a>
-                                    </div>
                                 </div>
 
                                 <div class="mx-n5 px-5 py-4 text-white" style="background-color: var(--secondary);">
