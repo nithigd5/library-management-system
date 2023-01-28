@@ -10,21 +10,27 @@ use Illuminate\Contracts\View\View;
 
 class CustomerDashboardController extends Controller
 {
+
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @return Application|Factory|View
      */
     public function index()
     {
         $rentedBooksCount = Purchase::rentedLastMonth()->count();
+        $returnedBooksCount = Purchase::returnedLastMonth()->count();
+        $overDueBooksCount = Purchase::bookOverDue()->count();
+
+        $overDuePaymentsSum = Purchase::paymentOverDue()->sum('pending_amount');
+
         $ownedLastMonth = Purchase::ownedLastMonth()->count();
 
         $latestPurchases = Purchase::with('book' , 'user')->latestPurchases()->limit(5)->get();
-        $topBooks = Book::limit(5)->get();
+
+        $topBooks = Book::orderByMostPurchased()->limit(5)->get();
 
         return view('pages.customer.customerDashboard' ,
-            compact('rentedBooksCount' , 'ownedLastMonth' , 'latestPurchases' , 'topBooks') ,
+            compact('rentedBooksCount' , 'ownedLastMonth' , 'latestPurchases' ,
+                'topBooks' , 'returnedBooksCount' , 'overDueBooksCount' , 'overDuePaymentsSum') ,
             ['type_menu' => 'dashboard']);
     }
 

@@ -26,3 +26,35 @@ $("select").each(function () {
 $("textarea").each(function () {
     $(this).change(() => $(this).removeClass('is-invalid'));
 })
+
+$(document).ready(function () {
+    $("#toggleInput").on("change", function () {
+        var value = $(this).data("variable");
+        if (this.checked) {
+            var orgPrice = (value).toFixed(2);
+            $("#subTotal").val(orgPrice);
+            $("#subTotal").prop("readOnly", false);
+        } else {
+            var rentPrice = (value * 0.1).toFixed(2);
+            $("#subTotal").val(rentPrice);
+            $("#subTotal").prop("readOnly", true);
+            $("#subTotalPrice").text(rentPrice);
+        }
+    });
+
+    $("#subTotal").keyup(function(){
+        var inputValue = $(this).val();
+        $("#subTotalPrice").text(inputValue);
+    });
+
+    $("#subTotal").on("input", function () {
+        var maxPrice = $(this).data("variable");
+        if (this.value > maxPrice) {
+            this.value = maxPrice;
+        }
+    });
+});
+
+
+
+
