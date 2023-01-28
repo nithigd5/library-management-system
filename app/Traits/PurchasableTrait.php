@@ -82,7 +82,7 @@ trait PurchasableTrait
                 ->where('pending_amount' , '>' , 0)
                 ->Orwhere(function (Builder $query) {
                     $query->where('for_rent' , true)
-                        ->whereNotNull('book_returned_at');
+                        ->whereNull('book_returned_at');
                 });
         }
 
