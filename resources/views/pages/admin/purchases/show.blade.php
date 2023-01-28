@@ -35,11 +35,11 @@
                                 <div class="row">
                                     <div class="col mb-3">
                                         <p class="small text-muted mb-1">Book</p>
-                                        <a href="#">{{ $purchase->book->name }}</a>
+                                        <a href="{{ route('admin.books.show', $purchase->book->id) }}">{{ $purchase->book->name }}</a>
                                     </div>
                                     <div class="col mb-3">
                                         <p class="small text-muted mb-1">User</p>
-                                        <a href="#">{{ $purchase->user->first_name.' '.$purchase->user->last_name }}</a>
+                                        <a href="{{  route('admin.customers.show', $purchase->user->id) }}">{{ $purchase->user->first_name.' '.$purchase->user->last_name }}</a>
                                     </div>
                                 </div>
 

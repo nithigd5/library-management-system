@@ -71,8 +71,9 @@ class BookController extends Controller
     public function show($id)
     {
         $book=Book::findOrFail($id);
-        return view('pages.admin.books.showBooks',[ 'type_menu'=> '','book'=>$book]);
+        return view('pages.admin.books.show',[ 'type_menu'=> '','book'=>$book]);
     }
+
     /**
 
      * Show the form for editing the specified book.
