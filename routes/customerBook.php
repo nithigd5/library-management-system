@@ -31,11 +31,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/bookrequest/create', [BookRequestController::class, 'create'])->name('create');
         Route::post('/bookrequest/store', [BookRequestController::class, 'store'])->name('store');
         Route::get('/bookrequest/{id}', [BookRequestController::class, 'show'])->name('show');
-//        Route::get('/book/search', [BookRequestController::class, 'search'])->name('search');
-//
-//        Route::get('/book/edit/{book}', [BookRequestController::class, 'edit'])->name('edit');
-//        Route::put('/book/{book}', [BookRequestController::class, 'update'])->name('update');
-//        Route::delete('/book/{book}', [BookRequestController::class, 'destroy'])->name('destroy');
     });
 });
 
