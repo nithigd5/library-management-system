@@ -7,6 +7,7 @@ use App\Models\Purchase;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 
 class CustomerDashboardController extends Controller
 {
@@ -17,19 +18,19 @@ class CustomerDashboardController extends Controller
      */
     public function index(): Factory|View|Application
     {
-        $rentedBooksCount = Purchase::rentedLastMonth()->count();
-        $returnedBooksCount = Purchase::returnedLastMonth()->count();
-        $overDueBooksCount = Purchase::bookOverDue()->count();
+        $rentedBooksCount = Purchase::rentedLastMonth()->where('user_id', Auth::id())->count();
+        $returnedBooksCount = Purchase::returnedLastMonth()->where('user_id', Auth::id())->count();
+        $overDueBooksCount = Purchase::bookOverDue()->where('user_id', Auth::id())->count();
 
-        $unPaidSum = Purchase::unpaidPayment()->sum('pending_amount');
+        $unPaidSum = Purchase::unpaidPayment()->where('user_id', Auth::id())->sum('pending_amount');
 
-        $ownedLastMonth = Purchase::ownedLastMonth()->count();
+        $ownedLastMonth = Purchase::ownedLastMonth()->where('user_id', Auth::id())->count();
 
-        $latestPurchases = Purchase::with('book' , 'user')->latestPurchases()->limit(5)->get();
+        $latestPurchases = Purchase::with('book' , 'user')->latestPurchases()->where('user_id', Auth::id())->limit(5)->get();
 
-        $lastMonthRevenueSum = Purchase::revenueSumBetween(now()->subMonth() , now())->first()->revenue;
+        $lastMonthRevenueSum = Purchase::revenueSumBetween(now()->subMonth() , now())->where('user_id', Auth::id())->first()->revenue;
 
-        $lastMonthRentedRevenueSum = Purchase::revenueSumBetween(now()->subMonth() , now() , true)->first()->revenue;
+        $lastMonthRentedRevenueSum = Purchase::revenueSumBetween(now()->subMonth() , now() , true)->where('user_id', Auth::id())->first()->revenue;
 
         $topBooks = Book::orderByMostPurchased()->limit(5)->get();
 
