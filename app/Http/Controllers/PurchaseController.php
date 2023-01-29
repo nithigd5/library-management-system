@@ -42,7 +42,6 @@ class PurchaseController extends Controller
      */
     public function create()
     {
-
     }
 
     /**
@@ -55,7 +54,7 @@ class PurchaseController extends Controller
     }
 
     /**
-     * store updated purchase offline Purchase
+     * store updated purchase offline Purchase as ajax
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Purchase $purchase , PaymentUpdateRequest $request)
@@ -87,7 +86,6 @@ class PurchaseController extends Controller
                 'pending_amount' => $purchase->pending_amount
             ]
         ] , 200);
-
     }
 
     /**
@@ -136,19 +134,6 @@ class PurchaseController extends Controller
             default => $query
         };
 
-        $date_range = explode(' - ' , $date_range);
-
-        //Handle Invalid Date Format Error and query between given date ranges
-        try {
-            $start = Carbon::createFromFormat('m/d/Y' , $date_range[0]);
-            $end = Carbon::createFromFormat('m/d/Y' , $date_range[1]);
-
-            if ($date_range) {
-                $query->whereBetween('created_at' , [$start , $end]);
-            }
-        } catch (\Exception $e) {
-
-        }
 
         $query = match ($isReturned) {
             '1' => $query->where('for_rent' , true)->whereNotNull('book_returned_at') ,
@@ -164,12 +149,8 @@ class PurchaseController extends Controller
             default => $query
         };
 
-        //Sort the result
-        if ($sort == 'oldest') {
-            $query = $query->orderBy('updated_at');
-        } else {
-            $query = $query->orderByDesc('updated_at');
-        }
+        //Sort and filter the result in given date range
+        $this->sortAndDateQueryFilter($query, $date_range, $sort);
 
         return $query;
     }

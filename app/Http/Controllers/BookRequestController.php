@@ -47,6 +47,6 @@ class BookRequestController extends Controller
     public function show($id)
     {
         $book=BookRequest::find($id);
-        return view('pages.customer.bookrequest.showBooks',[ 'type_menu'=> '','book'=>$book]);
+        return view('pages.customer.bookrequest.show',[ 'type_menu'=> '','book'=>$book]);
     }
 }

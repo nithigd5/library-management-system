@@ -1,4 +1,4 @@
-@props(['books'])
+    @props(['books'])
 
 @extends('layouts.customer-app')
 
@@ -39,9 +39,8 @@
                     @endphp
                     @foreach($books as $book)
                         <tr>
-                            <td><a href="{{ route('book.show', $book->id) }}">{{ $book->name }}</a></td>
                             <td>{{ $i++}}</td>
-                            <td>{{ $book->book_name}}</td>
+                            <td>{{ $book->book_name }}</td>
                             <td>{{ $book->book_author  }}</td>
                             <td>{{ $book->description}}</td>
                             <td><span class="badge badge-{{ $book->status == 'accepted' ? 'success' : ($book->status == 'rejected' ? 'danger' : 'warning')}}">{{ $book->status }}</span>

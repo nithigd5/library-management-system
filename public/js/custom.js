@@ -118,3 +118,17 @@ function createAndValidateAjax(form, callback) {
         }
     })
 }
+
+$(function () {
+    var start = moment().subtract(29, 'days');
+    var end = moment();
+
+    $('#date_range').daterangepicker({
+        opens: 'left',
+        startDate: start,
+        endDate: end,
+        value: null
+    }, function (start, end, label) {
+        console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+    });
+});

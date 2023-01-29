@@ -66,6 +66,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'books.request.create']);
         Permission::create(['name' => 'books.request.view']);
         Permission::create(['name' => 'books.request.viewAll']);
+        Permission::create(['name' => 'books.request.update']);
 
         Permission::create(['name' => 'books.link.generate']);
         Permission::create(['name' => 'books.link.download']);

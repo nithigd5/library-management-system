@@ -1,6 +1,6 @@
 @props(['purchases'])
 
-@extends('layouts.customer-app')
+@extends('layouts.admin-app')
 
 @section('title', 'My Purchases')
 
@@ -142,8 +142,8 @@
                             </div>
                         </div>
                         <div class="form-group col-md-2">
-                            <label>Sort the Result</label>
-                            <select class="form-control" name="sort">
+                            <label for="sort">Sort the Result</label>
+                            <select id="sort" class="form-control" name="sort">
                                 <option value="recent" selected>Most Recent</option>
                                 <option value="oldest" @selected(request('sort') === 'oldest')>Oldest</option>
                             </select>
@@ -173,24 +173,5 @@
 
 @push('scripts')
     <script>
-        console.log($('input[name="filter"]').val())
-
-        $(function () {
-            var start = moment().subtract(29, 'days');
-            var end = moment();
-
-            $('#date_range').daterangepicker({
-                opens: 'left',
-                startDate: start,
-                endDate: end,
-                value: null
-            }, function (start, end, label) {
-                console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
-            });
-        });
-        //
-        // $('#filter input').change(function (e){
-        //     $("#filter").submit()
-        // });
     </script>
 @endpush

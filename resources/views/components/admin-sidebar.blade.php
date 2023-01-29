@@ -22,6 +22,9 @@
                     <li class="{{ Request::is('admin/books/create') ? 'active' : '' }}">
                         <a href="{{ route('admin.books.create') }}">Add a Book</a>
                     </li>
+                    <li class="{{ Request::is('admin/book-requests') ? 'active' : '' }}">
+                        <a href="{{ route('admin.book-requests.index') }}">Book Requests</a>
+                    </li>
                 </ul>
             </li>
             <li class="menu-header">Users</li>
@@ -46,11 +49,11 @@
                         <a href="{{ route('admin.purchases.index') }}">All Purchases</a>
                     </li>
                 </ul>
-                <ul class="dropdown-menu">
-                    <li class="{{ Request::is('admin/purchases/create') ? 'active' : '' }}">
-                        <a href="{{ route('admin.purchases.create') }}">Create a Purchase</a>
-                    </li>
-                </ul>
+{{--                <ul class="dropdown-menu">--}}
+{{--                    <li class="{{ Request::is('admin/purchases/create') ? 'active' : '' }}">--}}
+{{--                        <a href="{{ route('admin.purchases.create') }}">Create a Purchase</a>--}}
+{{--                    </li>--}}
+{{--                </ul>--}}
             </li>
         </ul>
     </aside>
