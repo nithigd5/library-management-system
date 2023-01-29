@@ -2,7 +2,7 @@
 
 @extends('layouts.customer-app')
 
-@section('title', 'My Purchases')
+@section('title', 'Customers')
 
 @push('style')
     <!-- CSS Libraries -->
@@ -160,7 +160,7 @@
                     <div class="col">
                         <div class="card">
                             <div class="card-body p-0">
-                                <x-purchase-table :$purchases/>
+                                <x-customer-purchase-table :$purchases/>
                             </div>
                         </div>
                     </div>
@@ -188,9 +188,5 @@
                 console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
             });
         });
-        //
-        // $('#filter input').change(function (e){
-        //     $("#filter").submit()
-        // });
     </script>
 @endpush

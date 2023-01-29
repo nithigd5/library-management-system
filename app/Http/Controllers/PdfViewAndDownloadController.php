@@ -13,11 +13,7 @@ class PdfViewAndDownloadController extends Controller
     public function viewPDF($id)
     {
         $book = Book::find($id);
-        $purchased = Purchase::where('user_id', auth()->user()->id)
-            ->where('book_id', $book->id)
-            ->where('book_return_due', '>=', Carbon::now())
-            ->orWhere('book_return_due', null)
-            ->exists();
+        $purchased=$this->checkIfPurchased($book);
 
         if ($purchased) {
             $path = public_path('/storage/data/bookPDF/dummy.pdf');
@@ -34,11 +30,7 @@ class PdfViewAndDownloadController extends Controller
     {
         $book = Book::find($id);
         if ($book->is_download_allowed) {
-            $purchased = Purchase::where('user_id', auth()->user()->id)
-                ->where('book_id', $book->id)
-                ->where('book_return_due', '>=', Carbon::now())
-                ->orWhere('book_return_due', null)
-                ->exists();
+           $purchased=$this->checkIfPurchased($book);
 
             if ($purchased) {
                 $file_path = public_path('/storage/data/bookPDF/dummy.pdf');
@@ -50,5 +42,15 @@ class PdfViewAndDownloadController extends Controller
     else {
         return back()->with('status', "Downloading is not allowed for this Book.");
     }
+    }
+
+    public function checkIfPurchased($book) {
+        return Purchase::where(function ($query) use ($book) {
+            $query->where('user_id', auth()->user()->id)
+                ->where('book_id', $book->id);
+        })->where(function ($query) {
+            $query->where('book_return_due', '>=', Carbon::now())
+                ->orWhere('book_return_due', null);
+        })->exists();
     }
 }

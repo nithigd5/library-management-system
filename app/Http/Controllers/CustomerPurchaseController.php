@@ -3,9 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PaymentRequest;
+use App\Http\Requests\PaymentUpdateRequest;
 use App\Models\Book;
 use App\Models\Purchase;
 use Carbon\Carbon;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -14,13 +19,15 @@ use PhpParser\Node\NullableType;
 class CustomerPurchaseController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * View all Purchases ordered by recent
+     * @return Application|Factory|View
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $purchases = $this->getPurchases($request->due , $request->type , $request->date_range ,
+            $request->status , $request->sort , $request->returned , $request->payment)->paginate(10);
+
+        return view('pages.customer.purchases.index' , compact('purchases') , ['type_menu' => 'purchase' , 'status' => 'all']);
     }
 
     /**
@@ -32,11 +39,7 @@ class CustomerPurchaseController extends Controller
     {
         $book = Book::find($id);
         if ($book->mode == "online") {
-            $purchased = Purchase::where('user_id', auth()->user()->id)
-                ->where('book_id', $book->id)
-                ->where('book_return_due', '>=', Carbon::now())
-                ->orWhere('book_return_due', null)
-                ->exists();
+            $purchased=$this->checkIfPurchased($book);
 
             if ($purchased) {
                 return back()->with('status', 'Book Already Purchased');
@@ -89,47 +92,143 @@ class CustomerPurchaseController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
+     * Show a particular book view page
+     * @param $book
+     * @return Application|Factory|View
      */
     public function show($id)
     {
-        //
+        $purchase = Purchase::with('user' , 'book')->findOrFail($id);
+        return view('pages.customer.purchases.show' , compact('purchase') , ['type_menu' => 'purchase']);
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
+     * store updated purchase offline Purchase
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function edit($id)
+    public function update(Purchase $purchase , PaymentUpdateRequest $request)
     {
-        //
+        //Check if given amount is not greater than pending amount
+
+        if ($purchase->pending_amount < $request->amount)
+            return response()->json([
+                'message' => 'failed' ,
+                'errors' => [
+                    'amount' => ['Payment Amount cannot be greater than pending amount: '.$purchase->pending_amount]
+                ]
+            ] , 422);
+
+        $purchase->pending_amount = $purchase->pending_amount - $request->amount;
+
+        if (!$purchase->save()) {
+            return response()->json([
+                'message' => 'failed' ,
+                'errors' => [
+                    'amount' => ['Payment Amount cannot be updated. Please try again later.']
+                ]
+            ] , 400);
+        }
+
+        return response()->json([
+            'message' => 'success' ,
+            'data' => [
+                'pending_amount' => $purchase->pending_amount
+            ]
+        ] , 200);
+
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response
+     * return a book if not returned
+     * @param Purchase $purchase
+     * @return RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function returnBook(Purchase $purchase)
     {
-        //
+        if ($purchase->toReturn()) {
+            try {
+                $purchase->book_returned_at = now();
+                $purchase->saveOrFail();
+            } catch (\Throwable $e) {
+                return back()->with('message' , 'Book cannot be returned. Try again later')->with('status' , 'danger');
+            }
+            return back()->with('message' , 'Book has been returned successfully')->with('status' , 'success');
+        } else {
+            return back()->with('message' , 'Book is already returned')->with('status' , 'danger');
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function getPurchases($due = null , $type = null , $date_range = null , $status = null , $sort = null , $isReturned = null , $isPaid = null)
     {
-        //
+        $query = Purchase::with('book' , 'user');
+
+        //Query By Type
+        $query = match ($type) {
+            'rented' => $query->where('for_rent' , true) ,
+            'owned' => $query->where('for_rent' , false) ,
+            default => $query
+        };
+
+        //Query By Due Date
+        $query = match ($due) {
+            'all' => $query->bookOverDue()->paymentOverDue() ,
+            'book_due' => $query->bookOverDue() ,
+            'payment_due' => $query->paymentOverDue() ,
+            default => $query
+        };
+
+        //Query by Status
+        $query = match ($status) {
+            'active' => $query->byStatus(Purchase::STATUS_OPEN) ,
+            'inactive' => $query->byStatus(Purchase::STATUS_CLOSE) ,
+            default => $query
+        };
+
+        $date_range = explode(' - ' , $date_range);
+
+        //Handle Invalid Date Format Error and query between given date ranges
+        try {
+            $start = Carbon::createFromFormat('m/d/Y' , $date_range[0]);
+            $end = Carbon::createFromFormat('m/d/Y' , $date_range[1]);
+
+            if ($date_range) {
+                $query->whereBetween('created_at' , [$start , $end]);
+            }
+        } catch (\Exception $e) {
+
+        }
+
+        $query = match ($isReturned) {
+            '1' => $query->where('for_rent' , true)->whereNotNull('book_returned_at') ,
+            '0' => $query->where('for_rent' , true)->whereNull('book_returned_at') ,
+            default => $query
+        };
+
+        $query = match ($isPaid) {
+            '1' => $query->where('pending_amount' , '=' , 0) ,
+            '0' => $query->whereColumn('pending_amount' , '=' , 'price') ,
+            '2' => $query->where('pending_amount' , '>' , 0)
+                ->whereColumn('pending_amount' , '<' , 'price') ,
+            default => $query
+        };
+
+        //Sort the result
+        if ($sort == 'oldest') {
+            $query = $query->orderBy('updated_at');
+        } else {
+            $query = $query->orderByDesc('updated_at');
+        }
+
+        return $query;
+    }
+
+    public function checkIfPurchased($book) {
+        return Purchase::where(function ($query) use ($book) {
+            $query->where('user_id', auth()->user()->id)
+                ->where('book_id', $book->id);
+        })->where(function ($query) {
+            $query->where('book_return_due', '>=', Carbon::now())
+                ->orWhere('book_return_due', null);
+        })->exists();
     }
 }
