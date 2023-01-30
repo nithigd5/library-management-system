@@ -72,12 +72,18 @@ function convertFormToJSON(form) {
 }
 
 function createAndValidateAjax(form, callback) {
-    let inputs = $(form+' '+'input')
+    let inputs = $(form + ' ' + 'input')
+    $.merge(inputs, $(form + ' ' + 'select'))
+    $.merge(inputs, $(form + ' ' + 'textarea'))
+
+    console.log(inputs)
+
     let formDataJson = JSON.stringify(convertFormToJSON(form))
     form = $(form);
     let type = form.attr('method');
     let method = form.children('input[name="_method"]');
-    if(method){
+
+    if (method.length) {
         type = method.val()
     }
 
@@ -103,15 +109,18 @@ function createAndValidateAjax(form, callback) {
             inputs.each(function () {
                 let input = $(this)
 
+                console.log(input.attr('name'))
+
                 if (errors[input.attr('name')]) {
                     $(this).addClass('is-invalid');
 
                     let errorElem = input.siblings('.invalid-feedback')
 
-                    errors[input.attr('name')].forEach(function (value){
+                    errors[input.attr('name')].forEach(function (value) {
                         errorElem.text(value)
                     })
-                }else{
+                } else {
+                    input.removeClass('is-invalid');
                     input.addClass('is-valid');
                 }
             })
@@ -132,3 +141,15 @@ $(function () {
         console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
     });
 });
+
+
+function paginateResults(data, params) {
+    params.page = params.page || 1;
+
+    return {
+        results: data.data,
+        pagination: {
+            more: data.meta.last_page > data.meta.current_page
+        }
+    };
+}

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Purchase;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -11,7 +12,7 @@ use Illuminate\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+    use AuthorizesRequests , DispatchesJobs , ValidatesRequests;
 
     /**
      * Sort and filter the result in given date range
@@ -20,7 +21,7 @@ class Controller extends BaseController
      * @param Builder $query
      * @return Builder
      */
-    public function sortAndDateQueryFilter(Builder $query , $date_range , $sort = null, $column = 'updated_at'): Builder
+    public function sortAndDateQueryFilter(Builder $query , $date_range , $sort = null , $column = 'updated_at'): Builder
     {
         //Sort the result
         if ($sort == 'oldest') {
@@ -43,6 +44,27 @@ class Controller extends BaseController
 
         }
         return $query;
+    }
+
+    /**
+     * Check if User has already rented the same book and not returned
+     * @param $book
+     * @param $user
+     * @return bool
+     */
+    public function checkIfAlreadyRented($book , $user): bool
+    {
+        return Purchase::where(function ($query) use ($user , $book) {
+            $query
+                ->where('user_id' , $user->id)
+                ->where('book_id' , $book->id);
+        })->where(function ($query) {
+            $query
+                ->where('for_rent' , 1)
+                ->whereNull('book_returned_at')
+                ->where('payment_due', '>', now())
+                ->where('book_return_due', '>', now());
+        })->exists();
     }
 
 }

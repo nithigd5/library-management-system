@@ -25,6 +25,7 @@
     <link rel="stylesheet"
           href="{{ asset('css/components.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css" integrity="sha256-2XFplPlrFClt0bIdPgpz8H7ojnk10H69xRqd9+uTShA=" crossorigin="anonymous" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 
 </head>
@@ -56,12 +57,13 @@
 <script src="{{ asset('js/stisla.js') }}"></script>
 <script src="{{ asset('library/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
 <script src="{{ asset('library/bootstrap-daterangepicker/moment.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-@stack('scripts')
 
 <!-- Template JS File -->
 <script src="{{ asset('js/scripts.js') }}"></script>
 <script src="{{ asset('js/custom.js') }}"></script>
+@stack('scripts')
 </body>
 
 </html>

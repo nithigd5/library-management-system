@@ -10,8 +10,10 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use PhpParser\Node\NullableType;
@@ -25,7 +27,7 @@ class CustomerPurchaseController extends Controller
     public function index(Request $request)
     {
         $purchases = $this->getPurchases($request->due , $request->type , $request->date_range ,
-            $request->status , $request->sort , $request->returned , $request->payment)->paginate(10);
+            $request->status , $request->sort , $request->returned , $request->payment)->paginate(10)->withQueryString();
 
         return view('pages.customer.purchases.index' , compact('purchases') , ['type_menu' => 'purchase' , 'status' => 'all']);
     }
@@ -33,13 +35,13 @@ class CustomerPurchaseController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create($id)
     {
         $book = Book::find($id);
         if ($book->mode == "online") {
-            $purchased=$this->checkIfPurchased($book);
+            $purchased=$this->checkIfAlreadyRented($book, Auth::id());
 
             if ($purchased) {
                 return back()->with('status', 'Book Already Purchased');
@@ -55,8 +57,9 @@ class CustomerPurchaseController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param $id
+     * @return Response
      */
     public function store(Request $request, $id)
     {
@@ -75,7 +78,7 @@ class CustomerPurchaseController extends Controller
             $pendingAmount = 0;
             $rentOrBuy = 1;
             $payDue = Carbon::now()->addDays(10);
-            $book_return_due = Carbon::now()->addDays(30);
+            $book_return_due = Carbon::now()->addDays(config('book.book_return_due_days'));
         }
         Purchase::create([
             'user_id' => auth()->user()->id,
@@ -83,7 +86,7 @@ class CustomerPurchaseController extends Controller
             'price' => $book->price,
             'for_rent' => $rentOrBuy,
             'pending_amount' => $pendingAmount,
-            'payment_due' => Carbon::now()->addDays(15),
+            'payment_due' => Carbon::now()->addDays(config('book.purchase_due_days')),
             'book_return_due' => $book_return_due,
             'book_issued_at' => Carbon::now(),
             'mode' => $book->mode,
@@ -93,69 +96,13 @@ class CustomerPurchaseController extends Controller
 
     /**
      * Show a particular book view page
-     * @param $book
+     * @param $id
      * @return Application|Factory|View
      */
     public function show($id)
     {
         $purchase = Purchase::with('user' , 'book')->findOrFail($id);
         return view('pages.customer.purchases.show' , compact('purchase') , ['type_menu' => 'purchase']);
-    }
-
-    /**
-     * store updated purchase offline Purchase
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(Purchase $purchase , PaymentUpdateRequest $request)
-    {
-        //Check if given amount is not greater than pending amount
-
-        if ($purchase->pending_amount < $request->amount)
-            return response()->json([
-                'message' => 'failed' ,
-                'errors' => [
-                    'amount' => ['Payment Amount cannot be greater than pending amount: '.$purchase->pending_amount]
-                ]
-            ] , 422);
-
-        $purchase->pending_amount = $purchase->pending_amount - $request->amount;
-
-        if (!$purchase->save()) {
-            return response()->json([
-                'message' => 'failed' ,
-                'errors' => [
-                    'amount' => ['Payment Amount cannot be updated. Please try again later.']
-                ]
-            ] , 400);
-        }
-
-        return response()->json([
-            'message' => 'success' ,
-            'data' => [
-                'pending_amount' => $purchase->pending_amount
-            ]
-        ] , 200);
-
-    }
-
-    /**
-     * return a book if not returned
-     * @param Purchase $purchase
-     * @return RedirectResponse
-     */
-    public function returnBook(Purchase $purchase)
-    {
-        if ($purchase->toReturn()) {
-            try {
-                $purchase->book_returned_at = now();
-                $purchase->saveOrFail();
-            } catch (\Throwable $e) {
-                return back()->with('message' , 'Book cannot be returned. Try again later')->with('status' , 'danger');
-            }
-            return back()->with('message' , 'Book has been returned successfully')->with('status' , 'success');
-        } else {
-            return back()->with('message' , 'Book is already returned')->with('status' , 'danger');
-        }
     }
 
     public function getPurchases($due = null , $type = null , $date_range = null , $status = null , $sort = null , $isReturned = null , $isPaid = null)
@@ -222,13 +169,4 @@ class CustomerPurchaseController extends Controller
         return $query;
     }
 
-    public function checkIfPurchased($book) {
-        return Purchase::where(function ($query) use ($book) {
-            $query->where('user_id', auth()->user()->id)
-                ->where('book_id', $book->id);
-        })->where(function ($query) {
-            $query->where('book_return_due', '>=', Carbon::now())
-                ->orWhere('book_return_due', null);
-        })->exists();
-    }
 }

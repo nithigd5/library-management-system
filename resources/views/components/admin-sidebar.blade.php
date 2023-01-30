@@ -49,11 +49,11 @@
                         <a href="{{ route('admin.purchases.index') }}">All Purchases</a>
                     </li>
                 </ul>
-{{--                <ul class="dropdown-menu">--}}
-{{--                    <li class="{{ Request::is('admin/purchases/create') ? 'active' : '' }}">--}}
-{{--                        <a href="{{ route('admin.purchases.create') }}">Create a Purchase</a>--}}
-{{--                    </li>--}}
-{{--                </ul>--}}
+                <ul class="dropdown-menu">
+                    <li class="{{ Request::is('admin/purchases/create') ? 'active' : '' }}">
+                        <a href="{{ route('admin.purchases.create') }}">Create a Purchase</a>
+                    </li>
+                </ul>
             </li>
         </ul>
     </aside>

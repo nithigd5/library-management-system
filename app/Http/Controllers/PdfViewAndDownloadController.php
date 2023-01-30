@@ -6,6 +6,7 @@ use App\Models\Book;
 use App\Models\Purchase;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class PdfViewAndDownloadController extends Controller
@@ -13,7 +14,7 @@ class PdfViewAndDownloadController extends Controller
     public function viewPDF($id)
     {
         $book = Book::find($id);
-        $purchased=$this->checkIfPurchased($book);
+        $purchased=$this->checkIfAlreadyRented($book, Auth::user());
 
         if ($purchased) {
             $path = public_path('/storage/data/bookPDF/dummy.pdf');
@@ -24,13 +25,13 @@ class PdfViewAndDownloadController extends Controller
     }
 
     /**
-     * @return BinaryFileResponse
+     * @return \Illuminate\Http\RedirectResponse|BinaryFileResponse
      */
     public function downloadPdf($id)
     {
         $book = Book::find($id);
         if ($book->is_download_allowed) {
-           $purchased=$this->checkIfPurchased($book);
+           $purchased=$this->checkIfAlreadyRented($book, Auth::user());
 
             if ($purchased) {
                 $file_path = public_path('/storage/data/bookPDF/dummy.pdf');
@@ -42,15 +43,5 @@ class PdfViewAndDownloadController extends Controller
     else {
         return back()->with('status', "Downloading is not allowed for this Book.");
     }
-    }
-
-    public function checkIfPurchased($book) {
-        return Purchase::where(function ($query) use ($book) {
-            $query->where('user_id', auth()->user()->id)
-                ->where('book_id', $book->id);
-        })->where(function ($query) {
-            $query->where('book_return_due', '>=', Carbon::now())
-                ->orWhere('book_return_due', null);
-        })->exists();
     }
 }
