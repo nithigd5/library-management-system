@@ -56,7 +56,7 @@ return [
      * You can skip these by adding a `--skip-{name}` flag to the command.
      */
     'before' => [
-        'assets' => 'npm run build',
+//        'assets' => 'npm run build',
     ],
 
     /*
@@ -66,7 +66,7 @@ return [
      * You can skip these by adding a `--skip-{name}` flag to the command.
      */
     'after' => [
-        'deploy' => 'npm run deploy',
+//        'deploy' => 'npm run deploy',
     ],
 
 ];
