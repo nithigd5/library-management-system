@@ -12,7 +12,10 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::redirect('/' , '/login');
+
+Route::get('/', function () {
+    return view('welcome');
+});
 
 // auth
 Route::get('/auth-forgot-password' , function () {
