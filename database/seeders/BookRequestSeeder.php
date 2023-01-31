@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\BookRequest;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class BookRequestSeeder extends Seeder
@@ -15,6 +15,9 @@ class BookRequestSeeder extends Seeder
      */
     public function run()
     {
-        BookRequest::factory(10)->create();
+        foreach (User::all() as $user)
+            BookRequest::factory(2)->create([
+                'user_id' => $user->id
+            ]);
     }
 }

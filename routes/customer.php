@@ -9,10 +9,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->group(function () {
 
-    //Admin Dashboard Routes
-    Route::name('customer.')->group(function () {
+    Route::get('/dashboard' , [CustomerDashboardController::class , 'index'])->name('dashboard');
 
-        Route::get('/customer/dashboard' , [CustomerDashboardController::class , 'index'])->name('dashboard');
+    Route::name('offline.')->group(function () {
 
+        Route::post('/offline-entry/{user}' , [OfflineEntryController::class , 'setUserEntry'])->name('entry')->can('entry.offline.create');
+
+        Route::patch('/offline-entry/{offlineEntry}' , [OfflineEntryController::class , 'setUserExit'])->name('exit')->can('entry.offline.update');
     });
 });

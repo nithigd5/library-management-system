@@ -7,7 +7,7 @@
             <a href="{{ route('admin.dashboard') }}">LMS</a>
         </div>
         <ul class="sidebar-menu">
-            <li class='nav-item {{ Request::is('admin/admin') ? 'active' : '' }}'>
+            <li class='nav-item {{ Request::is('admin') ? 'active' : '' }}'>
                 <a class="nav-link"
                    href="{{ route('admin.dashboard') }}"><i class="fas fa-fire"></i><span>Dashboard</span></a>
             </li>
@@ -21,6 +21,9 @@
                     </li>
                     <li class="{{ Request::is('admin/books/create') ? 'active' : '' }}">
                         <a href="{{ route('admin.books.create') }}">Add a Book</a>
+                    </li>
+                    <li class="{{ Request::is('admin/book-requests') ? 'active' : '' }}">
+                        <a href="{{ route('admin.book-requests.index') }}">Book Requests</a>
                     </li>
                 </ul>
             </li>
@@ -45,17 +48,10 @@
                     <li class="{{ Request::is('admin/purchases') ? 'active' : '' }}">
                         <a href="{{ route('admin.purchases.index') }}">All Purchases</a>
                     </li>
-
-                    <li class="{{ Request::is('admin/purchases/open') ? 'active' : '' }}">
-                        <a href="{{ route('admin.purchases.open') }}">Open Purchases</a>
-                    </li>
-
-                    <li class="{{ Request::is('admin/purchases/closed') ? 'active' : '' }}">
-                        <a href="{{ route('admin.purchases.closed') }}">closed Purchases</a>
-                    </li>
-
-                    <li class="{{ Request::is('admin/purchases/overdue') ? 'active' : '' }}">
-                        <a href="{{ route('admin.purchases.overdue') }}">Overdue Purchases</a>
+                </ul>
+                <ul class="dropdown-menu">
+                    <li class="{{ Request::is('admin/purchases/create') ? 'active' : '' }}">
+                        <a href="{{ route('admin.purchases.create') }}">Create a Purchase</a>
                     </li>
                 </ul>
             </li>

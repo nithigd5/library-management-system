@@ -10,9 +10,8 @@
     <div class="main-content">
         <section class="section">
             <div class="section-header row justify-content-between">
-                <h1 class="col-6">Dashboard - A Simple analytics</h1>
-
-                <button type="button" class="btn btn-primary col-3 btn btn-primary"
+                <h1 class="col-md-6 col-sm-12">Dashboard - A Simple analytics</h1>
+                <button type="button" class="btn btn-primary col-md-3 col-sm-12 btn btn-primary"
                         onclick="generateLink()">
                     Generate a Customer Invitation Link
                 </button>
@@ -20,8 +19,105 @@
 
             <div class="section-body">
                 <x-session-message :message="session('message')" :status="session('status')"></x-session-message>
+
                 <div class="row">
                     <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="card card-statistic-2">
+                            <div class="card-icon shadow-primary bg-primary">
+                                <i class="fas fa-rupee-sign"></i>
+                            </div>
+                            <div class="card-wrap">
+                                <div class="card-header">
+                                    <h4>Total Revenue last 30 Days</h4>
+                                </div>
+                                <div class="card-body">
+                                    @money( $lastMonthRevenueSum)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="card card-statistic-2">
+                            <div class="card-icon shadow-primary bg-primary">
+                                <i class="fas fa-rupee-sign"></i>
+                            </div>
+                            <div class="card-wrap">
+                                <div class="card-header">
+                                    <h4>Total Revenue from rent last 30 Days</h4>
+                                </div>
+                                <div class="card-body">
+                                    @money( $lastMonthRentedRevenueSum)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="card card-statistic-2">
+                            <div class="card-icon shadow-primary bg-primary">
+                                <i class="fas fa-rupee-sign"></i>
+                            </div>
+                            <div class="card-wrap">
+                                <div class="card-header">
+                                <h4>Total Unpaid Money</h4>
+                                </div>
+                                <div class="card-body">
+                                    @money($unPaidSum)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="card card-statistic-2">
+                            <div class="card-icon shadow-primary bg-primary">
+                                <i class="fas fa-rupee-sign"></i>
+                            </div>
+                            <div class="card-wrap">
+                                <div class="card-header">
+                                    <h4>Total Overdue Money</h4>
+                                </div>
+                                <div class="card-body">
+                                    @money($overDueSum)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="card card-statistic-2">
+                            <div class="card-icon shadow-primary bg-primary">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <div class="card-wrap">
+                                <div class="card-header">
+                                    <h4>Owned Last 30 Days</h4>
+                                </div>
+                                <div class="card-body">
+                                    {{ $ownedLastMonth }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="card card-statistic-2">
+                            <div class="card-icon shadow-primary bg-primary">
+                                <i class="fas fa-archive"></i>
+                            </div>
+                            <div class="card-wrap">
+                                <div class="card-header">
+                                    <h4>Total Book Acquisitions Last 30 days</h4>
+                                </div>
+                                <div class="card-body">
+                                    {{ $rentedBooksCount + $ownedLastMonth }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-12 m-auto">
                         <div class="card card-statistic-2 pb-2">
                             <div class="card-stats">
                                 <div class="card-stats-title">Book Rented Statistics
@@ -44,63 +140,8 @@
 
                         </div>
                     </div>
-                    <div class="col-lg-4 col-md-4 col-sm-12">
-                        <div class="card card-statistic-2">
-                            <div class="card-icon shadow-primary bg-primary">
-                                <i class="fas fa-shopping-bag"></i>
-                            </div>
-                            <div class="card-wrap">
-                                <div class="card-header">
-                                    <h4>Owned Last 30 Days</h4>
-                                </div>
-                                <div class="card-body">
-                                    {{ $ownedLastMonth }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card card-statistic-2">
-                            <div class="card-icon shadow-primary bg-primary">
-                                <i class="fas fa-archive"></i>
-                            </div>
-                            <div class="card-wrap">
-                                <div class="card-header">
-                                    <h4>Total Book Acquisitions Last 30 days</h4>
-                                </div>
-                                <div class="card-body">
-                                    {{ $rentedBooksCount + $ownedLastMonth }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="col-lg-4 col-md-4 col-sm-12">
-                        <div class="card card-statistic-2">
-                            <div class="card-icon shadow-primary bg-primary">
-                                <i class="fas fa-dollar-sign"></i>
-                            </div>
-                            <div class="card-wrap">
-                                <div class="card-header">
-                                    <h4>Total Revenue last 30 Days</h4>
-                                </div>
-                                <div class="card-body">
-                                    $187,13
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card card-statistic-2">
-                            <div class="card-icon shadow-primary bg-primary">
-                                <i class="fas fa-dollar-sign"></i>
-                            </div>
-                            <div class="card-wrap">
-                                <div class="card-header">
-                                    <h4>Total Unpaid Payment</h4>
-                                </div>
-                                <div class="card-body">
-                                   @money($overDuePaymentsSum)
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
 
                 <div class="row">
@@ -108,16 +149,6 @@
                         <div class="card gradient-bottom">
                             <div class="card-header">
                                 <h4>Top 5 Purchased Books</h4>
-                                <div class="card-header-action dropdown">
-                                    <a href="#" data-toggle="dropdown" class="btn btn-danger dropdown-toggle">Month</a>
-                                    <ul class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
-                                        <li class="dropdown-title">Select Period</li>
-                                        <li><a href="#" class="dropdown-item">Today</a></li>
-                                        <li><a href="#" class="dropdown-item">Week</a></li>
-                                        <li><a href="#" class="dropdown-item active">Month</a></li>
-                                        <li><a href="#" class="dropdown-item">This Year</a></li>
-                                    </ul>
-                                </div>
                             </div>
                             <div class="card-body" id="top-5-scroll"
                                  style="overflow: hidden; outline: none;" tabindex="2">

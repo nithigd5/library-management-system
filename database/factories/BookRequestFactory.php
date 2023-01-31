@@ -23,6 +23,7 @@ class BookRequestFactory extends Factory
             'user_id' => User::factory(),
             'description' => fake()->paragraph(),
             'status' => fake()->randomElement(['pending', 'accepted', 'rejected']),
+            'comment' => fake()->paragraph()
         ];
     }
 }

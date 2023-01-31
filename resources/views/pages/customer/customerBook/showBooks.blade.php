@@ -25,7 +25,7 @@
                                 <div class="form-group">
                                     <label for="name">Book Name</label>
                                     <input type="text" id="name" class="form-control"
-                                           value="{{ $book->name}}" name="name" disabled>
+                                           value="{{ $book->name}}" disabled>
                                 </div>
                                 <div class="form-group">
                                     <label for="author">Author</label>
@@ -68,42 +68,56 @@
                                     </select>
                                 </div>
                                 <div class="row">
-                                <div class="d-flex align-items-center col-6">
-                                    <img src="{{asset('/img/dummy.jpg')}}" alt="..." class="img-thumbnail" width="150px" height="250px" >
-                                </div>
-                                <div class="d-flex align-items-center col-6">
-                                    <div class="col">
-                                    <div class="form-group">
-                                        <div class="form-check">
-                                            <input
-                                                class="form-check-input"
-                                                type="radio" name="is_download_allowed"
-                                                id="is_download_allowed1" value="1" {{ $book->is_download_allowed == 1 ? 'checked' : '' }} disabled>
-                                            <label class="form-check-label" for="is_download_allowed1">
-                                                Download is Allowed
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input
-                                                class="form-check-input"
-                                                type="radio" name="is_download_allowed"
-                                                id="is_download_allowed2" value="{{$book->is_download_allowed}}" disabled>
-                                            <label class="form-check-label" for="is_download_allowed2">
-                                                Download not Allowed
-                                            </label>
+                                    <div class="d-flex align-items-center col-6">
+                                        <img src="{{ Storage::url($book->image) }}" alt="..." class="img-thumbnail"
+                                             width="150px" height="250px">
+                                    </div>
+                                    <div class="d-flex align-items-center col-6">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <div class="form-check">
+                                                    <input
+                                                        class="form-check-input"
+                                                        type="radio" name="is_download_allowed"
+                                                        id="is_download_allowed1" value="1"
+                                                        {{ $book->is_download_allowed == 1 ? 'checked' : '' }} disabled>
+                                                    <label class="form-check-label" for="is_download_allowed1">
+                                                        Download is Allowed
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input
+                                                        class="form-check-input"
+                                                        type="radio" name="is_download_allowed"
+                                                        id="is_download_allowed2" value="{{$book->is_download_allowed}}"
+                                                        disabled>
+                                                    <label class="form-check-label" for="is_download_allowed2">
+                                                        Download not Allowed
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-3">
+                                                    <a href="{{route('purchase.create',$book->id)}}"
+                                                       class="btn btn-success">Buy</a>
+                                                </div>
+                                                <br>
+                                                <div class="col-3">
+                                                    <a href="{{route('book.viewpdf',$book->id)}}"
+                                                       class="btn btn-primary">View</a>
+                                                </div>
+                                                <br>
+                                                <div class="col-3">
+                                                    <a href="{{route('book.download',$book->id)}}"
+                                                       class="btn btn-warning">Download</a>
+                                                </div>
+                                                @if(session('status'))
+                                                    <p class="mt-3 text-primary text-danger"> {{ session('status') }}</p>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
-                                        <div class="row">
-                                        <div class="col-6">
-                                            <button type="submit" class="btn btn-primary">Purchase</button>
-                                        </div>
-                                        <br>
-                                        <div class="col-6">
-                                            <button type="submit" class="btn btn-primary">Download</button>
-                                        </div>
-                                        </div>
-                                    </div>
-                                </div>
+
                                 </div>
                             </div>
                         </div>

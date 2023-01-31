@@ -28,13 +28,18 @@ class PurchaseFactory extends Factory
             'book_issued_at' => fn($attr) => $attr['created_at'] ,
             'mode' => fake()->randomElement(['online' , 'offline']) ,
             'payment_due' => function ($attr) {
-                return $attr['book_issued_at']->copy()->addDays(10);
+                return $attr['pending_amount'] > 0 ? $attr['book_issued_at']->copy()->addDays(10) : null;
             } ,
             'book_return_due' => function ($attr) {
-                return $attr['book_issued_at']->copy()->addDays(14);
-            },
+                return $attr['for_rent'] ? $attr['book_issued_at']->copy()->addDays(14) : null;
+            } ,
             'book_returned_at' => function ($attr) {
-                return $attr['for_rent'] ? fake()->randomElement([$attr['book_issued_at']->copy()->addDays(10) , null]) : null;
+                return $attr['for_rent'] && $attr['book_issued_at'] < now()->subDays(1) ?
+                    fake()->randomElement([
+                        fake()->dateTimeBetween($attr['book_issued_at']->copy()->addDays(10) , $attr['book_return_due'])
+                        , null
+                    ])
+                    : null;
             } ,
         ];
     }
