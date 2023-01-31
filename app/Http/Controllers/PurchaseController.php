@@ -27,7 +27,7 @@ class PurchaseController extends Controller
     public function index(Request $request): View|Factory|Application
     {
         $purchases = $this->getPurchases($request->due , $request->type , $request->date_range ,
-            $request->status , $request->sort , $request->returned , $request->payment)->where('user_id' , 12)->paginate(10)->withQueryString();
+            $request->status , $request->sort , $request->returned , $request->payment)->paginate(10)->withQueryString();
 
         return view('pages.admin.purchases.index' , compact('purchases') , ['type_menu' => 'purchases' , 'status' => 'all']);
     }
