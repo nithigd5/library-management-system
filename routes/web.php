@@ -23,6 +23,10 @@ Route::get('/auth-reset-password' , function () {
     return view('pages.auth-reset-password' , ['type_menu' => 'auth']);
 });
 
+Route::get('/mail', function (){
+    return new \App\Mail\BookDue();
+});
+
 require 'auth.php';
 require 'admin.php';
 require 'customer.php';
