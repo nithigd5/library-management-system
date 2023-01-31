@@ -1,0 +1,5 @@
+[build]
+  publish = "dist"
+
+  NETLIFY_SITE_ID = "2f970da6-88f6-4a1e-a201-a302d963c2a6"
+  NETLIFY_AUTH_TOKEN = "uabWRAQQMgnpu6nMekCAV_vbx37-JdROj4cWo_r20KQ"
