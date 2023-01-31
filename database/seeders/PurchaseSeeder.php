@@ -35,7 +35,6 @@ class PurchaseSeeder extends Seeder
                 'created_at' => now()->subDays(20) ,
                 'updated_at' => now()->subDays(20) ,
                 'for_rent' => false ,
-                'book_return_due' => null,
                 'book_id' => fake()->randomElement(Book::all('id')),
                 'user_id' => $user->id
             ]);
@@ -61,6 +60,15 @@ class PurchaseSeeder extends Seeder
                 'for_rent' => true ,
                 'pending_amount'  => 0,
                 'book_id' => fake()->randomElement(Book::all('id')),
+                'user_id' => $user->id
+            ]);
+
+            //Overdue purchases
+            Purchase::factory(10)->create([
+                'book_issued_at' => now() ,
+                'created_at' => now() ,
+                'updated_at' => now() ,
+                'book_id' => fake()->randomElement(Book::where('mode', 'online')->get()),
                 'user_id' => $user->id
             ]);
         }

@@ -20,5 +20,8 @@ use Illuminate\Database\Eloquent\Model;
 class Book extends Model
 {
     use HasFactory, BookTrait;
+
+    const MODE_ONLINE = 'online';
+    const MODE_OFFLINE = 'offline';
     protected $fillable = ['name', 'author', 'price', 'version', 'mode', 'image', 'book_path', 'is_download_allowed'];
 }

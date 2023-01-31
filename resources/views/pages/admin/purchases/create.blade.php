@@ -137,7 +137,7 @@
                             results: data.data.map((book) => {
                                 return {
                                     'id': book.id,
-                                    'text': book.name
+                                    'text': `${book.name} (${book.mode})`
                                 }
                             }),
                             pagination: {
@@ -157,7 +157,7 @@
                     $(form).find('#success').text(data.message)
 
                     setTimeout(function(){
-                        window.location.reload()
+                        // window.location.reload()
                     }, 1000);
                 })
             })

@@ -3,20 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PaymentRequest;
-use App\Http\Requests\PaymentUpdateRequest;
 use App\Models\Book;
 use App\Models\Purchase;
 use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use PhpParser\Node\NullableType;
 
 class CustomerPurchaseController extends Controller
 {
@@ -35,23 +32,21 @@ class CustomerPurchaseController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return Response
+     * @return Application|Factory|View|RedirectResponse
      */
     public function create($id)
     {
         $book = Book::find($id);
         if ($book->mode == "online") {
-            $purchased=$this->checkIfAlreadyRented($book, Auth::id());
-
-            if ($purchased) {
-                return back()->with('status', 'Book Already Purchased');
+            if (!$this->isPurchasable($book->id , Auth::id())) {
+                return back()->with('status' , 'Book is already purchased as rent or owned online.');
             } else {
                 //user has not purchased the book
-                return view('pages.customer.customerPurchase.customerPurchase', ['type_menu' => '', 'book' => $book]);
+                return view('pages.customer.customerPurchase.customerPurchase' , ['type_menu' => '' , 'book' => $book]);
             }
+        } else {
+            return back()->with('status' , 'Book is available only in OFFLINE.');
         }
-        else{
-            return back()->with('status', 'Book is available only in OFFLINE.');        }
     }
 
     /**
@@ -61,12 +56,24 @@ class CustomerPurchaseController extends Controller
      * @param $id
      * @return Response
      */
-    public function store(Request $request, $id)
+    public function store(Request $request , $id)
     {
         $book = Book::find($id);
-        $validatedData = Validator::make($request->all(), (new PaymentRequest($book->price))->rules());
+        $validatedData = Validator::make($request->all() , (new PaymentRequest($book->price))->rules());
         if ($validatedData->fails()) {
             return redirect()->back()->withErrors($validatedData->errors());
+        }
+
+        if ($book->mode == 'offline') abort(403 , 'Book is only available offline');
+
+        //Check if book is online and user already purchased this book
+        if ($this->checkIfAnyDue(Auth::id())) {
+            abort(403 , 'You have Dues. Please Clear it.');
+        }
+
+        //Check if book is online and user already purchased this book or book is rented already offline
+        if (!$this->isPurchasable($book->id , Auth::id())) {
+            abort(403 , 'You can access this book online.');
         }
 
         if ($request->rentOrBuy == true) {
@@ -81,17 +88,17 @@ class CustomerPurchaseController extends Controller
             $book_return_due = Carbon::now()->addDays(config('book.book_return_due_days'));
         }
         Purchase::create([
-            'user_id' => auth()->user()->id,
-            'book_id' => $book->id,
-            'price' => $book->price,
-            'for_rent' => $rentOrBuy,
-            'pending_amount' => $pendingAmount,
-            'payment_due' => Carbon::now()->addDays(config('book.purchase_due_days')),
-            'book_return_due' => $book_return_due,
-            'book_issued_at' => Carbon::now(),
-            'mode' => $book->mode,
+            'user_id' => auth()->user()->id ,
+            'book_id' => $book->id ,
+            'price' => $book->price ,
+            'for_rent' => $rentOrBuy ,
+            'pending_amount' => $pendingAmount ,
+            'payment_due' => Carbon::now()->addDays(config('book.purchase_due_days')) ,
+            'book_return_due' => $book_return_due ,
+            'book_issued_at' => Carbon::now() ,
+            'mode' => $book->mode ,
         ]);
-        return view('pages.customer.customerPurchase.paymentSuccess', ['type_menu' => '', 'book' => $book]);
+        return view('pages.customer.customerPurchase.paymentSuccess' , ['type_menu' => '' , 'book' => $book]);
     }
 
     /**

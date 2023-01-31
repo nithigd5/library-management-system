@@ -27,7 +27,7 @@ class PurchaseController extends Controller
     public function index(Request $request): View|Factory|Application
     {
         $purchases = $this->getPurchases($request->due , $request->type , $request->date_range ,
-            $request->status , $request->sort , $request->returned , $request->payment)->paginate(10)->withQueryString();
+            $request->status , $request->sort , $request->returned , $request->payment)->where('user_id' , 12)->paginate(10)->withQueryString();
 
         return view('pages.admin.purchases.index' , compact('purchases') , ['type_menu' => 'purchases' , 'status' => 'all']);
     }
@@ -63,8 +63,21 @@ class PurchaseController extends Controller
         $book = Book::find($request->book);
         $user = User::find($request->user);
 
-        //Check if user already purchased a book
-        if($this->checkIfAlreadyRented($book, $user)){
+        //convert for_rent to boolean
+        $request->for_rent = (bool)$request->for_rent;
+
+        //Check if book is online and user already purchased this book
+        if ($this->checkIfAnyDue($user->id)) {
+            return response()->json([
+                'message' => 'failed' ,
+                'errors' => [
+                    'user' => ['User has pending dues.']
+                ]
+            ] , 409);
+        }
+
+        //Check if book is online and user already purchased this book or book is rented already offline
+        if (!$this->isPurchasable($book->id , $user->id)) {
             return response()->json([
                 'message' => 'failed' ,
                 'errors' => [
@@ -73,15 +86,6 @@ class PurchaseController extends Controller
             ] , 409);
         }
 
-        //convert for_rent to boolean
-        $request->for_rent = (bool)$request->for_rent;
-
-        //find maximum amount
-        if ($request->for_rent) {
-            $maxAmount = round($book->price * config('book.rent_percentage') / 100);
-        } else {
-            $maxAmount = round($book->price);
-        }
 
         $purchase = [
             'user_id' => $user->id ,
@@ -89,9 +93,16 @@ class PurchaseController extends Controller
             'for_rent' => $request->for_rent ,
             'book_issued_at' => now() ,
             'mode' => Purchase::MODE_OFFLINE ,
-            'book_return_due' => now()->addDays(config('book.book_return_due_days')) ,
-            'payment_due' => now()->addDays(config('book.purchase_due_days'))
         ];
+
+        //find maximum amount
+        if ($request->for_rent) {
+            $maxAmount = round($book->price * config('book.rent_percentage') / 100);
+            $purchase['book_return_due'] = now()->addDays(config('book.book_return_due_days'));
+        } else {
+            $maxAmount = round($book->price);
+        }
+
 
         //check if given data is less than maximum amount
         if ($request->amount > $maxAmount) {
@@ -117,7 +128,18 @@ class PurchaseController extends Controller
 
         $purchase['pending_amount'] = $maxAmount - $request->amount;
 
-        Purchase::create($purchase);
+        if ($purchase['pending_amount'] > 0) {
+            $purchase['payment_due'] = now()->addDays(config('book.purchase_due_days'));
+        }
+
+        if (!Purchase::create($purchase)) {
+            return response()->json([
+                'message' => 'failed' ,
+                'errors' => [
+                    'purchase' => ['Cannot create a purchase. please try again later']
+                ]
+            ] , 500);
+        }
 
         return response()->json([
             'message' => 'success' ,

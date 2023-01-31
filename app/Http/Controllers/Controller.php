@@ -47,24 +47,26 @@ class Controller extends BaseController
     }
 
     /**
-     * Check if User has already rented the same book and not returned
-     * @param $book
-     * @param $user
+     * User is allowed to purchase only if book is not rented already in offline
+     * and not owned or rented in online and also no due
+     * @param $bookId
+     * @param $userId
      * @return bool
      */
-    public function checkIfAlreadyRented($book , $user): bool
+    public function isPurchasable($bookId , $userId): bool
     {
-        return Purchase::where(function ($query) use ($user , $book) {
-            $query
-                ->where('user_id' , $user->id)
-                ->where('book_id' , $book->id);
-        })->where(function ($query) {
-            $query
-                ->where('for_rent' , 1)
-                ->whereNull('book_returned_at')
-                ->where('payment_due', '>', now())
-                ->where('book_return_due', '>', now());
-        })->exists();
+        return  (!Purchase::accessibleOnlineBooks($userId)->where('book_id' , $bookId)->exists()
+            && !Purchase::accessibleOfflineBooks($userId)->where('for_rent' , true)->where('book_id' , $bookId)->exists());
     }
 
+    /**
+     * User is allowed to purchase only if book is not rented already in offline
+     * and not owned or rented in online
+     * @param $userId
+     * @return bool
+     */
+    public function checkIfAnyDue($userId): bool
+    {
+        return Purchase::allDue()->where('user_id' , $userId)->exists();
+    }
 }
