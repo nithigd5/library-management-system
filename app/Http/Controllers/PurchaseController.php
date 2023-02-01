@@ -151,6 +151,8 @@ class PurchaseController extends Controller
 
     /**
      * store updated purchase offline Purchase as ajax
+     * @param Purchase $purchase
+     * @param PaymentUpdateRequest $request
      * @return JsonResponse
      */
     public function update(Purchase $purchase , PaymentUpdateRequest $request): JsonResponse

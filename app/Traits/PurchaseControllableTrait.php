@@ -18,9 +18,9 @@ trait PurchaseControllableTrait
      * @param $isPaid
      * @return mixed
      */
-    public function getPurchases($due = null , $type = null , $date_range = null , $status = null , $sort = null , $isReturned = null , $isPaid = null)
+    public function getPurchases($due = null , $type = null , $date_range = null , $status = null , $sort = null , $isReturned = null , $isPaid = null): mixed
     {
-        $query = Purchase::with('book' , 'user');
+        $query = Purchase ::with('book' , 'user');
 
         //Query By Type
         $query = match ($type) {
@@ -31,8 +31,8 @@ trait PurchaseControllableTrait
 
         //Query By Due Date
         $query = match ($due) {
-            'all' => $query->bookOverDue()->paymentOverDue() ,
-            'book_due' => $query->bookOverDue() ,
+            'all' => $query->offlineBookOverDue()->paymentOverDue() ,
+            'book_due' => $query->offlineBookOverDue() ,
             'payment_due' => $query->paymentOverDue() ,
             default => $query
         };
@@ -60,7 +60,7 @@ trait PurchaseControllableTrait
         };
 
         //Sort and filter the result in given date range
-        $this->sortAndDateQueryFilter($query , $date_range , $sort);
+        $this->sortAndDateQueryFilter($query , $date_range , $sort, 'book_issued_at');
 
         return $query;
     }

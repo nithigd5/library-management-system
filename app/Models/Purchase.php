@@ -48,6 +48,7 @@ class Purchase extends Model
     protected $casts = [
         'book_issued_at' => 'datetime',
         'payment_due' => 'datetime',
+        'book_return_due' => 'datetime',
         'book_returned_at' => 'datetime'
     ];
 

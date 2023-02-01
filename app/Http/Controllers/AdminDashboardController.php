@@ -21,7 +21,7 @@ class AdminDashboardController extends Controller
 
         $returnedBooksCount = Purchase::returnedLastMonth()->count();
 
-        $overDueBooksCount = Purchase::bookOverDue()->count();
+        $overDueBooksCount = Purchase::offlineBookOverDue()->count();
 
         $unPaidSum = Purchase::unpaidPayment()->sum('pending_amount');
 

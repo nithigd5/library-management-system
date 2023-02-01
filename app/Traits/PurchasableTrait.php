@@ -114,16 +114,49 @@ trait PurchasableTrait
     }
 
     /**
-     * get all purchases not returned and return due is over.
+     * get all purchases not returned and return book due is over.
      * @param Builder $query
      * @return Builder
      */
-    public function scopeBookOverDue(Builder $query): Builder
+    public function scopeOfflineBookOverDue(Builder $query): Builder
     {
         return $query
+            ->join('books' , 'books.id' , '=' , 'purchases.book_id')
+            ->where('books.mode' , '=' , Book::MODE_OFFLINE)
             ->where('for_rent' , true)
             ->where('book_return_due' , '<' , now())
-            ->whereNull('book_returned_at');
+            ->whereNull('book_returned_at')
+            ->select('purchases.*');
+    }
+
+    /**
+     * get all purchases not returned if offline and book due is between given dates.
+     * @param Builder $query
+     * @param $start
+     * @param $end
+     * @return Builder
+     */
+    public function scopeBookDueBetween(Builder $query , $start = null , $end = null): Builder
+    {
+        if (is_null($start) || is_null($end)) {
+            $start = now()->addDay();
+            $end = now()->addDays(2);
+        }
+
+        return $query
+            ->join('books' , 'books.id' , '=' , 'purchases.book_id')
+            ->where(function (Builder $query) use ($end , $start) {
+                return $query->where('books.mode' , '=' , Book::MODE_OFFLINE)
+                    ->where('for_rent' , true)
+                    ->whereBetween('book_return_due' , [$start , $end])
+                    ->whereNull('book_returned_at');
+            })
+            ->Orwhere(function (Builder $query) use ($end , $start) {
+                return $query
+                    ->where('books.mode' , '=' , Book::MODE_ONLINE)
+                    ->where('for_rent' , true)
+                    ->whereBetween('book_return_due' , [$start , $end]);
+            })->select('purchases.*');
     }
 
     /**
@@ -139,13 +172,32 @@ trait PurchasableTrait
     }
 
     /**
+     * get all purchases where payments is not completed and payment due is over between given dates.
+     * @param Builder $query
+     * @param null $start
+     * @param null $end
+     * @return Builder
+     */
+    public function scopePaymentDueBetween(Builder $query, $start = null, $end = null): Builder
+    {
+        if (is_null($start) || is_null($end)) {
+            $start = now()->addDay();
+            $end = now()->addDays(2);
+        }
+
+        return $query
+            ->whereBetween('payment_due' , [$start , $end])
+            ->where('pending_amount' , '>' , 0);
+    }
+
+    /**
      * Get all payment and book overdue
      * @param Builder $query
      * @return Builder
      */
     public function scopeAllDue(Builder $query): Builder
     {
-        return $this->scopeBookOverDue($query)->OrWhere(function ($query) {
+        return $this->scopeOfflineBookOverDue($query)->OrWhere(function ($query) {
             return $this->scopePaymentOverDue($query);
         });
     }
