@@ -51,6 +51,10 @@ class BookController extends Controller
         return back()->with('message' , __('book.store.failed'))->with('status' , Constants::FAILED_STATUS);
     }
 
+    /**
+     * @param Request $request
+     * @return Application|Factory|View
+     */
     public function search(Request $request)
     {
         // Get the search value from the request

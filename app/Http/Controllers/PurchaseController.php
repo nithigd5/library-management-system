@@ -37,23 +37,6 @@ class PurchaseController extends Controller
     }
 
     /**
-     * Show a view for creating a new offline Purchase
-     * @return void
-     */
-    public function create()
-    {
-    }
-
-    /**
-     * store new offline Purchase
-     * @return void
-     */
-    public function store()
-    {
-
-    }
-
-    /**
      * store updated purchase offline Purchase as ajax
      * @return \Illuminate\Http\JsonResponse
      */
@@ -108,6 +91,16 @@ class PurchaseController extends Controller
         }
     }
 
+    /**
+     * @param $due
+     * @param $type
+     * @param $date_range
+     * @param $status
+     * @param $sort
+     * @param $isReturned
+     * @param $isPaid
+     * @return mixed
+     */
     public function getPurchases($due = null , $type = null , $date_range = null , $status = null , $sort = null , $isReturned = null , $isPaid = null)
     {
         $query = Purchase::with('book' , 'user');

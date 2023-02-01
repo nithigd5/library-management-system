@@ -5,11 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\Purchase;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class PdfViewAndDownloadController extends Controller
 {
+    /**
+     * @param $id
+     * @return RedirectResponse|BinaryFileResponse
+     */
     public function viewPDF($id)
     {
         $book = Book::find($id);
@@ -44,6 +49,10 @@ class PdfViewAndDownloadController extends Controller
     }
     }
 
+    /**
+     * @param $book
+     * @return mixed
+     */
     public function checkIfPurchased($book) {
         return Purchase::where(function ($query) use ($book) {
             $query->where('user_id', auth()->user()->id)

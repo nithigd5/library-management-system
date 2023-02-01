@@ -11,7 +11,9 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -28,11 +30,18 @@ class BookRequestController extends Controller
         return view('pages.customer.bookrequest.index', ['type_menu' => 'books', 'books' => $bookrequest]);
     }
 
+    /**
+     * @return Application|Factory|View
+     */
     public function create()
     {
         return view('pages.customer.bookrequest.create', ['type_menu' => 'books']);
     }
 
+    /**
+     * @param BookRequestValidation $request
+     * @return Application|RedirectResponse|Redirector
+     */
     public function store(BookRequestValidation $request)
     {
         BookRequest::create([
@@ -44,6 +53,10 @@ class BookRequestController extends Controller
         return redirect(route('bookrequest.index'));
     }
 
+    /**
+     * @param $id
+     * @return Application|Factory|View
+     */
     public function show($id)
     {
         $book=BookRequest::find($id);

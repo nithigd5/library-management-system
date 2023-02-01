@@ -158,6 +158,16 @@ class CustomerPurchaseController extends Controller
         }
     }
 
+    /**
+     * @param $due
+     * @param $type
+     * @param $date_range
+     * @param $status
+     * @param $sort
+     * @param $isReturned
+     * @param $isPaid
+     * @return mixed
+     */
     public function getPurchases($due = null , $type = null , $date_range = null , $status = null , $sort = null , $isReturned = null , $isPaid = null)
     {
         $query = Purchase::with('book' , 'user');
@@ -222,6 +232,10 @@ class CustomerPurchaseController extends Controller
         return $query;
     }
 
+    /**
+     * @param $book
+     * @return mixed
+     */
     public function checkIfPurchased($book) {
         return Purchase::where(function ($query) use ($book) {
             $query->where('user_id', auth()->user()->id)
