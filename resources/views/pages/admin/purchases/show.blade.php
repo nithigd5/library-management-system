@@ -41,7 +41,11 @@
                                         <p class="small text-muted mb-1">Book</p>
                                         <a href="{{ route('admin.books.show', $purchase->book->id) }}">{{ $purchase->book->name }}</a>
                                     </div>
-                                    <div class="col-6 mb-3">
+                                    <div class="col-3">
+                                        <p class="small text-muted mb-1">Book Mode</p>
+                                        <p>{{ $purchase->book->mode }}</p>
+                                    </div>
+                                    <div class="col-3 mb-3">
                                         <p class="small text-muted mb-1">User</p>
                                         <a href="{{  route('admin.customers.show', $purchase->user->id) }}">{{ $purchase->user->first_name.' '.$purchase->user->last_name }}</a>
                                     </div>

@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class BookDue extends Mailable implements ShouldQueue
+class PaymentDue extends Mailable implements ShouldQueue
 {
     use Queueable , SerializesModels;
 
@@ -31,7 +31,7 @@ class BookDue extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Book Due | Library' ,
+            subject: 'Payment Due | Library' ,
         );
     }
 
@@ -43,7 +43,7 @@ class BookDue extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.purchases.book-due' ,
+            markdown: 'emails.purchases.payment-due' ,
         );
     }
 

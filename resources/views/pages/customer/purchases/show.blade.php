@@ -37,9 +37,13 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col mb-3">
+                                    <div class="col">
                                         <p class="small text-muted mb-1">Book</p>
                                         <a href="#">{{ $purchase->book->name }}</a>
+                                    </div>
+                                    <div class="col">
+                                        <p class="small text-muted mb-1">Book Mode</p>
+                                        <p>{{ $purchase->book->mode }}</p>
                                     </div>
                                 </div>
 
@@ -115,24 +119,6 @@
                                         </p>
                                     </div>
                                 </div>
-
-                                @if($purchase->isOpen())
-                                    <p class="lead font-weight-bold mb-4 pb-2" style="color: var(--primary);">Purchase
-                                        Actions</p>
-                                    <div class="row">
-                                        @if($purchase->toReturn())
-                                            <a href="#" onclick="$(this).siblings('form').submit()"
-                                               class="btn btn-primary col mx-2">Set as returned</a>
-                                            <form class="d-none"
-                                                  action="{{ route('admin.purchases.return-book', $purchase->id) }}"
-                                                  method="post"> @csrf @method('put')</form>
-                                        @endif
-                                        @if($purchase->toPay())
-                                            <a href="#" class="btn btn-primary col mx-2">Pay Balance amount</a>
-                                        @endif
-                                    </div>
-                                @endif
-
                                 <p class="mt-4 pt-2 mb-0">Want any help? <a href="#" style="color: var(--primary);">Please
                                         contact us.</a></p>
 

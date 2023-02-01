@@ -20,7 +20,7 @@ class CustomerDashboardController extends Controller
     {
         $rentedBooksCount = Purchase::rentedLastMonth()->where('user_id', Auth::id())->count();
         $returnedBooksCount = Purchase::returnedLastMonth()->where('user_id', Auth::id())->count();
-        $overDueBooksCount = Purchase::bookOverDue()->where('user_id', Auth::id())->count();
+        $overDueBooksCount = Purchase::offlineBookOverDue()->where('user_id', Auth::id())->count();
 
         $unPaidSum = Purchase::unpaidPayment()->where('user_id', Auth::id())->sum('pending_amount');
 
