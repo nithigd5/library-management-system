@@ -150,13 +150,13 @@
 
             $('#create-purchase').submit(function (e) {
                 e.preventDefault()
-
+                let form = $.find("#create-purchase")[0]
+                $(form).find('#success').text('');
                 createAndValidateAjax('#create-purchase', function (data) {
                     console.log(data)
-                    let form = $.find("#create-purchase")[0]
                     $(form).find('#success').text(data.message)
 
-                    setTimeout(function(){
+                    setTimeout(function () {
                         // window.location.reload()
                     }, 1000);
                 })

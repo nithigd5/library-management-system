@@ -178,7 +178,7 @@ trait PurchasableTrait
      * @param null $end
      * @return Builder
      */
-    public function scopePaymentDueBetween(Builder $query, $start = null, $end = null): Builder
+    public function scopePaymentDueBetween(Builder $query , $start = null , $end = null): Builder
     {
         if (is_null($start) || is_null($end)) {
             $start = now()->addDay();
@@ -197,9 +197,18 @@ trait PurchasableTrait
      */
     public function scopeAllDue(Builder $query): Builder
     {
-        return $this->scopeOfflineBookOverDue($query)->OrWhere(function ($query) {
-            return $this->scopePaymentOverDue($query);
-        });
+        return $query
+            ->join('books' , 'books.id' , '=' , 'purchases.book_id')
+            ->where(function (Builder $query) {
+                return $query
+                    ->where('books.mode' , '=' , Book::MODE_OFFLINE)
+                    ->where('for_rent' , true)
+                    ->where('book_return_due' , '<' , now())
+                    ->whereNull('book_returned_at')
+                    ->select('purchases.*');
+            })->OrWhere(function ($query) {
+                return $this->scopePaymentOverDue($query);
+            });
     }
 
     /**
