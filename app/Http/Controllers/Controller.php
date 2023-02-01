@@ -16,12 +16,13 @@ class Controller extends BaseController
 
     /**
      * Sort and filter the result in given date range
-     * @param $date_range
-     * @param $sort
      * @param Builder $query
+     * @param $date_range
+     * @param null $sort
+     * @param string $column
      * @return Builder
      */
-    public function sortAndDateQueryFilter(Builder $query , $date_range , $sort = null , $column = 'updated_at'): Builder
+    public function sortAndDateQueryFilter(Builder $query , $date_range , $sort = null , string $column = 'updated_at'): Builder
     {
         //Sort the result
         if ($sort == 'oldest') {

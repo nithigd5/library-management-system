@@ -60,7 +60,7 @@ trait PurchaseControllableTrait
         };
 
         //Sort and filter the result in given date range
-        $this->sortAndDateQueryFilter($query , $date_range , $sort);
+        $this->sortAndDateQueryFilter($query , $date_range , $sort, 'book_issued_at');
 
         return $query;
     }
