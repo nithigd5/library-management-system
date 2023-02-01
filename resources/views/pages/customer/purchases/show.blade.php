@@ -53,7 +53,7 @@
                                             <p>Book Issued At</p>
                                         </div>
                                         <div class="col-md-4 col-lg-3">
-                                            <p>{{ $purchase->book_issued_at->toDayDateTimeString() }}</p>
+                                            <p>{{ $purchase->book_issued_at?->toDayDateTimeString() }}</p>
                                         </div>
                                     </div>
                                     @if($purchase->for_rent)
@@ -107,7 +107,7 @@
                                             <p class="mb-0">Payment Due</p>
                                         </div>
                                         <div class="col-md-4 col-lg-3">
-                                            <p class="mb-0">{{ $purchase->payment_due->toDateString() }}</p>
+                                            <p class="mb-0">{{ $purchase->payment_due?->toDateString() }}</p>
                                         </div>
                                     </div>
                                 </div>
