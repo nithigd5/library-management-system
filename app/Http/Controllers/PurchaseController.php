@@ -66,6 +66,24 @@ class PurchaseController extends Controller
         //convert for_rent to boolean
         $request->for_rent = (bool)$request->for_rent;
 
+        if ($request->for_rent && !$user->hasPermissionTo('books.purchase.rent')) {
+            return response()->json([
+                'message' => 'failed' ,
+                'errors' => [
+                    'user' => ['User don"t have permission to rent a book.']
+                ]
+            ] , 403);
+        }
+
+        if (!$request->for_rent && !$user->hasPermissionTo('books.purchase.buy')) {
+            return response()->json([
+                'message' => 'failed' ,
+                'errors' => [
+                    'user' => ['User don"t have permission to buy a book.']
+                ]
+            ] , 403);
+        }
+
         //Check if book is online and user already purchased this book
         if ($this->checkIfAnyDue($user->id)) {
             return response()->json([
