@@ -81,7 +81,7 @@ class Purchase extends Model
      */
     public static function can($book , $user): bool
     {
-        return  (!Purchase::accessibleOnlineBooks($user->id)->where('book_id' , $book->id)->exists()
-            && !Purchase::accessibleOfflineBooks($user->id)->where('for_rent' , true)->where('book_id' , $book->id)->exists());
+        return  (!static::accessibleOnlineBooks($user->id)->where('book_id' , $book->id)->exists()
+            && !static::accessibleOfflineBooks($user->id)->where('for_rent' , true)->where('book_id' , $book->id)->exists());
     }
 }

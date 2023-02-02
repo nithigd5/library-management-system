@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Constants;
-use App\Http\Requests\StoreBookRequest;
+use App\Http\Requests\BookStoreRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
 use App\Models\User;
@@ -40,10 +40,10 @@ class BookController extends Controller
     /**
      * Store a newly created valid book in books table.
      *
-     * @param StoreBookRequest $request
+     * @param BookStoreRequest $request
      * @return RedirectResponse
      */
-    public function store(StoreBookRequest $request)
+    public function store(BookStoreRequest $request)
     {
         if (Book::create($this->storeAndSetUploadedFiles($request->all()))) {
             return back()->with('message' , __('book.store.success'))->with('status' , Constants::SUCCESS_STATUS);

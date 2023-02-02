@@ -95,16 +95,16 @@ class OfflinePurchaseTest extends TestCase
 
 
         // Cannot rent a book if user a payment overdue
-        $this->createPurchaseOverDuePurchase($book);
+        $this->createPurchaseOverDuePurchase($customer);
         $purchase = ['user' => $customer->id , 'book' => $book->id , 'amount' => $book->price , 'for_rent' => 'on'];
         $this->assertStoreFailed($admin , $purchase , 3);
 
-
+        $customer = $this->createAndGetCustomer();
         // Cannot own an online book if user has already owned it
         $book = $this->createAndGetBook(true);
         $this->createOnGoingRentedPurchase($book , $customer);
         $purchase = ['user' => $customer->id , 'book' => $book->id , 'amount' => $book->price];
-        $this->assertStoreFailed($admin , $purchase , 4);
+        $response = $this->assertStoreFailed($admin , $purchase , 4);
 
 
         // Cannot own an online book if amount is greater than actual price
@@ -210,7 +210,6 @@ class OfflinePurchaseTest extends TestCase
     /**
      *
      * get a payment overdue rented purchase - no due - not returned
-     * @param $book
      * @param $customer
      * @param bool $forRent
      * @return Purchase
@@ -233,6 +232,7 @@ class OfflinePurchaseTest extends TestCase
      * @param array $purchase
      * @param $dbData
      * @return TestResponse
+     * @throws \JsonException
      */
     public function assertStoreSuccess(User $admin , array $purchase , $dbData): TestResponse
     {
