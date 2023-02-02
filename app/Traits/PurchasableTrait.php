@@ -195,7 +195,7 @@ trait PurchasableTrait
      * @param Builder $query
      * @return Builder
      */
-        public function scopeAllDue(Builder $query): Builder
+    public function scopeAllDue(Builder $query): Builder
     {
         return $query
             ->join('books' , 'books.id' , '=' , 'purchases.book_id')
@@ -204,11 +204,10 @@ trait PurchasableTrait
                     ->where('books.mode' , '=' , Book::MODE_OFFLINE)
                     ->where('for_rent' , true)
                     ->where('book_return_due' , '<' , now())
-                    ->whereNull('book_returned_at')
-                    ->select('purchases.*');
+                    ->whereNull('book_returned_at');
             })->OrWhere(function ($query) {
                 return $this->scopePaymentOverDue($query);
-            });
+            })->select('purchases.*');
     }
 
     /**
