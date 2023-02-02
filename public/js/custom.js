@@ -44,8 +44,8 @@ $(document).ready(function () {
         } else {
             var rentPrice = (value * 0.1).toFixed(2);
             $subTotal.val(rentPrice);
-            $subTotal.prop("readOnly", true);
             $("#subTotalPrice").text(rentPrice);
+            $subTotal.prop("readOnly", true);
         }
     });
 

@@ -50,6 +50,43 @@ class CustomerPurchaseController extends Controller
             return back()->with('status' , 'Book is available only in OFFLINE.');
         }
     }
+    public function storePending(Request $request , $id)
+    {
+        $book = Purchase::find($id);
+        $validatedData = Validator::make($request->all() , (new PaymentRequest($book->pending_amount))->rules());
+        if ($validatedData->fails()) {
+            return redirect()->back()->withErrors($validatedData->errors());
+        }
+        $pendingAmount = ($book->pending_amount - ($request->paidPrice));
+
+        Purchase::create([
+            'user_id' => auth()->user()->id ,
+            'book_id' => $book->book_id ,
+            'price' => $book->price ,
+            'for_rent' => $book->for_rent,
+            'pending_amount' => $pendingAmount ,
+            'payment_due' => $book->payment_due ,
+            'book_return_due' => $book->book_return_due ,
+            'book_issued_at' => $book->book_issued_at ,
+            'mode' => $book->mode ,
+        ]);
+
+        return view('pages.customer.customerPurchase.paymentSuccess' , ['type_menu' => '' , 'book' => $book]);
+    }
+    /**
+     * @param $id
+     * @return Application|Factory|View|RedirectResponse
+     */
+    public function pendingpayment($id)
+    {
+        $purchase = Purchase::find($id);
+        if ($purchase->pending_amount >0) {
+                return view('pages.customer.customerPurchase.customerPurchasePending' , ['type_menu' => '' , 'book' => $purchase]);
+            }
+        else {
+            return back()->with('status' , 'No Pending Due');
+        }
+    }
 
     /**
      * Store a newly created resource in storage.

@@ -119,6 +119,19 @@
                                         </p>
                                     </div>
                                 </div>
+                                <div class="row text-right my-4 justify-content-end">
+                                    <div class="col-md-8">
+                                        <a href="{{route('purchase.pending-payment',$purchase->id)}}"
+                                           class="btn btn-success">Pay Now</a>
+                                    </div>
+                                </div>
+                                <div class="row text-right my-4 justify-content-end">
+                                    <div class="col-md-8">
+                                        @if(session('status'))
+                                            <p class="mt-3 text-primary text-danger"> {{ session('status') }}</p>
+                                        @endif
+                                    </div>
+                                </div>
                                 <p class="mt-4 pt-2 mb-0">Want any help? <a href="#" style="color: var(--primary);">Please
                                         contact us.</a></p>
 

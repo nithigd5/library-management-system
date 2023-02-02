@@ -20,6 +20,8 @@ Route::middleware('auth')->group(function () {
     Route::name('purchase.')->group(function () {
         Route::post('purchase/{id}', [CustomerPurchaseController::class, 'store'])->name('store');
         Route::get('purchase/{id}/buy', [CustomerPurchaseController::class, 'create'])->name('create');
+        Route::get('purchase/{id}/pending-payment', [CustomerPurchaseController::class, 'pendingpayment'])->name('pending-payment');
+        Route::post('purchase/{id}/pending-payment', [CustomerPurchaseController::class, 'storePending'])->name('pending-payment');
         Route::get('/purchase', [CustomerPurchaseController::class, 'index'])->name('index');
         Route::get('/purchase/{id}', [CustomerPurchaseController::class, 'show'])->name('show');
     });
