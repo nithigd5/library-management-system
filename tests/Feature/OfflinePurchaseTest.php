@@ -111,7 +111,7 @@ class OfflinePurchaseTest extends TestCase
         $book = $this->createAndGetBook(true);
         $customer = $this->createAndGetCustomer();
         $purchase = ['user' => $customer->id , 'book' => $book->id , 'amount' => $book->price * 2];
-        $this->assertStoreFailed($admin , $purchase , 4)->assertStatus(406);
+        $this->assertStoreFailed($admin , $purchase , 4);
 
 
         // Customer with no permission are not allowed to purchase
@@ -252,19 +252,13 @@ class OfflinePurchaseTest extends TestCase
      * @param User $admin
      * @param array $purchase
      * @param $count
-     * @param null $status
      * @return TestResponse
      */
-    public function assertStoreFailed(User $admin , array $purchase , $count , $status = null): TestResponse
+    public function assertStoreFailed(User $admin , array $purchase , $count): TestResponse
     {
         $response = $this->actingAs($admin)->post(route('admin.purchases.store') , $purchase);
 
-        if (is_null($status)) {
-            $this->assertGreaterThanOrEqual(300 , $response->status() , 'Error Status Code should be returned or redirect');
-            $this->assertLessThan(500 , $response->status() , 'Error Status Code should be returned or redirect');
-        } else {
-            $response->assertStatus($status);
-        }
+        $response->assertSessionHasErrors();
 
         $this->assertDatabaseCount('purchases' , $count);
 
@@ -276,8 +270,10 @@ class OfflinePurchaseTest extends TestCase
      * Assert Database has give data and status code is 200
      * @param User $admin
      * @param array $purchase
+     * @param $purchaseID
      * @param $dbData
      * @return TestResponse
+     * @throws \JsonException
      */
     public function assertUpdateSuccess(User $admin , array $purchase , $purchaseID , $dbData): TestResponse
     {

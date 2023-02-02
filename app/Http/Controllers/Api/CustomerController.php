@@ -23,7 +23,7 @@ class CustomerController extends Controller
     /**
      * search a term in name and id column
      * @param Builder $query
-     * @param string $term
+     * @param string|null $term
      * @return Builder
      */
     public function search(Builder $query , ?string $term)

@@ -5,7 +5,9 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Traits\UserUpdatableTrait;
 use DateTime;
+use Illuminate\Database\Concerns\BuildsQueries;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
@@ -73,6 +75,16 @@ class User extends Authenticatable
     public function offlineEntries()
     {
         return $this->hasMany(OfflineEntry::class, 'user_id');
+    }
+
+    public function purchases()
+    {
+        return $this->hasMany(Purchase::class);
+    }
+
+    public function dues()
+    {
+        return $this->hasMany(Purchase::class)->allDue();
     }
 
     public function setPasswordAttribute($value)

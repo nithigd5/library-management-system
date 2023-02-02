@@ -4,16 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PaymentUpdateRequest;
 use App\Http\Requests\PurchaseStoreRequest;
-use App\Models\Book;
 use App\Models\Purchase;
-use App\Models\User;
 use App\Traits\PurchaseControllableTrait;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
 
 class PurchaseController extends Controller
 {
@@ -21,13 +20,12 @@ class PurchaseController extends Controller
 
     /**
      * View all Purchases ordered by recent
-     * @param Request $request
      * @return Application|Factory|View
      */
-    public function index(Request $request): View|Factory|Application
+    public function index(): View|Factory|Application
     {
-        $purchases = $this->getPurchases($request->due , $request->type , $request->date_range ,
-            $request->status , $request->sort , $request->returned , $request->payment)->paginate(10)->withQueryString();
+        $purchases = $this->getPurchases(request('due') , request('type') , request('date_range') ,
+            request('status') , request('sort') , request('returned') , request('payment'))->paginate(10)->withQueryString();
 
         return view('pages.admin.purchases.index' , compact('purchases') , ['type_menu' => 'purchases' , 'status' => 'all']);
     }
@@ -56,114 +54,11 @@ class PurchaseController extends Controller
      * store new offline Purchase
      * @param PurchaseStoreRequest $request
      * @return JsonResponse
+     * @throws ValidationException
      */
     public function store(PurchaseStoreRequest $request): JsonResponse
     {
-        //Get book and user
-        $book = Book::find($request->book);
-        $user = User::find($request->user);
-
-        //convert for_rent to boolean
-        $request->for_rent = (bool)$request->for_rent;
-
-        if ($request->for_rent && !$user->hasPermissionTo('books.purchase.rent')) {
-            return response()->json([
-                'message' => 'failed' ,
-                'errors' => [
-                    'user' => ['User don"t have permission to rent a book.']
-                ]
-            ] , 403);
-        }
-
-        if (!$request->for_rent && !$user->hasPermissionTo('books.purchase.buy')) {
-            return response()->json([
-                'message' => 'failed' ,
-                'errors' => [
-                    'user' => ['User don"t have permission to buy a book.']
-                ]
-            ] , 403);
-        }
-
-        //Check if book is online and user already purchased this book
-        if ($this->checkIfAnyDue($user->id)) {
-            return response()->json([
-                'message' => 'failed' ,
-                'errors' => [
-                    'user' => ['User has pending dues.']
-                ]
-            ] , 409);
-        }
-
-        //Check if book is online and user already purchased this book or book is rented already offline
-        if (!$this->isPurchasable($book->id , $user->id)) {
-            return response()->json([
-                'message' => 'failed' ,
-                'errors' => [
-                    'book' => ['User has already rented the same book and not returned.']
-                ]
-            ] , 409);
-        }
-
-
-        $purchase = [
-            'user_id' => $user->id ,
-            'book_id' => $book->id ,
-            'for_rent' => $request->for_rent ,
-            'book_issued_at' => now() ,
-            'mode' => Purchase::MODE_OFFLINE ,
-        ];
-
-        //find maximum amount
-        if ($request->for_rent) {
-            $maxAmount = round($book->price * config('book.rent_percentage') / 100);
-            $purchase['book_return_due'] = now()->addDays(config('book.book_return_due_days'));
-        } else {
-            $maxAmount = round($book->price);
-        }
-
-        //check if given data is less than maximum amount
-        if ($request->amount > $maxAmount) {
-            return response()->json([
-                'message' => 'failed' ,
-                'errors' => [
-                    'amount' => ['Amount cannot be greater than actual price or rent % amount']
-                ]
-            ] , 406);
-        }
-
-        $purchase['price'] = $maxAmount;
-
-        //check if user has permission to pay later for purchase if amount is less than maxAmount
-        if ($request->amount < $maxAmount && !$user->hasPermissionTo('books.purchase.pay.later')) {
-            return response()->json([
-                'message' => 'failed' ,
-                'errors' => [
-                    'user' => ['User don"t have permission to pay later']
-                ]
-            ] , 402);
-        }
-
-        $purchase['pending_amount'] = $maxAmount - $request->amount;
-
-        if ($purchase['pending_amount'] > 0) {
-            $purchase['payment_due'] = now()->addDays(config('book.purchase_due_days'));
-        }
-
-        if (!Purchase::create($purchase)) {
-            return response()->json([
-                'message' => 'failed' ,
-                'errors' => [
-                    'purchase' => ['Cannot create a purchase. please try again later']
-                ]
-            ] , 500);
-        }
-
-        return response()->json([
-            'message' => 'success' ,
-            'data' => [
-                'purchase' => $purchase
-            ]
-        ]);
+        return response()->json(['message' => 'success' , 'data' => ['purchase' => $request->handle()]]);
     }
 
     /**
@@ -182,7 +77,7 @@ class PurchaseController extends Controller
                 'errors' => [
                     'amount' => ['Payment Amount cannot be greater than pending amount: ' . $purchase->pending_amount]
                 ]
-            ] , 422);
+            ] , Response::HTTP_UNPROCESSABLE_ENTITY);
 
         $purchase->pending_amount = $purchase->pending_amount - $request->amount;
 
@@ -192,7 +87,7 @@ class PurchaseController extends Controller
                 'errors' => [
                     'amount' => ['Payment Amount cannot be updated. Please try again later.']
                 ]
-            ] , 400);
+            ] , Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return response()->json([
@@ -200,7 +95,7 @@ class PurchaseController extends Controller
             'data' => [
                 'pending_amount' => $purchase->pending_amount
             ]
-        ] , 200);
+        ]);
     }
 
     /**

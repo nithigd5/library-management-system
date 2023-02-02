@@ -7,9 +7,15 @@ use App\Http\Resources\BookCollection;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class BookController extends Controller
 {
+    /**
+     * Get all books with paginations
+     * @return BookCollection
+     */
     public function index()
     {
         return new BookCollection($this->search(Book::query() , request()->q)->paginate(5));
@@ -18,7 +24,7 @@ class BookController extends Controller
     /**
      * Search a given term in name and id column
      * @param Builder $query
-     * @param string $term
+     * @param string|null $term
      * @return Builder
      */
     public function search(Builder $query , ?string $term)
@@ -27,6 +33,11 @@ class BookController extends Controller
             ->orWhere('id' , $term) : $query;
     }
 
+    /**
+     * Return a book with given by ID.
+     * @param $id
+     * @return JsonResponse
+     */
     public function getBook($id)
     {
         $codeWithRouteName = strtoupper(request()->route()->getName()) . '-BOOK_GET-';
@@ -48,6 +59,6 @@ class BookController extends Controller
                     'code' => $codeWithRouteName . ' ' . 'NOT_FOUND'
                 ]
             ]
-        ] , 404);
+        ] , Response::HTTP_NOT_FOUND);
     }
 }

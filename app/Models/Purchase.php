@@ -71,4 +71,17 @@ class Purchase extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * User is allowed to purchase only if book is not rented already in offline
+     * and not owned or rented in online and also no due
+     * @param $book
+     * @param $user
+     * @return bool
+     */
+    public static function can($book , $user): bool
+    {
+        return  (!Purchase::accessibleOnlineBooks($user->id)->where('book_id' , $book->id)->exists()
+            && !Purchase::accessibleOfflineBooks($user->id)->where('for_rent' , true)->where('book_id' , $book->id)->exists());
+    }
 }
