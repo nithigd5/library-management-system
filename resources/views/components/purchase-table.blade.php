@@ -8,7 +8,7 @@
             <th>User</th>
             <th>Status</th>
             <th>Payment</th>
-            <th>Mode</th>
+            <th>Book Mode</th>
             <th>Type</th>
             <th>Purchased at</th>
             <th>Action</th>
@@ -27,7 +27,7 @@
                     <div
                         class="badge badge-{{ $getPaymentStatusBadge($purchase) }}">{{ $purchase->getPaymentStatus() }}</div>
                 </td>
-                <td>{{ $purchase->mode }}</td>
+                <td>{{ $purchase->book->mode }}</td>
                 <td>{{ $purchase->for_rent ? 'Rent' : 'Owned'  }}</td>
                 <td>{{ $purchase->created_at->toDateString() }}</td>
                 <td>

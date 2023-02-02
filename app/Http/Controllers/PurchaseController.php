@@ -3,44 +3,177 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PaymentUpdateRequest;
+use App\Http\Requests\PurchaseStoreRequest;
+use App\Models\Book;
 use App\Models\Purchase;
-use Carbon\Carbon;
+use App\Models\User;
+use App\Traits\PurchaseControllableTrait;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class PurchaseController extends Controller
 {
+    use PurchaseControllableTrait;
+
     /**
      * View all Purchases ordered by recent
+     * @param Request $request
      * @return Application|Factory|View
      */
-    public function index(Request $request)
+    public function index(Request $request): View|Factory|Application
     {
         $purchases = $this->getPurchases($request->due , $request->type , $request->date_range ,
-            $request->status , $request->sort , $request->returned , $request->payment)->paginate(10);
+            $request->status , $request->sort , $request->returned , $request->payment)->paginate(10)->withQueryString();
 
         return view('pages.admin.purchases.index' , compact('purchases') , ['type_menu' => 'purchases' , 'status' => 'all']);
     }
 
     /**
      * Show a particular book view page
-     * @param $book
+     * @param $id
      * @return Application|Factory|View
      */
-    public function show($id)
+    public function show($id): View|Factory|Application
     {
         $purchase = Purchase::with('user' , 'book')->findOrFail($id);
         return view('pages.admin.purchases.show' , compact('purchase') , ['type_menu' => 'purchases']);
     }
 
     /**
-     * store updated purchase offline Purchase as ajax
-     * @return \Illuminate\Http\JsonResponse
+     * Show a view for creating a new offline Purchase
+     * @return Application|Factory|View
      */
-    public function update(Purchase $purchase , PaymentUpdateRequest $request)
+    public function create(): View|Factory|Application
+    {
+        return view('pages.admin.purchases.create' , ['type_menu' => 'purchases']);
+    }
+
+    /**
+     * store new offline Purchase
+     * @param PurchaseStoreRequest $request
+     * @return JsonResponse
+     */
+    public function store(PurchaseStoreRequest $request): JsonResponse
+    {
+        //Get book and user
+        $book = Book::find($request->book);
+        $user = User::find($request->user);
+
+        //convert for_rent to boolean
+        $request->for_rent = (bool)$request->for_rent;
+
+        if ($request->for_rent && !$user->hasPermissionTo('books.purchase.rent')) {
+            return response()->json([
+                'message' => 'failed' ,
+                'errors' => [
+                    'user' => ['User don"t have permission to rent a book.']
+                ]
+            ] , 403);
+        }
+
+        if (!$request->for_rent && !$user->hasPermissionTo('books.purchase.buy')) {
+            return response()->json([
+                'message' => 'failed' ,
+                'errors' => [
+                    'user' => ['User don"t have permission to buy a book.']
+                ]
+            ] , 403);
+        }
+
+        //Check if book is online and user already purchased this book
+        if ($this->checkIfAnyDue($user->id)) {
+            return response()->json([
+                'message' => 'failed' ,
+                'errors' => [
+                    'user' => ['User has pending dues.']
+                ]
+            ] , 409);
+        }
+
+        //Check if book is online and user already purchased this book or book is rented already offline
+        if (!$this->isPurchasable($book->id , $user->id)) {
+            return response()->json([
+                'message' => 'failed' ,
+                'errors' => [
+                    'book' => ['User has already rented the same book and not returned.']
+                ]
+            ] , 409);
+        }
+
+
+        $purchase = [
+            'user_id' => $user->id ,
+            'book_id' => $book->id ,
+            'for_rent' => $request->for_rent ,
+            'book_issued_at' => now() ,
+            'mode' => Purchase::MODE_OFFLINE ,
+        ];
+
+        //find maximum amount
+        if ($request->for_rent) {
+            $maxAmount = round($book->price * config('book.rent_percentage') / 100);
+            $purchase['book_return_due'] = now()->addDays(config('book.book_return_due_days'));
+        } else {
+            $maxAmount = round($book->price);
+        }
+
+
+        //check if given data is less than maximum amount
+        if ($request->amount > $maxAmount) {
+            return response()->json([
+                'message' => 'failed' ,
+                'errors' => [
+                    'amount' => ['Amount cannot be greater than actual price or rent % amount']
+                ]
+            ] , 406);
+        }
+
+        $purchase['price'] = $maxAmount;
+
+        //check if user has permission to pay later for purchase if amount is less than maxAmount
+        if ($request->amount < $maxAmount && !$user->hasPermissionTo('books.purchase.pay.later')) {
+            return response()->json([
+                'message' => 'failed' ,
+                'errors' => [
+                    'user' => ['User don"t have permission to pay later']
+                ]
+            ] , 402);
+        }
+
+        $purchase['pending_amount'] = $maxAmount - $request->amount;
+
+        if ($purchase['pending_amount'] > 0) {
+            $purchase['payment_due'] = now()->addDays(config('book.purchase_due_days'));
+        }
+
+        if (!Purchase::create($purchase)) {
+            return response()->json([
+                'message' => 'failed' ,
+                'errors' => [
+                    'purchase' => ['Cannot create a purchase. please try again later']
+                ]
+            ] , 500);
+        }
+
+        return response()->json([
+            'message' => 'success' ,
+            'data' => [
+                'purchase' => $purchase
+            ]
+        ]);
+    }
+
+    /**
+     * store updated purchase offline Purchase as ajax
+     * @param Purchase $purchase
+     * @param PaymentUpdateRequest $request
+     * @return JsonResponse
+     */
+    public function update(Purchase $purchase , PaymentUpdateRequest $request): JsonResponse
     {
         //Check if given amount is not greater than pending amount
 
@@ -48,7 +181,7 @@ class PurchaseController extends Controller
             return response()->json([
                 'message' => 'failed' ,
                 'errors' => [
-                    'amount' => ['Payment Amount cannot be greater than pending amount: '.$purchase->pending_amount]
+                    'amount' => ['Payment Amount cannot be greater than pending amount: ' . $purchase->pending_amount]
                 ]
             ] , 422);
 
@@ -76,7 +209,7 @@ class PurchaseController extends Controller
      * @param Purchase $purchase
      * @return RedirectResponse
      */
-    public function returnBook(Purchase $purchase)
+    public function returnBook(Purchase $purchase): RedirectResponse
     {
         if ($purchase->toReturn()) {
             try {
@@ -89,62 +222,5 @@ class PurchaseController extends Controller
         } else {
             return back()->with('message' , 'Book is already returned')->with('status' , 'danger');
         }
-    }
-
-    /**
-     * @param $due
-     * @param $type
-     * @param $date_range
-     * @param $status
-     * @param $sort
-     * @param $isReturned
-     * @param $isPaid
-     * @return mixed
-     */
-    public function getPurchases($due = null , $type = null , $date_range = null , $status = null , $sort = null , $isReturned = null , $isPaid = null)
-    {
-        $query = Purchase::with('book' , 'user');
-
-        //Query By Type
-        $query = match ($type) {
-            'rented' => $query->where('for_rent' , true) ,
-            'owned' => $query->where('for_rent' , false) ,
-            default => $query
-        };
-
-        //Query By Due Date
-        $query = match ($due) {
-            'all' => $query->bookOverDue()->paymentOverDue() ,
-            'book_due' => $query->bookOverDue() ,
-            'payment_due' => $query->paymentOverDue() ,
-            default => $query
-        };
-
-        //Query by Status
-        $query = match ($status) {
-            'active' => $query->byStatus(Purchase::STATUS_OPEN) ,
-            'inactive' => $query->byStatus(Purchase::STATUS_CLOSE) ,
-            default => $query
-        };
-
-
-        $query = match ($isReturned) {
-            '1' => $query->where('for_rent' , true)->whereNotNull('book_returned_at') ,
-            '0' => $query->where('for_rent' , true)->whereNull('book_returned_at') ,
-            default => $query
-        };
-
-        $query = match ($isPaid) {
-            '1' => $query->where('pending_amount' , '=' , 0) ,
-            '0' => $query->whereColumn('pending_amount' , '=' , 'price') ,
-            '2' => $query->where('pending_amount' , '>' , 0)
-                ->whereColumn('pending_amount' , '<' , 'price') ,
-            default => $query
-        };
-
-        //Sort and filter the result in given date range
-        $this->sortAndDateQueryFilter($query, $date_range, $sort);
-
-        return $query;
     }
 }

@@ -35,6 +35,8 @@ class Purchase extends Model
     const PAYMENT_COMPLETED = 'Completed';
     const PAYMENT_HALF_PAID = 'Half-Paid';
     const PAYMENT_PENDING = 'Pending';
+    const MODE_OFFLINE = 'offline';
+    const MODE_ONLINE = 'online';
 
 
     protected $fillable = ['user_id','book_id','price','for_rent','pending_amount','payment_due','book_return_due','book_issued_at','mode'];
@@ -46,6 +48,7 @@ class Purchase extends Model
     protected $casts = [
         'book_issued_at' => 'datetime',
         'payment_due' => 'datetime',
+        'book_return_due' => 'datetime',
         'book_returned_at' => 'datetime'
     ];
 

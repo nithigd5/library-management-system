@@ -22,9 +22,13 @@
                                 <p class="lead fw-bold mb-5" style="color: var(--primary);">Purchase Details</p>
 
                                 <div class="row">
-                                    <div class="col mb-3">
+                                    <div class="col-6 mb-3">
                                         <p class="small text-muted mb-1">Date</p>
                                         <p>{{ $purchase->created_at->toDayDateTimeString() }}</p>
+                                    </div>
+                                    <div class="col mb-3">
+                                        <p class="small text-muted mb-1">Purchase Mode</p>
+                                        <p>{{ $purchase->mode }}</p>
                                     </div>
                                     <div class="col mb-3">
                                         <p class="small text-muted mb-1">Purchase ID.</p>
@@ -33,11 +37,15 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col mb-3">
+                                    <div class="col-6 mb-3">
                                         <p class="small text-muted mb-1">Book</p>
                                         <a href="{{ route('admin.books.show', $purchase->book->id) }}">{{ $purchase->book->name }}</a>
                                     </div>
-                                    <div class="col mb-3">
+                                    <div class="col-3">
+                                        <p class="small text-muted mb-1">Book Mode</p>
+                                        <p>{{ $purchase->book->mode }}</p>
+                                    </div>
+                                    <div class="col-3 mb-3">
                                         <p class="small text-muted mb-1">User</p>
                                         <a href="{{  route('admin.customers.show', $purchase->user->id) }}">{{ $purchase->user->first_name.' '.$purchase->user->last_name }}</a>
                                     </div>
@@ -49,7 +57,7 @@
                                             <p>Book Issued At</p>
                                         </div>
                                         <div class="col-md-4 col-lg-3">
-                                            <p>{{ $purchase->book_issued_at->toDayDateTimeString() }}</p>
+                                            <p>{{ $purchase->book_issued_at?->toDayDateTimeString() }}</p>
                                         </div>
                                     </div>
                                     @if($purchase->for_rent)
@@ -103,7 +111,7 @@
                                             <p class="mb-0">Payment Due</p>
                                         </div>
                                         <div class="col-md-4 col-lg-3">
-                                            <p class="mb-0">{{ $purchase->payment_due->toDateString() }}</p>
+                                            <p class="mb-0">{{ $purchase->payment_due?->toDateString() }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -135,9 +143,6 @@
                                         @endif
                                     </div>
                                 @endif
-
-                                {{--                                <p class="mt-4 pt-2 mb-0">Want any help? <a href="#!" style="color: var(--primary);">Please--}}
-                                {{--                                        contact us</a></p>--}}
 
                             </div>
                         </div>

@@ -23,11 +23,6 @@ class CustomerBookController extends Controller
     {
         return view('pages.customer.customerBook.index' , ['type_menu' => 'books' , 'books' => Book::all()]);
     }
-
-    /**
-     * @param Request $request
-     * @return Application|Factory|View
-     */
     public function search(Request $request)
     {
         // Get the search value from the request

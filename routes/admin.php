@@ -71,7 +71,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::delete('/{book}' , [BookController::class , 'destroy'])->name('destroy')->can('books.delete');
     });
 
-    Route::name('book-requests.')->prefix('book-requests')->group(function (){
+    Route::name('book-requests.')->prefix('book-requests')->group(function () {
         Route::get('/' , [AdminBookRequestController::class , 'index'])->name('index')->can('books.request.viewAny');
 
         Route::get('/{BookRequest}' , [AdminBookRequestController::class , 'show'])->name('show')->can('books.request.viewAny');
@@ -86,6 +86,18 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::patch('/offline-entry/{offlineEntry}' , [OfflineEntryController::class , 'setUserExit'])->name('exit')->can('entry.offline.update');
     });
 
+
+    Route::name('api.')->prefix('api')->group(function () {
+        Route::name('customers.')->prefix('customers')->group(function () {
+            Route::get('/' , [\App\Http\Controllers\Api\CustomerController::class , 'index'])->name('index')->can('users.customer.viewAny');
+        });
+
+        Route::name('books.')->prefix('books')->group(function () {
+            Route::get('/' , [\App\Http\Controllers\Api\BookController::class , 'index'])->name('index')->can('books.view');
+
+            Route::get('/{Book}' , [\App\Http\Controllers\Api\BookController::class , 'getBook'])->name('show')->can('books.view');
+        });
+    });
 
 });
 

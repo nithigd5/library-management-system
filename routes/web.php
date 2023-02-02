@@ -12,7 +12,10 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::redirect('/' , '/login');
+
+Route::get('/', function () {
+    return view('welcome');
+});
 
 // auth
 Route::get('/auth-forgot-password' , function () {
@@ -21,6 +24,10 @@ Route::get('/auth-forgot-password' , function () {
 
 Route::get('/auth-reset-password' , function () {
     return view('pages.auth-reset-password' , ['type_menu' => 'auth']);
+});
+
+Route::get('/mail', function (){
+    return new \App\Mail\BookDue();
 });
 
 require 'auth.php';

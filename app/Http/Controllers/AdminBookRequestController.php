@@ -27,7 +27,7 @@ class AdminBookRequestController extends Controller
 
         $query = $this->filterByStatus($query, $request->status);
 
-        $bookrequest = $query->paginate(10);
+        $bookrequest = $query->paginate(10)->withQueryString();
 
         return view('pages.admin.bookrequest.index' , ['type_menu' => 'books ' , 'books' => $bookrequest]);
     }

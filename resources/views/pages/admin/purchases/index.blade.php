@@ -90,7 +90,7 @@
                                         <i class="fas fa-calendar"></i>
                                     </div>
                                 </div>
-                                <input id="date_range" name="date_range" type="text" class="form-control daterange-cus">
+                                <input id="date_range" value="{{ request('date_range') }}" name="date_range" type="text" class="form-control daterange-cus">
                             </div>
 
                         </div>

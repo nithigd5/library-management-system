@@ -25,7 +25,7 @@ class PaymentUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'amount' => 'required|decimal:0,2'
+            'amount' => 'required|integer'
         ];
     }
 }
