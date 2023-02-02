@@ -28,7 +28,7 @@ class UpdateBookRequest extends FormRequest
         return [
             'name' => ['required' , 'min:5' , Rule::unique('books' , 'name')->ignore($this->book->id)] ,
             'author' => 'required' ,
-            'price' => 'required|decimal:0,2' ,
+            'price' => 'required|int' ,
             'version' => 'required|int' ,
             'mode' => 'required|in:online,offline' ,
             'book_file' => [

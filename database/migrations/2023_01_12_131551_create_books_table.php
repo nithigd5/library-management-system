@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamps();
             $table->string('name');
             $table->string('author');
-            $table->float('price');
+            $table->integer('price');
             $table->integer('version');
             $table->string('book_path')->nullable();
             $table->enum('mode', ['offline', 'online'])->default('offline');

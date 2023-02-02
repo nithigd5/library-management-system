@@ -31,7 +31,7 @@ class BookTest extends TestCase
         $book = [
             'name' => 'Book Name' ,
             'author' => 'Book Author' ,
-            'price' => 50.50 ,
+            'price' => 50 ,
             'version' => 5 ,
             'book_file' => $bookFile = UploadedFile::fake()->create('book.pdf' , 100 , 'application/pdf') ,
             'image' => $image = UploadedFile::fake()->image('thumbnail.jpg' , 100 , 100) ,
@@ -65,7 +65,7 @@ class BookTest extends TestCase
         $book = [
             'name' => 'Book Name 2' ,
             'author' => 'Book Author' ,
-            'price' => 50.50 ,
+            'price' => 50 ,
             'version' => 5 ,
             'mode' => 'offline' ,
             'image' => $image = UploadedFile::fake()->image('thumbnail.jpg' , 100 , 100) ,
@@ -97,7 +97,7 @@ class BookTest extends TestCase
         //Test admin can update a book (offline)
         $new_book['name'] = 'Book New Name';
         $new_book['author'] = 'Book New Author';
-        $new_book['price'] = 55.60;
+        $new_book['price'] = 55;
         $new_book['version'] = 6;
         $new_book['mode'] = 'offline';
         $new_book['image'] = UploadedFile::fake()->image('thumbnail.jpg' , 100 , 100);
@@ -127,7 +127,7 @@ class BookTest extends TestCase
         $new_book = array();
         $new_book['name'] = 'Book New Name 2';
         $new_book['author'] = 'Book New Author 2';
-        $new_book['price'] = 55.60;
+        $new_book['price'] = 55;
         $new_book['version'] = 6;
         $new_book['mode'] = 'online';
         $new_book['book_file'] = UploadedFile::fake()->create('book.pdf' , 100 , 'application/pdf');

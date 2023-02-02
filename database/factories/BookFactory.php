@@ -21,7 +21,7 @@ class BookFactory extends Factory
         return [
             'name' => fake()->sentence() ,
             'author' => fake()->name() ,
-            'price' => fake()->randomFloat(2 , 10 , 5000) ,
+            'price' => fake()->numberBetween(2 , 5000) ,
             'version' => fake()->numberBetween(1 , 50) ,
             'book_path' => fake()->randomElement(Storage::allFiles('books')) ,
             'image' => fake()->randomElement(Storage::disk('public')->allFiles('data/books/front-covers' , ['disk' => 'public'])) ,

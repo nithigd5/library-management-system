@@ -121,7 +121,6 @@ class PurchaseController extends Controller
             $maxAmount = round($book->price);
         }
 
-
         //check if given data is less than maximum amount
         if ($request->amount > $maxAmount) {
             return response()->json([

@@ -27,7 +27,7 @@ class PurchaseStoreRequest extends FormRequest
         return [
             'user' => ['required' , Rule::exists('users' , 'id')] ,
             'book' => ['required' , Rule::exists('books' , 'id')] ,
-            'amount' => 'required|integer'
+            'amount' => 'required|integer|gte:0'
         ];
     }
 }

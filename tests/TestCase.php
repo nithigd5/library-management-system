@@ -29,9 +29,10 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * Create and return customer user
+     * @param bool $withProfileImage
      * @return User
      */
-    function createAndGetCustomer($withProfileImage = false): User
+    function createAndGetCustomer(bool $withProfileImage = false): User
     {
         return User::factory()->create([
             'profile_image' => $withProfileImage ? UploadedFile::fake()->image('profile.jpg' , 100 , 100)
@@ -43,9 +44,10 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * Create and return a book
+     * @param bool $is_online
      * @return Book
      */
-    function createAndGetBook($is_online = true): Book
+    function createAndGetBook(bool $is_online = true): Book
     {
         return Book::factory()->create([
             'mode' => $is_online ? 'online' : 'offline',
@@ -56,12 +58,21 @@ abstract class TestCase extends BaseTestCase
 
     /**
      *
+     * @param bool $withProfileImage
      * @return User
      */
-    public function seedAndGetAdmin($withProfileImage = false): User
+    public function seedAndGetAdmin(bool $withProfileImage = false): User
     {
-        $this->seed([PermissionSeeder::class , RoleSeeder::class]);
+        $this->seedRolesPermissions();
 
         return $this->createAndGetAdmin($withProfileImage);
+    }
+
+    /**
+     * @return void
+     */
+    public function seedRolesPermissions(): void
+    {
+        $this->seed([PermissionSeeder::class , RoleSeeder::class]);
     }
 }

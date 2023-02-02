@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property  DateTime book_returned_at
  * @property  float pending_amount
  * @property  boolean for_rent
+ * @property mixed $id
  * @method static Builder rentedLastMonth()
  * @method static Builder rentedBetween()
  * @method static Builder latestPurchases()

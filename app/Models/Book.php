@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $mode
  * @property string $image
  * @property string $book_path
+ * @property mixed $id
  * @method static Book create(array $array)
  */
 class Book extends Model

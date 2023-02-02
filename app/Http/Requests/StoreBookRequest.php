@@ -28,7 +28,7 @@ class StoreBookRequest extends FormRequest
         return [
             'name' => 'required|min:5|unique:books,name',
             'author' => 'required|',
-            'price' => 'required|decimal:0,2',
+            'price' => 'required|int',
             'version' => 'required|int',
             'mode' => 'required|in:online,offline',
             'book_file' => ['required_if:mode,online', File::types('application/pdf')],
