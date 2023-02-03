@@ -1,34 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
+@php use Illuminate\Support\Facades\URL; @endphp
+@extends('layouts.guest')
 
-<head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"
-          name="viewport">
-    <title>Login &mdash; Library Management System</title>
+@section('title', 'Login')
 
-    <!-- General CSS Files -->
-    <link rel="stylesheet"
-          href="{{ asset('library/bootstrap/dist/css/bootstrap.min.css') }}">
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
-          integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
-          crossorigin="anonymous"
-          referrerpolicy="no-referrer"/>
+@push('style')
 
-    <!-- CSS Libraries -->
-    <link rel="stylesheet"
-          href="{{ asset('library/bootstrap-social/bootstrap-social.css') }}">
+@endpush
 
-    <!-- Template CSS -->
-    <link rel="stylesheet"
-          href="{{ asset('css/style.css') }}">
-    <link rel="stylesheet"
-          href="{{ asset('css/components.css') }}">
-</head>
-
-<body>
-<div id="app">
+@section('main')
     <section class="section">
         <div class="d-flex align-items-stretch flex-wrap">
             <div class="col-lg-4 col-md-6 col-12 order-lg-1 min-vh-100 order-2 bg-white">
@@ -53,10 +32,10 @@
                                    class="form-control"
                                    name="email"
                                    tabindex="1"
-                                   autofocus required data-parsley-errors-container="#email-error"
+                                   autofocus required
                                    data-parsley-type="email" data-parsley-trigger="change">
 
-                            <div id="email-error" style="color: red">@error('email'){{ $message }}@enderror</div>
+                            <div class="invalid-feedback">@error('email'){{ $message }}@enderror</div>
 
                         </div>
 
@@ -72,7 +51,7 @@
                                    tabindex="2"
                                    required data-parsley-errors-container="#password-error" data-parsley-minlength="8"
                                    data-parsley-trigger="change">
-                            <div id="password-error" style="color: red"></div>
+                            <div class="invalid-feedback"></div>
                         </div>
 
                         <div class="form-group">
@@ -128,26 +107,4 @@
             </div>
         </div>
     </section>
-</div>
-
-<!-- General JS Scripts -->
-<script src="{{ asset('library/jquery/dist/jquery.min.js') }}"></script>
-<script src="{{ asset('library/popper.js/dist/umd/popper.js') }}"></script>
-<script src="{{ asset('library/tooltip.js/dist/umd/tooltip.js') }}"></script>
-<script src="{{ asset('library/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-<script src="{{ asset('library/jquery.nicescroll/dist/jquery.nicescroll.min.js') }}"></script>
-<script src="{{ asset('library/moment/min/moment.min.js') }}"></script>
-<script src="{{ asset('js/stisla.js') }}"></script>
-
-<!-- JS Libraies -->
-
-<!-- Page Specific JS File -->
-
-<!-- Template JS File -->
-<script src="{{ asset('js/scripts.js') }}"></script>
-<script src="{{ asset('js/custom.js') }}"></script>
-<script src="{{asset('js/parsley.js')}}"></script>
-
-</body>
-
-</html>
+@endsection

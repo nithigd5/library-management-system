@@ -1,7 +1,7 @@
 @props(['route', 'method', 'first_name', 'last_name', 'email', 'phone', 'address'])
 
 <form method="POST" action="{{ $route }}" enctype="multipart/form-data" class="{{ $attributes->get('class') }}"
-      data-parsley-validate>
+      data-parsley-validate id="parsley-validate">
     @if($method === 'put')
         @method('put')
     @endif

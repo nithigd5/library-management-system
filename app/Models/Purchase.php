@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\PurchasableTrait;
+use App\Traits\PurchaseScopeTrait;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,10 +26,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder rentedLastMonth()
  * @method static Builder rentedBetween()
  * @method static Builder latestPurchases()
+ * @method static create(array $purchase)
  */
 class Purchase extends Model
 {
-    use HasFactory, PurchasableTrait;
+    use HasFactory , PurchaseScopeTrait , PurchasableTrait;
 
     const STATUS_OPEN = 'open';
     const STATUS_CLOSE = 'closed';
@@ -40,16 +42,16 @@ class Purchase extends Model
     const MODE_ONLINE = 'online';
 
 
-    protected $fillable = ['user_id','book_id','price','for_rent','pending_amount','payment_due','book_return_due','book_issued_at','mode'];
+    protected $fillable = ['user_id' , 'book_id' , 'price' , 'for_rent' , 'pending_amount' , 'payment_due' , 'book_return_due' , 'book_issued_at' , 'mode'];
     /**
      * The attributes that should be mutated to dates.
      *
      * @var array
      */
     protected $casts = [
-        'book_issued_at' => 'datetime',
-        'payment_due' => 'datetime',
-        'book_return_due' => 'datetime',
+        'book_issued_at' => 'datetime' ,
+        'payment_due' => 'datetime' ,
+        'book_return_due' => 'datetime' ,
         'book_returned_at' => 'datetime'
     ];
 
@@ -81,7 +83,7 @@ class Purchase extends Model
      */
     public static function can($book , $user): bool
     {
-        return  (!static::accessibleOnlineBooks($user->id)->where('book_id' , $book->id)->exists()
+        return (!static::accessibleOnlineBooks($user->id)->where('book_id' , $book->id)->exists()
             && !static::accessibleOfflineBooks($user->id)->where('for_rent' , true)->where('book_id' , $book->id)->exists());
     }
 }

@@ -5,7 +5,6 @@
 @push('style')
     <!-- CSS Libraries -->
 @endpush
-
 @section('main')
     <div class="main-content">
         <section class="section">
@@ -161,33 +160,36 @@
                     }, 1000);
                 })
             })
+
+
+            $("#book").change(function () {
+                let url = '/admin/api/books';
+                let book = $(this).val()
+
+                $.get(`${url}/${book}`, function (data) {
+                    console.log(data)
+                    let price = Math.round(data.data.book.price)
+                    $("#book_price").val(price)
+                    $("#amount").val(price)
+                }).fail(function (data) {
+                    console.log(data)
+                })
+            })
+
+            $("#for_rent").change(function () {
+                if ($(this).is(":checked")) {
+                    let percentage = parseInt($("#rent_percentage").text())
+
+                    let price = Math.round(percentage * $("#book_price").val() / 100)
+
+                    $("#amount").val(price)
+                } else {
+                    $("#amount").val($("#book_price").val())
+                }
+            })
+            
         });
 
-        $("#book").change(function () {
-            let url = '/admin/api/books';
-            let book = $(this).val()
-
-            $.get(`${url}/${book}`, function (data) {
-                console.log(data)
-                let price = Math.round(data.data.book.price)
-                $("#book_price").val(price)
-                $("#amount").val(price)
-            }).fail(function (data) {
-                console.log(data)
-            })
-        })
-
-        $("#for_rent").change(function () {
-            if ($(this).is(":checked")) {
-                let percentage = parseInt($("#rent_percentage").text())
-
-                let price = Math.round(percentage * $("#book_price").val() / 100)
-
-                $("#amount").val(price)
-            } else {
-                $("#amount").val($("#book_price").val())
-            }
-        })
 
     </script>
 

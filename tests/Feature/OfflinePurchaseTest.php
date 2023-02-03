@@ -130,28 +130,42 @@ class OfflinePurchaseTest extends TestCase
         $purchase = $this->createOnGoingRentedPurchase($book , $customer , ['pending_amount' => 10]);
 
         $this->assertUpdateSuccess($admin , ['amount' => 10 , 'user_id' => $customer->id] , $purchase->id ,
-            ['user_id' => $customer->id , 'book_id' => $book->id , 'pending_amount' => 0]);
+            ['id' => $purchase->id , 'user_id' => $customer->id , 'book_id' => $book->id , 'pending_amount' => 0]);
 
         //Cannot Update rented book pending amount if already paid
         $this->assertUpdateFailed($admin , ['amount' => 10 , 'user_id' => $customer->id] , $purchase->id ,
-            ['user_id' => $customer->id , 'book_id' => $book->id , 'pending_amount' => 0]);
+            ['id' => $purchase->id , 'user_id' => $customer->id , 'book_id' => $book->id , 'pending_amount' => 0]);
 
 
         // Return a book
-        $purchase = $this->createOnGoingRentedPurchase($book , $customer , ['pending_amount' => 0]);
-
         $response = $this->actingAs($admin)->put(route('admin.purchases.return-book' , $purchase->id));
         $response->assertRedirect();
         $response->assertSessionHas('status' , 'success');
+
         $this->assertEquals(1 ,
-            Purchase::where(['id' => $purchase->id , 'user_id' => $customer->id , 'book_id' => $book->id , 'pending_amount' => 0])->whereNotNull('book_returned_at')->count());
+            Purchase::where(['id' => $purchase->id , 'user_id' => $customer->id , 'book_id' => $book->id , 'pending_amount' => 0])
+                ->whereNotNull('book_returned_at')->count() , 'Book is not returned.');
 
 
         // Cannot return a book if already returned
         $response = $this->actingAs($admin)->put(route('admin.purchases.return-book' , $purchase->id));
         $response->assertSessionHas('status' , 'danger');
         $this->assertEquals(1 ,
-            Purchase::where(['id' => $purchase->id , 'user_id' => $customer->id , 'book_id' => $book->id , 'pending_amount' => 0])->whereNotNull('book_returned_at')->count());
+            Purchase::where(['id' => $purchase->id , 'user_id' => $customer->id , 'book_id' => $book->id , 'pending_amount' => 0])
+                ->whereNotNull('book_returned_at')->count() , 'Database count mismatches');
+
+
+        // Cannot return online book
+        $purchase = $this->createOnGoingRentedPurchase($book = $this->createAndGetBook(true) , $customer , ['pending_amount' => 0]);
+
+        $response = $this->actingAs($admin)->put(route('admin.purchases.return-book' , $purchase->id));
+        $response->assertRedirect();
+        $response->assertSessionHas('status' , 'danger');
+
+        $this->assertEquals(1 ,
+            Purchase::where(['id' => $purchase->id , 'user_id' => $customer->id , 'book_id' => $book->id , 'pending_amount' => 0])
+                ->whereNull('book_returned_at')->count() , 'Online Book is returned');
+
     }
 
     /**
@@ -177,17 +191,18 @@ class OfflinePurchaseTest extends TestCase
      * get a valid rented purchase - no due - not returned
      * @param Book $book
      * @param User $customer
-     * @param array $purchase
+     * @param array $attributes
      * @return Purchase
      */
-    public function createOnGoingRentedPurchase(Book $book , User $customer , array $purchase = []): Purchase
+    public function createOnGoingRentedPurchase(Book $book , User $customer , array $attributes = []): Purchase
     {
         return Purchase::factory()->create(array_merge([
             'for_rent' => true ,
             'book_id' => $book->id ,
             'user_id' => $customer->id ,
-            'created_at' => now()
-        ] , $purchase));
+            'created_at' => now() ,
+            'book_returned_at' => null
+        ] , $attributes));
     }
 
     /**
@@ -295,19 +310,13 @@ class OfflinePurchaseTest extends TestCase
      * @param array $purchase
      * @param $purchaseID
      * @param $dbData
-     * @param null $status
      * @return TestResponse
      */
-    public function assertUpdateFailed(User $admin , array $purchase , $purchaseID , $dbData , $status = null): TestResponse
+    public function assertUpdateFailed(User $admin , array $purchase , $purchaseID , $dbData): TestResponse
     {
         $response = $this->actingAs($admin)->put(route('admin.purchases.update' , $purchaseID) , $purchase);
 
-        if (is_null($status)) {
-            $this->assertGreaterThanOrEqual(300 , $response->status() , 'Error Status Code should be returned or redirect');
-            $this->assertLessThan(500 , $response->status() , 'Error Status Code should be returned or redirect');
-        } else {
-            $response->assertStatus($status);
-        }
+        $response->assertSessionHasErrors();
 
         $this->assertDatabaseHas('purchases' , $dbData);
 

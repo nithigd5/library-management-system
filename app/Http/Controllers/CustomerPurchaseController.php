@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PaymentRequest;
 use App\Models\Book;
 use App\Models\Purchase;
-use App\Traits\PurchaseControllableTrait;
+use App\Traits\PurchaseControllerTrait;
 use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Validator;
 
 class CustomerPurchaseController extends Controller
 {
-    use PurchaseControllableTrait;
+    use PurchaseControllerTrait;
     /**
      * View all Purchases ordered by recent
      * @return Application|Factory|View

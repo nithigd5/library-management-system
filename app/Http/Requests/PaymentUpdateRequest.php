@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class PaymentUpdateRequest extends FormRequest
 {
@@ -27,5 +27,16 @@ class PaymentUpdateRequest extends FormRequest
         return [
             'amount' => 'required|integer'
         ];
+    }
+
+    /**
+     * Check if given amount is not greater than pending amount
+     * @return void
+     * @throws ValidationException
+     */
+    public function checkAmount()
+    {
+        if ($this->purchase->pending_amount < $this->amount)
+            throw ValidationException::withMessages(['amount' => 'Payment Amount cannot be greater than pending amount: ' . $this->purchase->pending_amount]);
     }
 }

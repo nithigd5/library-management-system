@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PaymentUpdateRequest;
 use App\Http\Requests\PurchaseStoreRequest;
 use App\Models\Purchase;
-use App\Traits\PurchaseControllableTrait;
+use App\Traits\PurchaseControllerTrait;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class PurchaseController extends Controller
 {
-    use PurchaseControllableTrait;
+    use PurchaseControllerTrait;
 
     /**
      * View all Purchases ordered by recent
@@ -58,7 +58,16 @@ class PurchaseController extends Controller
      */
     public function store(PurchaseStoreRequest $request): JsonResponse
     {
-        return response()->json(['message' => 'success' , 'data' => ['purchase' => $request->handle()]]);
+        // Do all the validations
+        $request->handle();
+
+        if (!$purchase = Purchase::create($request->purchase)) {
+            return response()
+                ->json(['message' => 'failed' , 'errors' => ['amount' => ['Cannot create a purchase. please try again later']]] ,
+                    Response::HTTP_SERVICE_UNAVAILABLE);
+        }
+
+        return response()->json(['message' => 'success' , 'data' => ['purchase' => $purchase]]);
     }
 
     /**
@@ -66,36 +75,23 @@ class PurchaseController extends Controller
      * @param Purchase $purchase
      * @param PaymentUpdateRequest $request
      * @return JsonResponse
+     * @throws ValidationException
      */
     public function update(Purchase $purchase , PaymentUpdateRequest $request): JsonResponse
     {
-        //Check if given amount is not greater than pending amount
-
-        if ($purchase->pending_amount < $request->amount)
-            return response()->json([
-                'message' => 'failed' ,
-                'errors' => [
-                    'amount' => ['Payment Amount cannot be greater than pending amount: ' . $purchase->pending_amount]
-                ]
-            ] , Response::HTTP_UNPROCESSABLE_ENTITY);
+        $request->checkAmount();
 
         $purchase->pending_amount = $purchase->pending_amount - $request->amount;
 
         if (!$purchase->save()) {
-            return response()->json([
-                'message' => 'failed' ,
-                'errors' => [
-                    'amount' => ['Payment Amount cannot be updated. Please try again later.']
-                ]
-            ] , Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()
+                ->json(['message' => 'failed' , 'errors' => ['amount' => ['Payment Amount cannot be updated. Please try again later.']]] ,
+                    Response::HTTP_SERVICE_UNAVAILABLE);
         }
 
-        return response()->json([
-            'message' => 'success' ,
-            'data' => [
-                'pending_amount' => $purchase->pending_amount
-            ]
-        ]);
+        return response()
+            ->json(['message' => 'success' , 'data' => ['pending_amount' => $purchase->pending_amount]
+            ]);
     }
 
     /**
@@ -105,14 +101,16 @@ class PurchaseController extends Controller
      */
     public function returnBook(Purchase $purchase): RedirectResponse
     {
+
         if ($purchase->toReturn()) {
-            try {
-                $purchase->book_returned_at = now();
-                $purchase->saveOrFail();
-            } catch (\Throwable $e) {
-                return back()->with('message' , 'Book cannot be returned. Try again later')->with('status' , 'danger');
-            }
-            return back()->with('message' , 'Book has been returned successfully')->with('status' , 'success');
+
+            $purchase->book_returned_at = now();
+
+            if (!$purchase->save())
+                abort(503, 'Cannot return a book. Please Try again later.');
+            else
+                return back()->with('message' , 'Book has been returned successfully')->with('status' , 'success');
+
         } else {
             return back()->with('message' , 'Book is already returned')->with('status' , 'danger');
         }

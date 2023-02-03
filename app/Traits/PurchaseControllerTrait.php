@@ -4,7 +4,7 @@ namespace App\Traits;
 
 use App\Models\Purchase;
 
-trait PurchaseControllableTrait
+trait PurchaseControllerTrait
 {
     /**
      *

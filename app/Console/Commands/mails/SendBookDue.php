@@ -32,10 +32,9 @@ class SendBookDue extends Command
     {
         $overDueBooks = Purchase::with('user' , 'book')->bookDueBetween()->get();
 
+        $this->info('Total users: ' . $overDueBooks->count());
 
-        $this->info('Total users: '.$overDueBooks->count());
-
-        foreach ($overDueBooks as $purchase){
+        foreach ($overDueBooks as $purchase) {
             Mail::to($purchase->user->email)->send((new BookDue($purchase))->onQueue('email'));
         }
 

@@ -17,20 +17,14 @@
             <form method="POST" data-parsley-validate>
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input id="email"
-                        type="email"
-                        class="form-control"
-                        name="email"
-                        tabindex="1"
-                        required
-                        autofocus data-parsley-type="email" data-parsley-errors-container="#email-error">
-                    <div id="email-error" style="color: red"></div>
+                    <input id="email" type="email" class="form-control @error('email') in-invalid @enderror"
+                           name="email" tabindex="1" required autofocus data-parsley-type="email">
+                    <div class="invalid-feedback">@error('email') {{ $message }} @enderror</div>
                 </div>
-
                 <div class="form-group">
                     <button type="submit"
-                        class="btn btn-primary btn-lg btn-block"
-                        tabindex="4">
+                            class="btn btn-primary btn-lg btn-block"
+                            tabindex="4">
                         Forgot Password
                     </button>
                 </div>
@@ -40,7 +34,4 @@
 @endsection
 
 @push('scripts')
-    <!-- JS Libraies -->
-    <script src="{{asset('js/parsley.js')}}"></script>
-    <!-- Page Specific JS File -->
 @endpush

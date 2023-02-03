@@ -7,12 +7,6 @@
 
 "use strict";
 
-$.ajaxSetup({
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-});
-
 function setFileChange(input, label) {
     label.text(input.val().split('\\').pop());
 }
@@ -34,6 +28,12 @@ $("textarea").each(function () {
 })
 
 $(document).ready(function () {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
     let $subTotal = $("#subTotal");
     $("#toggleInput").on("change", function () {
         var value = $(this).data("variable");
@@ -59,6 +59,16 @@ $(document).ready(function () {
         if (this.value > maxPrice) {
             this.value = maxPrice;
         }
+    });
+
+    $('[data-parsley-validate]').parsley({
+        errorClass: 'is-invalid',
+        successClass: 'is-valid',
+        classHandler: function (ParsleyField) {
+            return ParsleyField.$element;
+        },
+        errorsWrapper: '<div class="invalid-feedback"></div>',
+        errorTemplate: '<div></div>'
     });
 });
 
@@ -128,7 +138,7 @@ function createAndValidateAjax(form, callback) {
     })
 }
 
-$(function () {
+$.ready(function (){
     var start = moment().subtract(29, 'days');
     var end = moment();
 
@@ -140,8 +150,7 @@ $(function () {
     }, function (start, end, label) {
         console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
     });
-});
-
+})
 
 function paginateResults(data, params) {
     params.page = params.page || 1;

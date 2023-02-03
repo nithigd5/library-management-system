@@ -49,29 +49,27 @@ class PurchaseSeeder extends Seeder
                 'book_id' => fake()->randomElement(Book::all('id')),
                 'user_id' => $user->id
             ]);
-
-            //Overdue purchases
-            Purchase::factory(2)->create([
-                'book_issued_at' => now()->subDays(20) ,
-                'created_at' => now()->subDays(20) ,
-                'updated_at' => now()->subDays(20) ,
-                'book_return_due' => now()->subDays(5),
-                'book_returned_at' => null,
-                'for_rent' => true ,
-                'pending_amount'  => 0,
-                'book_id' => fake()->randomElement(Book::all('id')),
-                'user_id' => $user->id
-            ]);
-
-            //Overdue purchases
-            Purchase::factory(10)->create([
-                'book_issued_at' => now() ,
-                'created_at' => now() ,
-                'updated_at' => now() ,
-                'book_id' => fake()->randomElement(Book::where('mode', 'online')->get()),
-                'user_id' => $user->id
-            ]);
         }
+        //Overdue purchases
+        Purchase::factory(2)->create([
+            'book_issued_at' => now()->subDays(20) ,
+            'created_at' => now()->subDays(20) ,
+            'updated_at' => now()->subDays(20) ,
+            'book_return_due' => now()->subDays(5),
+            'book_returned_at' => null,
+            'for_rent' => true ,
+            'pending_amount'  => 0,
+            'book_id' => fake()->randomElement(Book::all('id')),
+            'user_id' => fake()->randomElement(User::all())->id
+        ]);
 
+        //Overdue purchases
+        Purchase::factory(10)->create([
+            'book_issued_at' => now() ,
+            'created_at' => now() ,
+            'updated_at' => now() ,
+            'book_id' => fake()->randomElement(Book::where('mode', 'online')->get()),
+            'user_id' => fake()->randomElement(User::all())->id
+        ]);
     }
 }

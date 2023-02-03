@@ -8,7 +8,6 @@ use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @property mixed $amount
@@ -50,7 +49,7 @@ class PurchaseStoreRequest extends FormRequest
      * Handle the request
      * @throws ValidationException
      */
-    public function handle(): Purchase
+    public function handle()
     {
         $this->customer = User::find($this->input('user'));
 
@@ -72,8 +71,6 @@ class PurchaseStoreRequest extends FormRequest
         $this->checkAmount();
 
         $this->checkPayment();
-
-        return $this->store();
     }
 
     /**
@@ -86,11 +83,11 @@ class PurchaseStoreRequest extends FormRequest
 
             if (!$this->customer->hasPermissionTo('books.purchase.rent'))
 
-                throw ValidationException::withMessages(['user' => 'User don"t have permission to rent a book.' , Response::HTTP_FORBIDDEN]);
+                throw ValidationException::withMessages(['user' => 'User don"t have permission to rent a book.']);
 
         } else if (!$this->customer->hasPermissionTo('books.purchase.buy')) {
 
-            throw ValidationException::withMessages(['user' => ['User don"t have permission to buy a book.']]);
+            throw ValidationException::withMessages(['user' => 'User don"t have permission to buy a book.']);
 
         }
     }
@@ -157,19 +154,5 @@ class PurchaseStoreRequest extends FormRequest
         if ($this->purchase['pending_amount'] > 0) {
             $this->purchase['payment_due'] = now()->addDays(config('book.purchase_due_days'));
         }
-    }
-
-    /**
-     * Store a Purchase to database
-     * @return Purchase
-     * @throws ValidationException
-     */
-    public function store(): Purchase
-    {
-        if (!$purchase = Purchase::create($this->purchase)) {
-            throw ValidationException::withMessages(['purchase' => 'Cannot create a purchase. please try again later']);
-        }
-
-        return $purchase;
     }
 }

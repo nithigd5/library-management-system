@@ -4,9 +4,6 @@
 @section('title', 'Register as a Customer')
 
 @push('style')
-    <!-- CSS Libraries -->
-    <link rel="stylesheet"
-          href="{{ asset('library/selectric/public/selectric.css') }}">
 
 @endpush
 
@@ -50,11 +47,5 @@
 @endsection
 
 @push('scripts')
-    <!-- JS Libraies -->
-    <script src="{{ asset('library/selectric/public/jquery.selectric.min.js') }}"></script>
-    <script src="{{ asset('library/jquery.pwstrength/jquery.pwstrength.min.js') }}"></script>
-    <script src="{{ asset('js/parsley.js') }}"></script>
 
-    <!-- Page Specific JS File -->
-    <script src="{{ asset('js/page/auth-register.js') }}"></script>
 @endpush

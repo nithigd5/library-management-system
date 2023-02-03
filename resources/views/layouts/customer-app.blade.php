@@ -25,13 +25,9 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     @stack('style')
 
-    <!-- Template CSS -->
-    <link rel="stylesheet"
-          href="{{ asset('css/style.css') }}">
-    <link rel="stylesheet"
-          href="{{ asset('css/custom.css') }}">
-    <link rel="stylesheet"
-          href="{{ asset('css/components.css') }}">
+    <!-- Template CSS & JS -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css" integrity="sha256-2XFplPlrFClt0bIdPgpz8H7ojnk10H69xRqd9+uTShA=" crossorigin="anonymous" />
 
 
@@ -61,13 +57,9 @@
 <script src="{{ asset('library/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 <script src="{{ asset('library/jquery.nicescroll/dist/jquery.nicescroll.min.js') }}"></script>
 <script src="{{ asset('library/moment/min/moment.min.js') }}"></script>
-<script src="{{ asset('js/stisla.js') }}"></script>
 
 @stack('scripts')
 
-<!-- Template JS File -->
-<script src="{{ asset('js/scripts.js') }}"></script>
-<script src="{{ asset('js/custom.js') }}"></script>
 <!-- Toggle JS Files -->
 <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script src="{{ asset('library/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
